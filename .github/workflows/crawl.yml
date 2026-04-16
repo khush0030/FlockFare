@@ -1,0 +1,51 @@
+name: FlockFare Fare Crawler
+
+on:
+  schedule:
+    # Run every 4 hours (6x/day) — well within free tier limits
+    - cron: '0 */4 * * *'
+  workflow_dispatch:
+    # Manual trigger from GitHub Actions UI
+    inputs:
+      origins:
+        description: 'Comma-separated origin codes (leave empty for all)'
+        required: false
+      dry_run:
+        description: 'Dry run (fetch only, no storage)'
+        required: false
+        type: boolean
+        default: false
+
+env:
+  SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+  SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+
+jobs:
+  crawl:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: 'pip'
+          cache-dependency-path: crawler/requirements.txt
+
+      - name: Install dependencies
+        run: pip install -r crawler/requirements.txt
+
+      - name: Run crawler
+        working-directory: crawler
+        run: |
+          ARGS=""
+          if [ -n "${{ github.event.inputs.origins }}" ]; then
+            ARGS="--origins $(echo '${{ github.event.inputs.origins }}' | tr ',' ' ')"
+          fi
+          if [ "${{ github.event.inputs.dry_run }}" = "true" ]; then
+            ARGS="$ARGS --dry-run"
+          fi
+          python run.py $ARGS

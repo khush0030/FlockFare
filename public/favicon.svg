@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="FlockFare favicon">
+  <!-- Simplified for small sizes: chunkier strokes, no spark dot, rounder tile -->
+  <rect x="2" y="2" width="60" height="60" rx="12" fill="#D8FF3C" stroke="#0B0B0F" stroke-width="3"/>
+  <path d="M10 44 L26 28 L42 44" stroke="#6D28FF" stroke-width="7"
+        stroke-linecap="square" stroke-linejoin="miter" fill="none"/>
+  <path d="M20 54 L42 30 L58 46" stroke="#0B0B0F" stroke-width="9"
+        stroke-linecap="square" stroke-linejoin="miter" fill="none"/>
+</svg>
