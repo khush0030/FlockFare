@@ -1,13 +1,18 @@
 import Image from "next/image";
 import { getActiveDeals } from "@/lib/supabase/deals";
-import { DealCard } from "@/components/deal-card";
-import { ORIGINS } from "@/config/watchlist";
+import { getActiveHotelDeals } from "@/lib/supabase/hotels";
+import { DealFilters } from "@/components/deal-filters";
 import { Header } from "@/components/header";
 
 export const revalidate = 300; // ISR: refresh every 5 minutes
 
 export default async function DealsPage() {
-  const deals = await getActiveDeals(30);
+  const [flightDeals, hotelDeals] = await Promise.all([
+    getActiveDeals(30),
+    getActiveHotelDeals(30),
+  ]);
+
+  const totalDeals = flightDeals.length + hotelDeals.length;
 
   return (
     <main className="flex-1">
@@ -19,35 +24,17 @@ export default async function DealsPage() {
           Penny&apos;s latest finds.
         </h1>
         <p className="mt-3 text-ffgray-500 max-w-lg">
-          Every deal links straight to Google Flights. Prices verified at crawl
-          time &mdash; availability can change fast.
+          {totalDeals > 0
+            ? "Every deal links straight to Google Flights or booking sites. Prices verified at crawl time."
+            : "Penny is building her price baseline. Deals will appear here once she has enough data."}
         </p>
 
-        {/* Origin filter pills */}
-        <div className="flex flex-wrap gap-2 mt-8">
-          {ORIGINS.map((origin) => {
-            const count = deals.filter(
-              (d) => d.origin_code === origin.code
-            ).length;
-            return (
-              <span
-                key={origin.code}
-                className="inline-flex items-center gap-1.5 bg-ink text-lime px-3 py-1.5 rounded-full font-mono font-bold text-[11px] tracking-[0.15em] uppercase"
-              >
-                {origin.code}
-                <span className="bg-lime text-ink w-5 h-5 rounded-full flex items-center justify-center text-[10px]">
-                  {count}
-                </span>
-              </span>
-            );
-          })}
-        </div>
-
-        {deals.length > 0 ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 mt-10">
-            {deals.map((deal) => (
-              <DealCard key={deal.id} deal={deal} />
-            ))}
+        {totalDeals > 0 ? (
+          <div className="mt-8">
+            <DealFilters
+              flightDeals={flightDeals}
+              hotelDeals={hotelDeals}
+            />
           </div>
         ) : (
           <div className="mt-12 bg-lime-tint border-4 border-ink rounded-[20px] p-8 flex flex-col items-center text-center">
