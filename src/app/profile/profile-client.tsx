@@ -68,7 +68,8 @@ export type ProfileData = {
     expiresAt: string | null;
   }[];
   notifPrefs: {
-    user_id: string;
+    user_id?: string;
+    email?: string;
     deals_email: boolean;
     weekly_digest: boolean;
     push: boolean;
@@ -729,7 +730,7 @@ function SettingsTab({ form, setForm, dirty, saveProfile, notif, savePrefs, show
             <DangerRow title="Export my data" desc="Download all history as JSON." action="Export" onClick={() => showToast("Export queued — check email in 5 min.")} />
             <DangerRow title="Pause all alerts" desc="Stop Penny without losing settings." action="Pause" onClick={() => showToast("Alerts paused. Resume anytime.")} />
             <DangerRow title="Sign out" desc="Log out of FlockFare." action="Sign out" onClick={() => {
-              fetch("/api/auth/signout", { method: "POST" }).then(() => { window.location.href = "/"; });
+              window.location.href = "/api/auth/signout";
             }} />
             <DangerRow title="Delete account" desc="Permanently remove everything." action="Delete" onClick={() => { if (confirm("Delete your account? This cannot be undone.")) showToast("Deletion requested."); }} />
           </div>

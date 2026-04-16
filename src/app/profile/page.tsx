@@ -1,10 +1,17 @@
 import { redirect } from "next/navigation";
-import { createAuthClient, getUser } from "@/lib/supabase/server-auth";
+import { auth } from "@/lib/auth";
+import { createClient } from "@supabase/supabase-js";
 import { ProfileClient } from "./profile-client";
 import type { ProfileData } from "./profile-client";
 
+const db = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.SUPABASE_SERVICE_ROLE_KEY!
+);
+
 type ProfileRow = {
   id: string;
+  email: string;
   display_name: string | null;
   avatar_url: string | null;
   referral_code: string | null;
@@ -14,7 +21,7 @@ type ProfileRow = {
 };
 
 type PrefsRow = {
-  user_id: string;
+  email: string;
   deals_email: boolean;
   weekly_digest: boolean;
   push: boolean;
@@ -24,7 +31,7 @@ type PrefsRow = {
 
 type SavedDealRow = {
   id: string;
-  user_id: string;
+  user_email: string;
   deal_id: string;
   status: "active" | "booked" | "expired";
   saved_at: string;
@@ -47,7 +54,7 @@ type SavedDealRow = {
 
 type BookingRow = {
   id: string;
-  user_id: string;
+  user_email: string;
   deal_id: string | null;
   route: string;
   airline: string | null;
@@ -72,38 +79,18 @@ type DealRow = {
 };
 
 export default async function ProfilePage() {
-  const user = await getUser();
-  if (!user) redirect("/login?next=/profile");
+  const session = await auth();
+  if (!session?.user?.email) redirect("/login?next=/profile");
 
-  const supabase = await createAuthClient();
+  const email = session.user.email;
 
   const [profileRes, prefsRes, savedRes, bookingsRes, dealsRes] =
     await Promise.all([
-      supabase
-        .from("user_profiles")
-        .select("*")
-        .eq("id", user.id)
-        .single(),
-      supabase
-        .from("notification_prefs")
-        .select("*")
-        .eq("user_id", user.id)
-        .single(),
-      supabase
-        .from("saved_deals")
-        .select("*, deals(*)")
-        .eq("user_id", user.id)
-        .order("saved_at", { ascending: false }),
-      supabase
-        .from("bookings")
-        .select("*")
-        .eq("user_id", user.id)
-        .order("booked_at", { ascending: false }),
-      supabase
-        .from("deals")
-        .select("*")
-        .order("detected_at", { ascending: false })
-        .limit(10),
+      db.from("user_profiles").select("*").eq("email", email).single(),
+      db.from("notification_prefs").select("*").eq("email", email).single(),
+      db.from("saved_deals").select("*, deals(*)").eq("user_email", email).order("saved_at", { ascending: false }),
+      db.from("bookings").select("*").eq("user_email", email).order("booked_at", { ascending: false }),
+      db.from("deals").select("*").order("detected_at", { ascending: false }).limit(10),
     ]);
 
   const profile = profileRes.data as ProfileRow | null;
@@ -113,24 +100,18 @@ export default async function ProfilePage() {
   const recentDeals = (dealsRes.data ?? []) as DealRow[];
 
   const totalSavings = bookings.reduce(
-    (sum, b) => sum + (b.baseline_inr - b.price_paid_inr),
-    0
+    (sum, b) => sum + (b.baseline_inr - b.price_paid_inr), 0
   );
-  const bestSave =
-    bookings.length > 0
-      ? Math.max(...bookings.map((b) => b.baseline_inr - b.price_paid_inr))
-      : 0;
-  const avgDiscount =
-    bookings.length > 0
-      ? Math.round(
-          bookings.reduce(
-            (sum, b) =>
-              sum +
-              ((b.baseline_inr - b.price_paid_inr) / b.baseline_inr) * 100,
-            0
-          ) / bookings.length
-        )
-      : 0;
+  const bestSave = bookings.length > 0
+    ? Math.max(...bookings.map((b) => b.baseline_inr - b.price_paid_inr))
+    : 0;
+  const avgDiscount = bookings.length > 0
+    ? Math.round(
+        bookings.reduce(
+          (sum, b) => sum + ((b.baseline_inr - b.price_paid_inr) / b.baseline_inr) * 100, 0
+        ) / bookings.length
+      )
+    : 0;
 
   const now = new Date();
   const monthBars = Array.from({ length: 4 }, (_, i) => {
@@ -144,29 +125,18 @@ export default async function ProfilePage() {
   });
 
   const memberSince = profile?.created_at
-    ? new Date(profile.created_at).toLocaleDateString("en", {
-        month: "short",
-        year: "numeric",
-      })
+    ? new Date(profile.created_at).toLocaleDateString("en", { month: "short", year: "numeric" })
     : "recently";
 
   const monthsDiff = profile?.created_at
-    ? Math.max(
-        1,
-        Math.ceil(
-          (Date.now() - new Date(profile.created_at).getTime()) /
-            (30 * 24 * 60 * 60 * 1000)
-        )
-      )
+    ? Math.max(1, Math.ceil((Date.now() - new Date(profile.created_at).getTime()) / (30 * 24 * 60 * 60 * 1000)))
     : 1;
 
   const data: ProfileData = {
     user: {
-      email: user.email ?? "",
-      displayName:
-        profile?.display_name ?? user.user_metadata?.name ?? "User",
-      avatarUrl:
-        profile?.avatar_url ?? user.user_metadata?.avatar_url ?? null,
+      email,
+      displayName: profile?.display_name ?? session.user.name ?? "User",
+      avatarUrl: profile?.avatar_url ?? session.user.image ?? null,
       memberSince,
       monthsInFlock: monthsDiff,
       planTier: (profile?.plan_tier as "free" | "pro") ?? "free",
@@ -225,7 +195,7 @@ export default async function ProfilePage() {
       expiresAt: d.expires_at,
     })),
     notifPrefs: prefs ?? {
-      user_id: user.id,
+      email,
       deals_email: true,
       weekly_digest: true,
       push: false,
