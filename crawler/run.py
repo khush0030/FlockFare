@@ -31,6 +31,7 @@ from config import (
 )
 from flight_source import fetch_cheapest_fare
 from db import store_price_snapshot, get_baseline_price, store_deal, expire_stale_deals
+from notify import notify_deal
 
 logging.basicConfig(
     level=logging.INFO,
@@ -166,6 +167,18 @@ def main():
     if args.dry_run:
         logger.info("DRY RUN — fetching fares but not storing")
 
+    # Fetch subscriber emails for notifications
+    subscriber_emails = []
+    if not args.dry_run:
+        try:
+            from db import get_client
+            client = get_client()
+            resp = client.table("subscribers").select("email").eq("is_active", True).not_.is_("email", "null").execute()
+            subscriber_emails = [r["email"] for r in resp.data if r.get("email")]
+            logger.info(f"Loaded {len(subscriber_emails)} subscriber emails")
+        except Exception as e:
+            logger.warning(f"Could not load subscribers: {e}")
+
     new_deals = []
     crawled = 0
     errors = 0
@@ -179,6 +192,8 @@ def main():
                     deal = crawl_route(origin.code, dest.code, month, dry_run=args.dry_run)
                     if deal:
                         new_deals.append(deal)
+                        # Notify on new deals
+                        notify_deal(deal, subscriber_emails)
                 except Exception as e:
                     errors += 1
                     logger.error(f"  Failed: {e}")

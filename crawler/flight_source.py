@@ -10,6 +10,9 @@ from dataclasses import dataclass
 
 from fast_flights import FlightData, Passengers, get_flights
 
+# Google Flights changed HTML; 'fallback' mode uses alt parsing that works
+FETCH_MODE = "fallback"
+
 logger = logging.getLogger(__name__)
 
 
@@ -77,6 +80,7 @@ def fetch_fares(
             passengers=Passengers(adults=1),
             seat=cabin,
             max_stops=max_stops,
+            fetch_mode=FETCH_MODE,
         )
 
         for flight in result.flights:

@@ -1,95 +1,67 @@
 import Image from "next/image";
 import { ORIGINS, DESTINATIONS } from "@/config/watchlist";
+import { getActiveDeals, type Deal } from "@/lib/supabase/deals";
+import { DealCard } from "@/components/deal-card";
 
-function DealCard({
-  origin,
-  destination,
-  price,
-  originalPrice,
-  pctOff,
-  airline,
-  stops,
-  duration,
-  dealType,
-}: {
-  origin: string;
-  destination: string;
-  price: string;
-  originalPrice: string;
-  pctOff: number;
-  airline: string;
-  stops: string;
-  duration: string;
-  dealType: "common" | "rare" | "unique";
-}) {
-  const bannerColors = {
-    common: "bg-lime",
-    rare: "bg-sun",
-    unique: "bg-coral",
-  };
-  const badgeLabels = {
-    common: `-${pctOff}%`,
-    rare: "FLASH SALE",
-    unique: "MISTAKE FARE",
-  };
+// Sample deals shown when no live deals exist yet (baseline building)
+const SAMPLE_DEALS: Deal[] = [
+  {
+    id: "sample-1",
+    origin_code: "BOM",
+    destination_code: "LHR",
+    travel_month: "2026-07",
+    current_price_inr: 21400,
+    baseline_price_inr: 46800,
+    pct_off: 54,
+    airline: "Air India",
+    stops: 0,
+    cabin_class: "economy",
+    duration_minutes: 590,
+    deal_type: "common",
+    google_flights_url: "https://www.google.com/travel/flights?q=Flights+from+BOM+to+LHR+in+July+2026",
+    is_active: true,
+    detected_at: new Date().toISOString(),
+  },
+  {
+    id: "sample-2",
+    origin_code: "DEL",
+    destination_code: "BKK",
+    travel_month: "2026-08",
+    current_price_inr: 11900,
+    baseline_price_inr: 19200,
+    pct_off: 38,
+    airline: "Vistara",
+    stops: 1,
+    cabin_class: "economy",
+    duration_minutes: 425,
+    deal_type: "rare",
+    google_flights_url: "https://www.google.com/travel/flights?q=Flights+from+DEL+to+BKK+in+August+2026",
+    is_active: true,
+    detected_at: new Date().toISOString(),
+  },
+  {
+    id: "sample-3",
+    origin_code: "BLR",
+    destination_code: "NRT",
+    travel_month: "2026-09",
+    current_price_inr: 18700,
+    baseline_price_inr: 58400,
+    pct_off: 68,
+    airline: "ANA",
+    stops: 0,
+    cabin_class: "business",
+    duration_minutes: 520,
+    deal_type: "unique",
+    google_flights_url: "https://www.google.com/travel/flights?q=Flights+from+BLR+to+NRT+in+September+2026",
+    is_active: true,
+    detected_at: new Date().toISOString(),
+  },
+];
 
-  return (
-    <div className="bg-paper border-4 border-ink rounded-[20px] shadow-brut overflow-hidden flex flex-col">
-      <div
-        className={`${bannerColors[dealType]} border-b-4 border-ink px-5 py-4 flex justify-between items-start`}
-      >
-        <div className="font-display font-black text-[28px] leading-none tracking-tight text-ink">
-          {origin}{" "}
-          <span className="text-violet mx-1">&rarr;</span>{" "}
-          {destination}
-        </div>
-        <span
-          className={`inline-flex items-center gap-1 ${
-            dealType === "common"
-              ? "bg-coral text-white"
-              : dealType === "rare"
-                ? "bg-ink text-sun"
-                : "bg-lime text-ink"
-          } px-3 py-1 rounded-full font-mono font-bold text-[11px] tracking-[0.15em] uppercase`}
-        >
-          {badgeLabels[dealType]}
-        </span>
-      </div>
-      <div className="p-5 flex-1 flex flex-col">
-        <div className="font-display font-black text-[44px] leading-none tracking-[-0.03em] text-ink">
-          {price}
-          <span className="text-base text-ffgray-500 ml-1 font-mono">
-            round-trip
-          </span>
-        </div>
-        <div className="line-through text-ffgray-400 text-sm mt-1.5 font-mono">
-          {originalPrice}
-        </div>
-        <div className="font-mono text-[11px] tracking-[0.15em] uppercase text-ffgray-500 mt-2.5">
-          {airline} &middot; {stops} &middot; {duration}
-        </div>
-        <div className="flex gap-2.5 mt-5">
-          <button
-            className={`flex-1 inline-flex items-center justify-center gap-2 font-display font-bold text-base
-              px-5 py-3 rounded-full border-4 border-ink cursor-pointer
-              transition-transform duration-[120ms] ease-[var(--ease-ff-out)]
-              hover:translate-x-[-2px] hover:translate-y-[-2px] hover:shadow-brut-lg
-              active:translate-x-[3px] active:translate-y-[3px] active:shadow-brut-sm
-              ${
-                dealType === "unique"
-                  ? "bg-lime text-ink shadow-brut"
-                  : "bg-violet text-cream shadow-brut"
-              }`}
-          >
-            Grab &rarr;
-          </button>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-export default function Home() {
+export default async function Home() {
+  const liveDeals = await getActiveDeals(6);
+  const deals = liveDeals.length > 0 ? liveDeals : SAMPLE_DEALS;
+  const isLive = liveDeals.length > 0;
   return (
     <main className="flex-1">
       {/* HERO */}
@@ -154,52 +126,46 @@ export default function Home() {
         </div>
       </section>
 
-      {/* SAMPLE DEALS */}
+      {/* DEALS */}
       <section className="max-w-[1200px] mx-auto px-6 py-16 md:py-24">
-        <p className="ff-eyebrow mb-3">LATEST DEALS</p>
+        <p className="ff-eyebrow mb-3">
+          {isLive ? "LIVE DEALS" : "SAMPLE DEALS"}
+        </p>
         <h2 className="text-[clamp(2rem,4vw,2.75rem)] font-display font-black tracking-tight">
           What Penny found this week.
         </h2>
         <p className="mt-3 text-ffgray-500 max-w-lg">
-          Real deals from real price drops. Every card links straight to Google
-          Flights &mdash; we don&apos;t sell tickets, we find them.
+          {isLive
+            ? "Real deals from real price drops. Every card links straight to Google Flights."
+            : "Penny is building her price baseline. These are examples of what you\u2019ll see soon."}
         </p>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-5 mt-10">
-          <DealCard
-            origin="BOM"
-            destination="LHR"
-            price={"\u20B921,400"}
-            originalPrice={"\u20B946,800 \u00B7 Jul 12 departure"}
-            pctOff={54}
-            airline="Air India"
-            stops="Direct"
-            duration="9h 50m"
-            dealType="common"
-          />
-          <DealCard
-            origin="DEL"
-            destination="BKK"
-            price={"\u20B911,900"}
-            originalPrice={"\u20B919,200 \u00B7 Aug 3-10"}
-            pctOff={38}
-            airline="Vistara"
-            stops="1-stop"
-            duration="7h 05m"
-            dealType="rare"
-          />
-          <DealCard
-            origin="BLR"
-            destination="NRT"
-            price={"\u20B918,700"}
-            originalPrice={"\u20B958,400 \u00B7 Sep 18"}
-            pctOff={68}
-            airline="ANA"
-            stops="Biz class"
-            duration="8h 40m"
-            dealType="unique"
-          />
+          {deals.map((deal) => (
+            <DealCard key={deal.id} deal={deal} />
+          ))}
         </div>
+
+        {!isLive && (
+          <div className="mt-8 bg-lime-tint border-4 border-ink rounded-[20px] p-6 flex items-center gap-4">
+            <Image
+              src="/mascots/penny-sleepy-600.png"
+              alt="Penny sleeping"
+              width={80}
+              height={80}
+              className="flex-shrink-0"
+            />
+            <div>
+              <p className="font-display font-bold text-lg">
+                Penny is napping on the job (for now).
+              </p>
+              <p className="text-ffgray-500 text-sm mt-1">
+                Price baseline needs 2&ndash;4 weeks of data before real deals appear.
+                The crawler is running &mdash; check back soon.
+              </p>
+            </div>
+          </div>
+        )}
       </section>
 
       {/* HOW IT WORKS */}
