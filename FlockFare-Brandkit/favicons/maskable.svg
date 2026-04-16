@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="FlockFare maskable PWA icon">
+  <!-- Maskable icons need full-bleed with 40% safe zone centred. Safe zone = inner 204px radius -->
+  <rect x="0" y="0" width="512" height="512" fill="#D8FF3C"/>
+
+  <!-- Mark centered in the safe zone (204px radius circle around 256,256) -->
+  <g transform="translate(128, 128)">
+    <path d="M24 176 L104 92 L184 176" stroke="#6D28FF" stroke-width="32"
+          stroke-linecap="square" stroke-linejoin="miter" fill="none"/>
+    <path d="M68 224 L176 108 L248 184" stroke="#0B0B0F" stroke-width="44"
+          stroke-linecap="square" stroke-linejoin="miter" fill="none"/>
+    <circle cx="224" cy="36" r="22" fill="#FF4E64" stroke="#0B0B0F" stroke-width="8"/>
+  </g>
+</svg>

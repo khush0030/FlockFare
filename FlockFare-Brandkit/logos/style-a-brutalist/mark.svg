@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" role="img" aria-label="FlockFare Neo-Brutalist mark">
+  <!-- Background tile: acid lime card with thick black border -->
+  <rect x="4" y="4" width="248" height="248" rx="28" fill="#D8FF3C" stroke="#0B0B0F" stroke-width="8"/>
+
+  <!-- Hard-shadow chevron (back bird) — violet -->
+  <path d="M40 172 L104 108 L168 172"
+        stroke="#6D28FF"
+        stroke-width="26"
+        stroke-linecap="square"
+        stroke-linejoin="miter"
+        stroke-miterlimit="4"
+        fill="none"/>
+
+  <!-- Lead chevron (front bird) — pitch black, heavier weight -->
+  <path d="M80 208 L168 118 L232 184"
+        stroke="#0B0B0F"
+        stroke-width="34"
+        stroke-linecap="square"
+        stroke-linejoin="miter"
+        stroke-miterlimit="4"
+        fill="none"/>
+
+  <!-- Deal spark — coral disc with black outline -->
+  <circle cx="204" cy="64" r="20" fill="#FF4E64" stroke="#0B0B0F" stroke-width="6"/>
+  <circle cx="204" cy="64" r="6" fill="#0B0B0F"/>
+</svg>

@@ -1,0 +1,108 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" role="img" aria-label="Penny celebrating a deal">
+  <defs>
+    <radialGradient id="cbBody" cx="50%" cy="40%" r="65%">
+      <stop offset="0%" stop-color="#3F3F52"/>
+      <stop offset="100%" stop-color="#15151E"/>
+    </radialGradient>
+    <radialGradient id="cbBelly" cx="50%" cy="45%" r="60%">
+      <stop offset="0%" stop-color="#FFFFFF"/>
+      <stop offset="100%" stop-color="#F1F1F8"/>
+    </radialGradient>
+    <radialGradient id="cbCheek" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#FF89A0"/>
+      <stop offset="100%" stop-color="#FF89A0" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="cbBeak" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#FFD166"/>
+      <stop offset="50%" stop-color="#FF8A3D"/>
+      <stop offset="100%" stop-color="#FF4E64"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Confetti burst (behind) -->
+  <g>
+    <rect x="48" y="60" width="16" height="8" fill="#D8FF3C" stroke="#0B0B0F" stroke-width="1.5" transform="rotate(-20 56 64)"/>
+    <rect x="340" y="70" width="16" height="8" fill="#FF4E64" stroke="#0B0B0F" stroke-width="1.5" transform="rotate(20 348 74)"/>
+    <rect x="80" y="130" width="14" height="7" fill="#6D28FF" stroke="#0B0B0F" stroke-width="1.5" transform="rotate(36 87 134)"/>
+    <rect x="312" y="136" width="14" height="7" fill="#FFD166" stroke="#0B0B0F" stroke-width="1.5" transform="rotate(-32 319 140)"/>
+    <rect x="62" y="218" width="12" height="6" fill="#FF4EB4" stroke="#0B0B0F" stroke-width="1.2" transform="rotate(-15 68 221)"/>
+    <rect x="340" y="220" width="12" height="6" fill="#D8FF3C" stroke="#0B0B0F" stroke-width="1.2" transform="rotate(15 346 223)"/>
+    <!-- Starbursts -->
+    <path d="M34 190 l 3 10 l 10 3 l -10 3 l -3 10 l -3 -10 l -10 -3 l 10 -3 z" fill="#FFD166" stroke="#0B0B0F" stroke-width="1.4"/>
+    <path d="M360 180 l 3 10 l 10 3 l -10 3 l -3 10 l -3 -10 l -10 -3 l 10 -3 z" fill="#6D28FF" stroke="#0B0B0F" stroke-width="1.4"/>
+    <path d="M200 30 l 4 12 l 12 4 l -12 4 l -4 12 l -4 -12 l -12 -4 l 12 -4 z" fill="#FF4E64" stroke="#0B0B0F" stroke-width="1.5"/>
+  </g>
+
+  <!-- tiny action lines -->
+  <g stroke="#6D28FF" stroke-width="3" stroke-linecap="round" fill="none">
+    <line x1="60" y1="300" x2="48" y2="312"/>
+    <line x1="100" y1="340" x2="88" y2="356"/>
+    <line x1="340" y1="300" x2="352" y2="312"/>
+    <line x1="300" y1="340" x2="312" y2="356"/>
+  </g>
+
+  <!-- ground shadow (smaller, Penny is jumping) -->
+  <ellipse cx="200" cy="382" rx="70" ry="6" fill="#0B0B0F" opacity="0.16"/>
+
+  <!-- body tilted like mid-jump -->
+  <g transform="translate(0, -20) rotate(-4 200 220)">
+    <path d="M90 220 Q 90 130 200 128 Q 310 130 310 220 Q 310 320 200 340 Q 90 320 90 220 Z"
+          fill="url(#cbBody)" stroke="#0B0B0F" stroke-width="4"/>
+    <path d="M148 200 Q 148 150 200 148 Q 252 150 252 200 Q 252 300 200 318 Q 148 300 148 200 Z"
+          fill="url(#cbBelly)" stroke="#0B0B0F" stroke-width="3"/>
+
+    <!-- BOTH wings raised in a yay pose -->
+    <g transform="rotate(-40 108 200)">
+      <path d="M80 200 Q 56 130 72 96 Q 106 98 108 142 Q 112 176 96 214 Z"
+            fill="#15151E" stroke="#0B0B0F" stroke-width="4" stroke-linejoin="round"/>
+    </g>
+    <g transform="rotate(40 292 200)">
+      <path d="M320 200 Q 344 130 328 96 Q 294 98 292 142 Q 288 176 304 214 Z"
+            fill="#15151E" stroke="#0B0B0F" stroke-width="4" stroke-linejoin="round"/>
+    </g>
+
+    <!-- tiny legs dangling -->
+    <g stroke="#0B0B0F" stroke-width="5" stroke-linecap="round" fill="none">
+      <path d="M176 320 Q 174 332 172 344"/>
+      <path d="M224 320 Q 226 332 228 344"/>
+    </g>
+    <rect x="160" y="342" width="30" height="16" rx="6" fill="#FFD166" stroke="#0B0B0F" stroke-width="3"/>
+    <rect x="210" y="342" width="30" height="16" rx="6" fill="#FFD166" stroke="#0B0B0F" stroke-width="3"/>
+
+    <!-- head -->
+    <ellipse cx="200" cy="138" rx="96" ry="92" fill="url(#cbBody)" stroke="#0B0B0F" stroke-width="4"/>
+    <ellipse cx="200" cy="154" rx="68" ry="60" fill="url(#cbBelly)" stroke="#0B0B0F" stroke-width="3"/>
+
+    <!-- cheeks (big blush for excitement) -->
+    <circle cx="148" cy="174" r="18" fill="url(#cbCheek)"/>
+    <circle cx="252" cy="174" r="18" fill="url(#cbCheek)"/>
+
+    <!-- star-shaped eyes! (celebrating) -->
+    <path d="M172 132 L175 142 L185 143 L177 150 L180 161 L172 155 L164 161 L167 150 L159 143 L169 142 Z"
+          fill="#FFD166" stroke="#0B0B0F" stroke-width="2"/>
+    <path d="M228 132 L231 142 L241 143 L233 150 L236 161 L228 155 L220 161 L223 150 L215 143 L225 142 Z"
+          fill="#FFD166" stroke="#0B0B0F" stroke-width="2"/>
+
+    <!-- beak open — huge smile -->
+    <path d="M164 184 Q 200 166 236 184 Q 224 232 200 240 Q 176 232 164 184 Z"
+          fill="url(#cbBeak)" stroke="#0B0B0F" stroke-width="3.5"/>
+    <!-- tongue -->
+    <path d="M188 214 Q 200 228 212 214 Q 208 228 200 234 Q 192 228 188 214 Z" fill="#FF4E64" stroke="#0B0B0F" stroke-width="2"/>
+
+    <!-- headphones -->
+    <path d="M112 130 Q 200 36 288 130" stroke="#6D28FF" stroke-width="8" stroke-linecap="round" fill="none"/>
+    <circle cx="108" cy="140" r="18" fill="#6D28FF" stroke="#0B0B0F" stroke-width="3"/>
+    <circle cx="108" cy="140" r="9" fill="#D8FF3C"/>
+    <circle cx="292" cy="140" r="18" fill="#6D28FF" stroke="#0B0B0F" stroke-width="3"/>
+    <circle cx="292" cy="140" r="9" fill="#D8FF3C"/>
+  </g>
+
+  <!-- Speech bubble "YES!" -->
+  <g transform="translate(258, 22)">
+    <rect x="0" y="0" width="128" height="50" rx="14" fill="#FF4E64" stroke="#0B0B0F" stroke-width="3"/>
+    <path d="M18 48 L 0 68 L 40 48 Z" fill="#FF4E64" stroke="#0B0B0F" stroke-width="3" stroke-linejoin="round"/>
+    <text x="64" y="34" text-anchor="middle"
+          font-family="'Bricolage Grotesque',system-ui,sans-serif"
+          font-weight="900" font-size="26" letter-spacing="-1" fill="#FFFFFF">YES!!</text>
+  </g>
+</svg>

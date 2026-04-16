@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1040 260" role="img" aria-label="FlockFare horizontal lockup (Neo-Brutalist)">
+  <!-- Mark tile -->
+  <rect x="4" y="4" width="252" height="252" rx="28" fill="#D8FF3C" stroke="#0B0B0F" stroke-width="8"/>
+  <path d="M42 172 L108 108 L172 172" stroke="#6D28FF" stroke-width="26"
+        stroke-linecap="square" stroke-linejoin="miter" fill="none"/>
+  <path d="M82 208 L172 118 L236 184" stroke="#0B0B0F" stroke-width="34"
+        stroke-linecap="square" stroke-linejoin="miter" fill="none"/>
+  <circle cx="208" cy="64" r="20" fill="#FF4E64" stroke="#0B0B0F" stroke-width="6"/>
+  <circle cx="208" cy="64" r="6" fill="#0B0B0F"/>
+
+  <!-- Wordmark -->
+  <g transform="translate(296, 0)">
+    <text x="0" y="170"
+          font-family="'Bricolage Grotesque','Archivo Black',system-ui,sans-serif"
+          font-weight="900"
+          font-size="168"
+          letter-spacing="-8"
+          fill="#0B0B0F">Flock<tspan fill="#6D28FF">Fare</tspan></text>
+    <!-- Underline tag -->
+    <rect x="4" y="196" width="704" height="14" fill="#0B0B0F"/>
+    <rect x="4" y="196" width="344" height="14" fill="#6D28FF"/>
+    <text x="4" y="248"
+          font-family="'JetBrains Mono','IBM Plex Mono',monospace"
+          font-weight="700"
+          font-size="22"
+          letter-spacing="6"
+          fill="#0B0B0F">DEALS · DROPS · DEPARTURES</text>
+  </g>
+</svg>

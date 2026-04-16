@@ -1,0 +1,205 @@
+/* =============================================================
+   FLOCKFARE · Design Tokens · v1.0.0
+   Neo-Brutalist brand system — Web-first
+   ============================================================= */
+
+:root {
+  /* ---------- COLOR · CORE ---------- */
+  --ff-ink:         #0B0B0F;   /* primary text, strokes, on-cream */
+  --ff-ink-soft:    #1A1A22;   /* elevated surfaces on black */
+  --ff-cream:       #F6F3EC;   /* primary surface (warm paper) */
+  --ff-paper:       #FFFFFF;   /* true white for cards */
+  --ff-violet:      #6D28FF;   /* primary brand accent */
+  --ff-violet-deep: #2A1470;   /* hover / pressed state */
+  --ff-violet-tint: #EFE6FF;   /* background tint */
+  --ff-lime:        #D8FF3C;   /* hero colour · highlights */
+  --ff-lime-tint:   #F3FFC7;   /* soft background */
+  --ff-coral:       #FF4E64;   /* deal alerts · price drop · error */
+  --ff-coral-tint:  #FFE5ED;   /* soft coral background */
+  --ff-sun:         #FFD166;   /* secondary accent · warnings */
+
+  /* ---------- COLOR · NEUTRALS ---------- */
+  --ff-gray-50:  #FAFAF6;
+  --ff-gray-100: #F1F1EC;
+  --ff-gray-200: #E2E2DD;
+  --ff-gray-300: #C9C9C4;
+  --ff-gray-400: #9C9C98;
+  --ff-gray-500: #6A6A67;
+  --ff-gray-600: #4A4A48;
+  --ff-gray-700: #2F2F2D;
+
+  /* ---------- SEMANTIC ---------- */
+  --ff-bg:              var(--ff-cream);
+  --ff-fg:              var(--ff-ink);
+  --ff-surface:         var(--ff-paper);
+  --ff-surface-raised:  var(--ff-paper);
+  --ff-border:          var(--ff-ink);
+  --ff-link:            var(--ff-violet);
+  --ff-success:         #00B775;
+  --ff-warning:         var(--ff-sun);
+  --ff-danger:          var(--ff-coral);
+  --ff-focus-ring:      var(--ff-violet);
+
+  /* ---------- TYPOGRAPHY ---------- */
+  --ff-font-display: "Bricolage Grotesque", "Archivo Black", ui-sans-serif, system-ui, sans-serif;
+  --ff-font-body:    "DM Sans", "Inter", ui-sans-serif, system-ui, sans-serif;
+  --ff-font-mono:    "JetBrains Mono", "IBM Plex Mono", ui-monospace, monospace;
+
+  /* Modular scale · 1.333 (perfect fourth) — at 16px base */
+  --ff-fs-12: 0.75rem;   /* 12 · fine print */
+  --ff-fs-14: 0.875rem;  /* 14 · small UI */
+  --ff-fs-16: 1rem;      /* 16 · base body */
+  --ff-fs-18: 1.125rem;  /* 18 · large body / lead */
+  --ff-fs-24: 1.5rem;    /* 24 · h4 */
+  --ff-fs-32: 2rem;      /* 32 · h3 */
+  --ff-fs-44: 2.75rem;   /* 44 · h2 */
+  --ff-fs-60: 3.75rem;   /* 60 · h1 */
+  --ff-fs-80: 5rem;      /* 80 · display */
+
+  --ff-lh-tight: 1.02;
+  --ff-lh-snug:  1.14;
+  --ff-lh-base:  1.5;
+  --ff-lh-loose: 1.7;
+
+  --ff-ls-display: -0.03em;
+  --ff-ls-head:    -0.02em;
+  --ff-ls-body:    -0.005em;
+  --ff-ls-mono:    0.18em;   /* wide spaced uppercase */
+
+  --ff-fw-regular: 400;
+  --ff-fw-medium:  500;
+  --ff-fw-bold:    700;
+  --ff-fw-black:   900;
+
+  /* ---------- SPACING · 4-pt grid ---------- */
+  --ff-space-1:  4px;
+  --ff-space-2:  8px;
+  --ff-space-3:  12px;
+  --ff-space-4:  16px;
+  --ff-space-5:  20px;
+  --ff-space-6:  24px;
+  --ff-space-8:  32px;
+  --ff-space-10: 40px;
+  --ff-space-12: 48px;
+  --ff-space-16: 64px;
+  --ff-space-20: 80px;
+  --ff-space-24: 96px;
+
+  /* ---------- RADII ---------- */
+  --ff-radius-sm: 6px;
+  --ff-radius:    12px;    /* default card */
+  --ff-radius-lg: 20px;    /* hero blocks */
+  --ff-radius-xl: 28px;    /* tile / mark container */
+  --ff-radius-pill: 999px;
+
+  /* ---------- BORDERS ---------- */
+  --ff-border-w-hair: 1px;
+  --ff-border-w:      2px;
+  --ff-border-w-bold: 4px;
+
+  /* ---------- SHADOWS (Neo-Brutalist: hard offsets, no blur) ---------- */
+  --ff-shadow-brut-sm: 3px 3px 0 var(--ff-ink);
+  --ff-shadow-brut:    6px 6px 0 var(--ff-ink);
+  --ff-shadow-brut-lg: 10px 10px 0 var(--ff-ink);
+  --ff-shadow-brut-violet: 6px 6px 0 var(--ff-violet);
+  --ff-shadow-brut-coral:  6px 6px 0 var(--ff-coral);
+  /* Soft elevation (use sparingly) */
+  --ff-shadow-soft: 0 1px 2px rgba(11,11,15,0.06), 0 4px 12px rgba(11,11,15,0.06);
+
+  /* ---------- MOTION ---------- */
+  --ff-ease-out:  cubic-bezier(0.2, 0.8, 0.2, 1);
+  --ff-ease-in:   cubic-bezier(0.4, 0, 1, 1);
+  --ff-ease-ioq:  cubic-bezier(0.83, 0, 0.17, 1);  /* quick bouncy io */
+  --ff-dur-1: 120ms;
+  --ff-dur-2: 220ms;
+  --ff-dur-3: 360ms;
+  --ff-dur-4: 520ms;
+
+  /* ---------- LAYOUT ---------- */
+  --ff-container:    1200px;
+  --ff-container-md: 896px;
+  --ff-container-sm: 680px;
+  --ff-z-base: 1;
+  --ff-z-sticky: 100;
+  --ff-z-overlay: 1000;
+  --ff-z-modal: 1100;
+  --ff-z-toast: 1200;
+}
+
+/* ---------- DARK MODE ---------- */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --ff-bg:             #0B0B0F;
+    --ff-fg:             #F6F3EC;
+    --ff-surface:        #15151E;
+    --ff-surface-raised: #1A1A22;
+    --ff-border:         #F6F3EC;
+    --ff-violet-tint:    #1E1040;
+    --ff-lime-tint:      #2B3A00;
+    --ff-coral-tint:     #3F1220;
+  }
+}
+
+/* ---------- BASE RESET ---------- */
+*, *::before, *::after { box-sizing: border-box; }
+html { font-family: var(--ff-font-body); color: var(--ff-fg); background: var(--ff-bg); }
+body { margin: 0; line-height: var(--ff-lh-base); -webkit-font-smoothing: antialiased; }
+h1, h2, h3, h4 { font-family: var(--ff-font-display); font-weight: var(--ff-fw-black); letter-spacing: var(--ff-ls-display); line-height: var(--ff-lh-tight); margin: 0; }
+h1 { font-size: var(--ff-fs-60); }
+h2 { font-size: var(--ff-fs-44); }
+h3 { font-size: var(--ff-fs-32); }
+h4 { font-size: var(--ff-fs-24); }
+.ff-mono { font-family: var(--ff-font-mono); letter-spacing: var(--ff-ls-mono); text-transform: uppercase; font-weight: var(--ff-fw-bold); }
+.ff-eyebrow { font-family: var(--ff-font-mono); font-size: var(--ff-fs-12); letter-spacing: var(--ff-ls-mono); text-transform: uppercase; font-weight: var(--ff-fw-bold); color: var(--ff-violet); }
+a { color: var(--ff-link); text-decoration-thickness: 2px; text-underline-offset: 3px; }
+a:hover { color: var(--ff-violet-deep); }
+:focus-visible { outline: 3px solid var(--ff-focus-ring); outline-offset: 3px; border-radius: 2px; }
+
+/* ---------- REUSABLE COMPONENT PRIMITIVES ---------- */
+.ff-btn {
+  display: inline-flex; align-items: center; gap: var(--ff-space-2);
+  font-family: var(--ff-font-display); font-weight: var(--ff-fw-bold);
+  font-size: var(--ff-fs-16); letter-spacing: -0.01em;
+  padding: 12px 22px; border-radius: var(--ff-radius-pill);
+  border: var(--ff-border-w-bold) solid var(--ff-ink);
+  background: var(--ff-lime); color: var(--ff-ink);
+  box-shadow: var(--ff-shadow-brut);
+  cursor: pointer;
+  transition: transform var(--ff-dur-1) var(--ff-ease-out), box-shadow var(--ff-dur-1) var(--ff-ease-out);
+}
+.ff-btn:hover  { transform: translate(-2px, -2px); box-shadow: 10px 10px 0 var(--ff-ink); }
+.ff-btn:active { transform: translate(3px, 3px); box-shadow: 2px 2px 0 var(--ff-ink); }
+.ff-btn--violet { background: var(--ff-violet); color: var(--ff-cream); }
+.ff-btn--coral  { background: var(--ff-coral);  color: var(--ff-cream); }
+.ff-btn--ghost  { background: transparent;      color: var(--ff-ink); }
+
+.ff-card {
+  background: var(--ff-surface);
+  border: var(--ff-border-w-bold) solid var(--ff-ink);
+  border-radius: var(--ff-radius-lg);
+  box-shadow: var(--ff-shadow-brut);
+  padding: var(--ff-space-6);
+}
+
+.ff-pill {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 4px 10px; border-radius: var(--ff-radius-pill);
+  font-family: var(--ff-font-mono); font-size: var(--ff-fs-12);
+  font-weight: var(--ff-fw-bold); letter-spacing: var(--ff-ls-mono);
+  text-transform: uppercase;
+  background: var(--ff-ink); color: var(--ff-lime);
+}
+.ff-pill--coral { background: var(--ff-coral); color: var(--ff-cream); }
+.ff-pill--lime  { background: var(--ff-lime);  color: var(--ff-ink); }
+
+.ff-input {
+  width: 100%;
+  font-family: var(--ff-font-body); font-size: var(--ff-fs-16);
+  padding: 12px 16px;
+  background: var(--ff-paper);
+  border: var(--ff-border-w-bold) solid var(--ff-ink);
+  border-radius: var(--ff-radius);
+  box-shadow: var(--ff-shadow-brut-sm);
+  transition: box-shadow var(--ff-dur-1) var(--ff-ease-out);
+}
+.ff-input:focus { outline: none; box-shadow: 6px 6px 0 var(--ff-violet); }

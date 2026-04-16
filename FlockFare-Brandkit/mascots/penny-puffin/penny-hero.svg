@@ -1,0 +1,156 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" role="img" aria-label="Penny the puffin traveler mascot">
+  <defs>
+    <radialGradient id="puBody" cx="50%" cy="40%" r="65%">
+      <stop offset="0%"  stop-color="#3F3F52"/>
+      <stop offset="100%" stop-color="#15151E"/>
+    </radialGradient>
+    <radialGradient id="puBelly" cx="50%" cy="45%" r="60%">
+      <stop offset="0%"  stop-color="#FFFFFF"/>
+      <stop offset="100%" stop-color="#F1F1F8"/>
+    </radialGradient>
+    <radialGradient id="puCheek" cx="50%" cy="50%" r="50%">
+      <stop offset="0%"  stop-color="#FF89A0"/>
+      <stop offset="100%" stop-color="#FF89A0" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="puBeak" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%"  stop-color="#FFD166"/>
+      <stop offset="50%" stop-color="#FF8A3D"/>
+      <stop offset="100%" stop-color="#FF4E64"/>
+    </linearGradient>
+    <linearGradient id="puCase" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%"  stop-color="#FF4E64"/>
+      <stop offset="100%" stop-color="#C62945"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Ground shadow -->
+  <ellipse cx="200" cy="372" rx="140" ry="8" fill="#0B0B0F" opacity="0.13"/>
+
+  <!-- SUITCASE on the right -->
+  <g transform="translate(290, 240)">
+    <!-- handle -->
+    <path d="M10 -36 L10 -8 M46 -36 L46 -8"
+          stroke="#0B0B0F" stroke-width="5" stroke-linecap="round" fill="none"/>
+    <rect x="6" y="-42" width="44" height="12" rx="6" fill="#0B0B0F"/>
+    <!-- body -->
+    <rect x="-4" y="-8" width="64" height="98" rx="10" fill="url(#puCase)" stroke="#0B0B0F" stroke-width="4"/>
+    <!-- shine -->
+    <rect x="4" y="-2" width="8" height="86" rx="4" fill="#FFFFFF" opacity="0.25"/>
+    <!-- stripes -->
+    <rect x="-4" y="18" width="64" height="6" fill="#FFD166" stroke="#0B0B0F" stroke-width="2"/>
+    <rect x="-4" y="60" width="64" height="6" fill="#D8FF3C" stroke="#0B0B0F" stroke-width="2"/>
+    <!-- FlockFare sticker -->
+    <g transform="translate(14, 38) rotate(-6)">
+      <rect x="0" y="0" width="40" height="18" rx="3" fill="#FFFFFF" stroke="#0B0B0F" stroke-width="2"/>
+      <text x="20" y="13" text-anchor="middle"
+            font-family="'JetBrains Mono',monospace" font-weight="800" font-size="8"
+            letter-spacing="1.5" fill="#6D28FF">FLOCKFARE</text>
+    </g>
+    <!-- wheels -->
+    <circle cx="6" cy="96" r="8" fill="#0B0B0F"/>
+    <circle cx="50" cy="96" r="8" fill="#0B0B0F"/>
+    <circle cx="6" cy="96" r="3" fill="#A4BFF5"/>
+    <circle cx="50" cy="96" r="3" fill="#A4BFF5"/>
+  </g>
+
+  <!-- LEGS / FEET -->
+  <g>
+    <!-- left foot -->
+    <rect x="164" y="340" width="32" height="20" rx="8" fill="#FFD166" stroke="#0B0B0F" stroke-width="3.5"/>
+    <line x1="172" y1="350" x2="172" y2="360" stroke="#0B0B0F" stroke-width="2"/>
+    <line x1="180" y1="350" x2="180" y2="360" stroke="#0B0B0F" stroke-width="2"/>
+    <line x1="188" y1="350" x2="188" y2="360" stroke="#0B0B0F" stroke-width="2"/>
+    <!-- right foot (slightly forward like walking) -->
+    <rect x="206" y="344" width="32" height="20" rx="8" fill="#FFD166" stroke="#0B0B0F" stroke-width="3.5"/>
+    <line x1="214" y1="354" x2="214" y2="364" stroke="#0B0B0F" stroke-width="2"/>
+    <line x1="222" y1="354" x2="222" y2="364" stroke="#0B0B0F" stroke-width="2"/>
+    <line x1="230" y1="354" x2="230" y2="364" stroke="#0B0B0F" stroke-width="2"/>
+  </g>
+
+  <!-- BODY (rounded tuxedo) -->
+  <path d="M90 220 Q 90 130 200 128 Q 310 130 310 220 Q 310 320 200 340 Q 90 320 90 220 Z"
+        fill="url(#puBody)" stroke="#0B0B0F" stroke-width="4"/>
+
+  <!-- BELLY -->
+  <path d="M148 200 Q 148 150 200 148 Q 252 150 252 200 Q 252 300 200 318 Q 148 300 148 200 Z"
+        fill="url(#puBelly)" stroke="#0B0B0F" stroke-width="3"/>
+
+  <!-- LEFT WING holding suitcase handle -->
+  <path d="M82 228 Q 56 262 78 302 Q 120 314 134 280 Q 132 248 110 224 Z"
+        fill="#15151E" stroke="#0B0B0F" stroke-width="4" stroke-linejoin="round"/>
+  <path d="M94 268 Q 108 280 118 276 M94 284 Q 110 296 122 288"
+        stroke="#FFFFFF" stroke-opacity="0.25" stroke-width="2" fill="none"/>
+
+  <!-- RIGHT WING — extended waving -->
+  <path d="M312 228 Q 348 240 350 208 Q 352 178 326 180 Q 312 200 312 228 Z"
+        fill="#15151E" stroke="#0B0B0F" stroke-width="4" stroke-linejoin="round"/>
+
+  <!-- HEAD -->
+  <g>
+    <ellipse cx="200" cy="138" rx="96" ry="92" fill="url(#puBody)" stroke="#0B0B0F" stroke-width="4"/>
+    <!-- white face mask (puffin feature) -->
+    <ellipse cx="200" cy="154" rx="68" ry="60" fill="url(#puBelly)" stroke="#0B0B0F" stroke-width="3"/>
+
+    <!-- CHEEKS -->
+    <circle cx="148" cy="172" r="14" fill="url(#puCheek)"/>
+    <circle cx="252" cy="172" r="14" fill="url(#puCheek)"/>
+
+    <!-- EYES -->
+    <g>
+      <ellipse cx="172" cy="148" rx="13" ry="16" fill="#0B0B0F"/>
+      <ellipse cx="174" cy="144" rx="4.5" ry="5" fill="#FFFFFF"/>
+      <circle cx="168" cy="154" r="2" fill="#FFFFFF"/>
+    </g>
+    <g>
+      <ellipse cx="228" cy="148" rx="13" ry="16" fill="#0B0B0F"/>
+      <ellipse cx="230" cy="144" rx="4.5" ry="5" fill="#FFFFFF"/>
+      <circle cx="224" cy="154" r="2" fill="#FFFFFF"/>
+    </g>
+
+    <!-- BEAK (iconic puffin triangular rainbow) -->
+    <path d="M168 184 Q 200 170 232 184 Q 220 216 200 222 Q 180 216 168 184 Z"
+          fill="url(#puBeak)" stroke="#0B0B0F" stroke-width="3.5" stroke-linejoin="round"/>
+    <path d="M168 188 L 232 188" stroke="#FFD166" stroke-width="2"/>
+    <path d="M172 196 L 228 196" stroke="#FF8A3D" stroke-width="2"/>
+    <path d="M180 204 L 220 204" stroke="#FF4E64" stroke-width="2"/>
+    <!-- beak centre crease -->
+    <line x1="200" y1="172" x2="200" y2="220" stroke="#0B0B0F" stroke-width="1.5" opacity="0.5"/>
+
+    <!-- HEADPHONES (travel vibe) -->
+    <path d="M112 130 Q 200 36 288 130"
+          stroke="#6D28FF" stroke-width="8" stroke-linecap="round" fill="none"/>
+    <path d="M112 130 Q 200 44 288 130"
+          stroke="#D8FF3C" stroke-width="3" stroke-linecap="round" fill="none"/>
+    <!-- ear cups -->
+    <circle cx="108" cy="140" r="18" fill="#6D28FF" stroke="#0B0B0F" stroke-width="3"/>
+    <circle cx="108" cy="140" r="9" fill="#D8FF3C"/>
+    <circle cx="292" cy="140" r="18" fill="#6D28FF" stroke="#0B0B0F" stroke-width="3"/>
+    <circle cx="292" cy="140" r="9" fill="#D8FF3C"/>
+
+    <!-- Boarding pass tucked under wing -->
+    <g transform="translate(46, 280) rotate(-10)">
+      <rect x="0" y="0" width="80" height="40" rx="4" fill="#FFD166" stroke="#0B0B0F" stroke-width="3"/>
+      <line x1="54" y1="2" x2="54" y2="38" stroke="#0B0B0F" stroke-width="1.5" stroke-dasharray="3 3"/>
+      <text x="8" y="14" font-family="'JetBrains Mono',monospace" font-weight="800" font-size="8" fill="#0B0B0F">BOARDING</text>
+      <text x="8" y="26" font-family="'JetBrains Mono',monospace" font-weight="700" font-size="7" fill="#0B0B0F">BOM → LHR</text>
+      <text x="58" y="18" font-family="'JetBrains Mono',monospace" font-weight="800" font-size="10" fill="#FF4E64">7A</text>
+      <text x="8" y="35" font-family="'JetBrains Mono',monospace" font-weight="600" font-size="6" fill="#6D28FF">FLOCKFARE</text>
+    </g>
+  </g>
+
+  <!-- Sparkle stars -->
+  <g>
+    <path d="M64 60 l 3 10 l 10 3 l -10 3 l -3 10 l -3 -10 l -10 -3 l 10 -3 z"
+          fill="#D8FF3C" stroke="#0B0B0F" stroke-width="1.5"/>
+    <path d="M352 70 l 2 6 l 6 2 l -6 2 l -2 6 l -2 -6 l -6 -2 l 6 -2 z"
+          fill="#FF4EB4" stroke="#0B0B0F" stroke-width="1.2"/>
+  </g>
+
+  <!-- Name banner -->
+  <g transform="translate(200, 390)">
+    <rect x="-52" y="-16" width="104" height="22" rx="11" fill="#FF4E64"/>
+    <text x="0" y="-1" text-anchor="middle"
+          font-family="'JetBrains Mono',monospace" font-weight="700" font-size="12"
+          fill="#FFFFFF" letter-spacing="3">PENNY</text>
+  </g>
+</svg>

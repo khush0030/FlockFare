@@ -1,0 +1,92 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" role="img" aria-label="Penny waving hi">
+  <defs>
+    <radialGradient id="wvBody" cx="50%" cy="40%" r="65%">
+      <stop offset="0%" stop-color="#3F3F52"/>
+      <stop offset="100%" stop-color="#15151E"/>
+    </radialGradient>
+    <radialGradient id="wvBelly" cx="50%" cy="45%" r="60%">
+      <stop offset="0%" stop-color="#FFFFFF"/>
+      <stop offset="100%" stop-color="#F1F1F8"/>
+    </radialGradient>
+    <radialGradient id="wvCheek" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#FF89A0"/>
+      <stop offset="100%" stop-color="#FF89A0" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="wvBeak" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#FFD166"/>
+      <stop offset="50%" stop-color="#FF8A3D"/>
+      <stop offset="100%" stop-color="#FF4E64"/>
+    </linearGradient>
+  </defs>
+
+  <!-- motion lines (waving) -->
+  <g stroke="#FFD166" stroke-width="5" stroke-linecap="round" fill="none">
+    <path d="M340 100 Q 356 94 364 82"/>
+    <path d="M348 124 Q 366 124 378 116"/>
+    <path d="M342 146 Q 360 154 370 162"/>
+  </g>
+
+  <!-- ground shadow -->
+  <ellipse cx="200" cy="372" rx="110" ry="8" fill="#0B0B0F" opacity="0.13"/>
+
+  <!-- feet -->
+  <rect x="160" y="340" width="32" height="20" rx="8" fill="#FFD166" stroke="#0B0B0F" stroke-width="3.5"/>
+  <rect x="208" y="340" width="32" height="20" rx="8" fill="#FFD166" stroke="#0B0B0F" stroke-width="3.5"/>
+
+  <!-- body -->
+  <path d="M90 220 Q 90 130 200 128 Q 310 130 310 220 Q 310 320 200 340 Q 90 320 90 220 Z"
+        fill="url(#wvBody)" stroke="#0B0B0F" stroke-width="4"/>
+  <path d="M148 200 Q 148 150 200 148 Q 252 150 252 200 Q 252 300 200 318 Q 148 300 148 200 Z"
+        fill="url(#wvBelly)" stroke="#0B0B0F" stroke-width="3"/>
+
+  <!-- left wing relaxed -->
+  <path d="M82 228 Q 56 262 78 302 Q 120 314 134 280 Q 132 248 110 224 Z"
+        fill="#15151E" stroke="#0B0B0F" stroke-width="4"/>
+
+  <!-- RIGHT WING — raised in a wave! -->
+  <g transform="rotate(-30 290 180)">
+    <path d="M280 190 Q 310 120 322 90 Q 352 92 344 140 Q 334 170 306 200 Z"
+          fill="#15151E" stroke="#0B0B0F" stroke-width="4" stroke-linejoin="round"/>
+    <!-- tiny feather finger lines -->
+    <path d="M312 128 L 322 112 M318 148 L 336 136" stroke="#FFFFFF" stroke-opacity="0.25" stroke-width="2" fill="none"/>
+  </g>
+
+  <!-- head -->
+  <ellipse cx="200" cy="138" rx="96" ry="92" fill="url(#wvBody)" stroke="#0B0B0F" stroke-width="4"/>
+  <ellipse cx="200" cy="154" rx="68" ry="60" fill="url(#wvBelly)" stroke="#0B0B0F" stroke-width="3"/>
+
+  <!-- cheeks -->
+  <circle cx="148" cy="172" r="14" fill="url(#wvCheek)"/>
+  <circle cx="252" cy="172" r="14" fill="url(#wvCheek)"/>
+
+  <!-- eyes — open, sparkling -->
+  <ellipse cx="172" cy="148" rx="13" ry="16" fill="#0B0B0F"/>
+  <ellipse cx="174" cy="144" rx="4.5" ry="5" fill="#FFFFFF"/>
+  <ellipse cx="228" cy="148" rx="13" ry="16" fill="#0B0B0F"/>
+  <ellipse cx="230" cy="144" rx="4.5" ry="5" fill="#FFFFFF"/>
+
+  <!-- beak open in a smile -->
+  <path d="M168 184 Q 200 170 232 184 Q 220 222 200 228 Q 180 222 168 184 Z"
+        fill="url(#wvBeak)" stroke="#0B0B0F" stroke-width="3.5"/>
+  <path d="M174 214 Q 200 228 226 214" stroke="#0B0B0F" stroke-width="2" fill="none"/>
+
+  <!-- headphones -->
+  <path d="M112 130 Q 200 36 288 130" stroke="#6D28FF" stroke-width="8" stroke-linecap="round" fill="none"/>
+  <circle cx="108" cy="140" r="18" fill="#6D28FF" stroke="#0B0B0F" stroke-width="3"/>
+  <circle cx="108" cy="140" r="9" fill="#D8FF3C"/>
+  <circle cx="292" cy="140" r="18" fill="#6D28FF" stroke="#0B0B0F" stroke-width="3"/>
+  <circle cx="292" cy="140" r="9" fill="#D8FF3C"/>
+
+  <!-- Speech bubble -->
+  <g transform="translate(42, 46)">
+    <rect x="0" y="0" width="104" height="52" rx="14" fill="#D8FF3C" stroke="#0B0B0F" stroke-width="3"/>
+    <path d="M86 48 L 102 64 L 96 48 Z" fill="#D8FF3C" stroke="#0B0B0F" stroke-width="3" stroke-linejoin="round"/>
+    <text x="52" y="34" text-anchor="middle"
+          font-family="'Bricolage Grotesque',system-ui,sans-serif"
+          font-weight="900" font-size="26" letter-spacing="-1" fill="#0B0B0F">HI!!</text>
+  </g>
+
+  <!-- sparkle -->
+  <path d="M346 58 l 3 10 l 10 3 l -10 3 l -3 10 l -3 -10 l -10 -3 l 10 -3 z"
+        fill="#FF4E64" stroke="#0B0B0F" stroke-width="1.5"/>
+</svg>

@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" role="img" aria-label="FlockFare 16px favicon">
+  <!-- Ultra-simplified for 16px -->
+  <rect x="0" y="0" width="16" height="16" rx="3" fill="#D8FF3C"/>
+  <path d="M2 11 L7 6 L12 11" stroke="#6D28FF" stroke-width="2.2" fill="none"
+        stroke-linecap="square" stroke-linejoin="miter"/>
+  <path d="M5 14 L10 7 L14 12" stroke="#0B0B0F" stroke-width="2.8" fill="none"
+        stroke-linecap="square" stroke-linejoin="miter"/>
+</svg>

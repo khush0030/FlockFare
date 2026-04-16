@@ -1,0 +1,75 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" role="img" aria-label="FlockFare Open Graph image">
+  <!-- Background: ink with angled lime gutter -->
+  <rect x="0" y="0" width="1200" height="630" fill="#0B0B0F"/>
+
+  <!-- Diagonal lime stripe bottom-left -->
+  <polygon points="0,630 0,420 460,630" fill="#D8FF3C"/>
+  <!-- Violet slice middle -->
+  <polygon points="460,630 0,420 0,380 520,630" fill="#6D28FF"/>
+
+  <!-- Mark, top-left -->
+  <g transform="translate(70, 70)">
+    <rect x="0" y="0" width="140" height="140" rx="18" fill="#D8FF3C" stroke="#0B0B0F" stroke-width="5"/>
+    <path d="M22 96 L58 60 L94 96" stroke="#6D28FF" stroke-width="15"
+          stroke-linecap="square" stroke-linejoin="miter" fill="none"/>
+    <path d="M44 116 L94 64 L130 100" stroke="#0B0B0F" stroke-width="19"
+          stroke-linecap="square" stroke-linejoin="miter" fill="none"/>
+    <circle cx="112" cy="36" r="11" fill="#FF4E64" stroke="#0B0B0F" stroke-width="4"/>
+  </g>
+
+  <!-- Wordmark next to mark -->
+  <text x="230" y="170"
+        font-family="'Bricolage Grotesque','Archivo Black',system-ui,sans-serif"
+        font-weight="900" font-size="84" letter-spacing="-4"
+        fill="#F6F3EC">Flock<tspan fill="#D8FF3C">Fare</tspan></text>
+
+  <!-- Hero headline -->
+  <text x="70" y="330"
+        font-family="'Bricolage Grotesque',system-ui,sans-serif"
+        font-weight="900" font-size="114" letter-spacing="-5"
+        fill="#F6F3EC">Cheap flights.</text>
+  <text x="70" y="440"
+        font-family="'Bricolage Grotesque',system-ui,sans-serif"
+        font-weight="900" font-size="114" letter-spacing="-5"
+        fill="#D8FF3C">For the flock.</text>
+
+  <!-- Strapline tags -->
+  <g transform="translate(70, 500)" font-family="'JetBrains Mono',monospace" font-weight="700" font-size="20" letter-spacing="4">
+    <rect x="0" y="0" width="180" height="42" rx="21" fill="#FF4E64"/>
+    <text x="90" y="28" text-anchor="middle" fill="#0B0B0F">MISTAKE FARES</text>
+    <rect x="200" y="0" width="156" height="42" rx="21" fill="#6D28FF"/>
+    <text x="278" y="28" text-anchor="middle" fill="#F6F3EC">FLASH SALES</text>
+    <rect x="376" y="0" width="176" height="42" rx="21" fill="#D8FF3C"/>
+    <text x="464" y="28" text-anchor="middle" fill="#0B0B0F">PRICE DROPS</text>
+  </g>
+
+  <!-- URL bottom-right -->
+  <text x="1130" y="596" text-anchor="end"
+        font-family="'JetBrains Mono',monospace" font-weight="700" font-size="22" letter-spacing="6"
+        fill="#F6F3EC">FLOCKFARE.COM</text>
+
+  <!-- Penny peeking from the right -->
+  <g transform="translate(820, 120) scale(1.4)">
+    <!-- small simplified penny -->
+    <ellipse cx="120" cy="200" rx="96" ry="96" fill="#15151E" stroke="#0B0B0F" stroke-width="4"/>
+    <ellipse cx="120" cy="216" rx="60" ry="64" fill="#FFFFFF"/>
+    <!-- eyes -->
+    <ellipse cx="96" cy="188" rx="10" ry="13" fill="#0B0B0F"/>
+    <ellipse cx="98" cy="184" rx="4" ry="5" fill="#FFFFFF"/>
+    <ellipse cx="144" cy="188" rx="10" ry="13" fill="#0B0B0F"/>
+    <ellipse cx="146" cy="184" rx="4" ry="5" fill="#FFFFFF"/>
+    <!-- rainbow beak -->
+    <path d="M96 220 Q 120 210 144 220 Q 136 248 120 252 Q 104 248 96 220 Z" fill="#FFD166" stroke="#0B0B0F" stroke-width="3" stroke-linejoin="round"/>
+    <path d="M100 228 L 140 228" stroke="#FF8A3D" stroke-width="3"/>
+    <path d="M106 238 L 134 238" stroke="#FF4E64" stroke-width="3"/>
+    <!-- headphones -->
+    <path d="M46 176 Q 120 96 194 176" stroke="#6D28FF" stroke-width="9" stroke-linecap="round" fill="none"/>
+    <circle cx="42" cy="184" r="16" fill="#6D28FF" stroke="#0B0B0F" stroke-width="3"/>
+    <circle cx="198" cy="184" r="16" fill="#6D28FF" stroke="#0B0B0F" stroke-width="3"/>
+    <circle cx="42" cy="184" r="7" fill="#D8FF3C"/>
+    <circle cx="198" cy="184" r="7" fill="#D8FF3C"/>
+    <!-- cheeks -->
+    <circle cx="76" cy="210" r="10" fill="#FF89A0" opacity="0.55"/>
+    <circle cx="164" cy="210" r="10" fill="#FF89A0" opacity="0.55"/>
+  </g>
+</svg>

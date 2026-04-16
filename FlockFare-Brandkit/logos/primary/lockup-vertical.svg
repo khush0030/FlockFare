@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 560" role="img" aria-label="FlockFare vertical lockup">
+  <!-- Mark centred -->
+  <g transform="translate(132, 8)">
+    <rect x="0" y="0" width="256" height="256" rx="28" fill="#D8FF3C" stroke="#0B0B0F" stroke-width="8"/>
+    <path d="M40 172 L104 108 L168 172" stroke="#6D28FF" stroke-width="26"
+          stroke-linecap="square" stroke-linejoin="miter" fill="none"/>
+    <path d="M80 208 L168 118 L232 184" stroke="#0B0B0F" stroke-width="34"
+          stroke-linecap="square" stroke-linejoin="miter" fill="none"/>
+    <circle cx="204" cy="64" r="20" fill="#FF4E64" stroke="#0B0B0F" stroke-width="6"/>
+    <circle cx="204" cy="64" r="6" fill="#0B0B0F"/>
+  </g>
+
+  <!-- Wordmark centred below -->
+  <text x="260" y="400" text-anchor="middle"
+        font-family="'Bricolage Grotesque','Archivo Black',system-ui,sans-serif"
+        font-weight="900" font-size="116" letter-spacing="-6"
+        fill="#0B0B0F">Flock<tspan fill="#6D28FF">Fare</tspan></text>
+
+  <!-- Underline -->
+  <rect x="60" y="424" width="400" height="14" fill="#0B0B0F"/>
+  <rect x="60" y="424" width="196" height="14" fill="#6D28FF"/>
+
+  <!-- Tagline -->
+  <text x="260" y="478" text-anchor="middle"
+        font-family="'JetBrains Mono',monospace"
+        font-weight="700" font-size="16" letter-spacing="6"
+        fill="#0B0B0F">DEALS · DROPS · DEPARTURES</text>
+</svg>

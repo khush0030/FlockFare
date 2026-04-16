@@ -1,0 +1,247 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<title>FlockFare · Components Preview</title>
+<link rel="icon" type="image/svg+xml" href="../favicons/favicon.svg"/>
+<link rel="stylesheet" href="tokens.css"/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,700;12..96,900&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,700&family=JetBrains+Mono:wght@400;700;800&display=swap" rel="stylesheet"/>
+<style>
+  body { background: var(--ff-bg); padding: 48px 40px; max-width: 1240px; margin: 0 auto; }
+  header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 48px; }
+  header img { height: 56px; }
+  header .nav { display: flex; gap: 22px; align-items: center; }
+  header .nav a { font-family: var(--ff-font-display); font-weight: 700; font-size: 16px; color: var(--ff-ink); text-decoration: none; }
+  .section { margin: 56px 0; }
+  .section-title { display: flex; align-items: baseline; gap: 16px; margin-bottom: 24px; border-top: 2px solid var(--ff-ink); padding-top: 12px; }
+  .section-title h2 { font-size: 40px; }
+  .grid { display: grid; gap: 18px; }
+  .grid-3 { grid-template-columns: repeat(3, 1fr); }
+  .grid-2 { grid-template-columns: repeat(2, 1fr); }
+  .group { display: flex; flex-wrap: wrap; gap: 14px; align-items: center; }
+  code { font-family: var(--ff-font-mono); background: var(--ff-violet-tint); padding: 2px 8px; border-radius: 6px; font-size: 13px; }
+
+  /* Deal card */
+  .deal-card {
+    background: var(--ff-paper);
+    border: 4px solid var(--ff-ink);
+    border-radius: 20px;
+    box-shadow: 6px 6px 0 var(--ff-ink);
+    overflow: hidden;
+    display: flex; flex-direction: column;
+  }
+  .deal-card .banner {
+    background: var(--ff-lime);
+    border-bottom: 4px solid var(--ff-ink);
+    padding: 16px 18px 14px;
+    display: flex; justify-content: space-between; align-items: start;
+  }
+  .deal-card .route {
+    font-family: var(--ff-font-display);
+    font-weight: 900;
+    font-size: 28px;
+    letter-spacing: -0.02em;
+    line-height: 1;
+    color: var(--ff-ink);
+  }
+  .deal-card .route .arrow { margin: 0 8px; color: var(--ff-violet); }
+  .deal-card .body { padding: 18px; }
+  .deal-card .price {
+    font-family: var(--ff-font-display);
+    font-weight: 900;
+    font-size: 44px;
+    line-height: 1; letter-spacing: -0.03em;
+    color: var(--ff-ink);
+  }
+  .deal-card .price .unit { font-size: 16px; color: var(--ff-gray-500); margin-left: 4px; }
+  .deal-card .strike { text-decoration: line-through; color: var(--ff-gray-400); font-size: 14px; margin-top: 6px; font-family: var(--ff-font-mono); }
+  .deal-card .meta { font-family: var(--ff-font-mono); font-size: 11px; letter-spacing: 0.15em; text-transform: uppercase; color: var(--ff-gray-500); margin-top: 10px; }
+  .deal-card .cta { display: flex; gap: 10px; margin-top: 18px; }
+
+  /* Price drop badge */
+  .badge-drop {
+    display: inline-flex; align-items: center; gap: 4px;
+    background: var(--ff-coral); color: #fff;
+    padding: 4px 10px; border-radius: 999px;
+    font-family: var(--ff-font-mono); font-weight: 800;
+    font-size: 11px; letter-spacing: 0.15em;
+  }
+
+  /* Swatch grid */
+  .swatch { border: 4px solid var(--ff-ink); border-radius: 16px; padding: 16px; box-shadow: 6px 6px 0 var(--ff-ink); }
+  .swatch .chip { height: 140px; border-radius: 8px; margin-bottom: 12px; border: 2px solid var(--ff-ink); }
+  .swatch .name { font-family: var(--ff-font-display); font-weight: 900; font-size: 20px; margin-bottom: 2px; }
+  .swatch .hex { font-family: var(--ff-font-mono); font-size: 12px; letter-spacing: 2px; color: var(--ff-gray-500); }
+
+  /* Type specimens */
+  .type-row { border-top: 2px solid var(--ff-ink); padding: 16px 0; display: grid; grid-template-columns: 120px 1fr; align-items: baseline; gap: 16px; }
+  .type-row .lbl { font-family: var(--ff-font-mono); font-size: 11px; letter-spacing: 0.15em; color: var(--ff-gray-500); }
+  .type-sample { color: var(--ff-ink); }
+</style>
+</head>
+<body>
+
+<header>
+  <img src="../logos/primary/lockup-horizontal.svg" alt="FlockFare" />
+  <nav class="nav">
+    <a href="#colour">Colour</a>
+    <a href="#type">Type</a>
+    <a href="#buttons">Buttons</a>
+    <a href="#deals">Deal card</a>
+    <a href="#forms">Forms</a>
+    <button class="ff-btn ff-btn--violet">Join the flock →</button>
+  </nav>
+</header>
+
+<!-- ---------------- COLOUR ---------------- -->
+<section id="colour" class="section">
+  <div class="section-title">
+    <h2>Colour system</h2>
+    <span class="ff-mono" style="font-size:12px;color:var(--ff-gray-500)">4 core · 1 accent · 8 neutrals</span>
+  </div>
+
+  <div class="grid grid-3">
+    <div class="swatch"><div class="chip" style="background:#0B0B0F"></div><div class="name">Ink</div><div class="hex">#0B0B0F</div></div>
+    <div class="swatch"><div class="chip" style="background:#F6F3EC"></div><div class="name">Cream</div><div class="hex">#F6F3EC</div></div>
+    <div class="swatch"><div class="chip" style="background:#6D28FF"></div><div class="name">Violet</div><div class="hex">#6D28FF</div></div>
+    <div class="swatch"><div class="chip" style="background:#D8FF3C"></div><div class="name">Acid Lime</div><div class="hex">#D8FF3C</div></div>
+    <div class="swatch"><div class="chip" style="background:#FF4E64"></div><div class="name">Signal Coral</div><div class="hex">#FF4E64</div></div>
+    <div class="swatch"><div class="chip" style="background:#FFD166"></div><div class="name">Sun</div><div class="hex">#FFD166</div></div>
+  </div>
+</section>
+
+<!-- ---------------- TYPOGRAPHY ---------------- -->
+<section id="type" class="section">
+  <div class="section-title">
+    <h2>Typography</h2>
+    <span class="ff-mono" style="font-size:12px;color:var(--ff-gray-500)">Bricolage + DM Sans + JetBrains Mono</span>
+  </div>
+
+  <div class="type-row"><div class="lbl">DISPLAY / 80</div><div class="type-sample" style="font-family:var(--ff-font-display);font-weight:900;font-size:80px;line-height:.98;letter-spacing:-.04em;">Cheap flights.</div></div>
+  <div class="type-row"><div class="lbl">H1 / 60</div><div class="type-sample" style="font-family:var(--ff-font-display);font-weight:900;font-size:60px;line-height:1;letter-spacing:-.03em;">Deals, drops, departures.</div></div>
+  <div class="type-row"><div class="lbl">H2 / 44</div><div class="type-sample" style="font-family:var(--ff-font-display);font-weight:900;font-size:44px;letter-spacing:-.02em;">For your whole flock.</div></div>
+  <div class="type-row"><div class="lbl">H3 / 32</div><div class="type-sample" style="font-family:var(--ff-font-display);font-weight:900;font-size:32px;">Hand-picked, not scraped.</div></div>
+  <div class="type-row"><div class="lbl">H4 / 24</div><div class="type-sample" style="font-family:var(--ff-font-display);font-weight:700;font-size:24px;">Five alerts a week, max.</div></div>
+  <div class="type-row"><div class="lbl">LEAD / 18</div><div class="type-sample" style="font-size:18px;">Flight prices drop without warning. Penny watches them all night so you don't have to lift a finger.</div></div>
+  <div class="type-row"><div class="lbl">BODY / 16</div><div class="type-sample">We watch hundreds of fare databases every minute. When a mistake fare or flash sale appears, you get a push in under five minutes. It's the closest thing to cheating the airlines.</div></div>
+  <div class="type-row"><div class="lbl">CAPTION / 14</div><div class="type-sample" style="font-size:14px;color:var(--ff-gray-600);">Starting from ₹9,800 round-trip, taxes and fees included. Price accurate as of the alert; availability may change within minutes.</div></div>
+  <div class="type-row"><div class="lbl">MONO / 12</div><div class="type-sample ff-mono" style="font-size:12px;">BOM · DEL · BLR · MAA · CCU · HYD</div></div>
+</section>
+
+<!-- ---------------- BUTTONS ---------------- -->
+<section id="buttons" class="section">
+  <div class="section-title"><h2>Buttons</h2></div>
+  <div class="group">
+    <button class="ff-btn">Primary (Lime)</button>
+    <button class="ff-btn ff-btn--violet">Violet</button>
+    <button class="ff-btn ff-btn--coral">Coral · Grab deal</button>
+    <button class="ff-btn ff-btn--ghost">Ghost</button>
+  </div>
+  <div class="group" style="margin-top:18px">
+    <span class="ff-pill">NEW</span>
+    <span class="ff-pill ff-pill--coral">-54% PRICE DROP</span>
+    <span class="ff-pill ff-pill--lime">MISTAKE FARE</span>
+    <span class="ff-pill" style="background:var(--ff-sun);color:var(--ff-ink)">LAST 6 SEATS</span>
+  </div>
+</section>
+
+<!-- ---------------- DEAL CARD ---------------- -->
+<section id="deals" class="section">
+  <div class="section-title"><h2>Deal card · the hero component</h2></div>
+  <div class="grid grid-3">
+
+    <div class="deal-card">
+      <div class="banner">
+        <div class="route">BOM <span class="arrow">→</span> LHR</div>
+        <span class="badge-drop">-54%</span>
+      </div>
+      <div class="body">
+        <div class="price">₹ 21,400<span class="unit">round-trip</span></div>
+        <div class="strike">₹ 46,800 · Jul 12 departure</div>
+        <div class="meta">Air India · Direct · 9h 50m</div>
+        <div class="cta">
+          <button class="ff-btn ff-btn--coral" style="flex:1">Grab →</button>
+          <button class="ff-btn ff-btn--ghost" style="padding:10px 14px">♡</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="deal-card">
+      <div class="banner" style="background:#FFD166">
+        <div class="route">DEL <span class="arrow">→</span> BKK</div>
+        <span class="ff-pill" style="background:var(--ff-ink);color:var(--ff-sun)">FLASH SALE</span>
+      </div>
+      <div class="body">
+        <div class="price">₹ 11,900<span class="unit">return</span></div>
+        <div class="strike">₹ 19,200 · Aug 3-10</div>
+        <div class="meta">Vistara · 1 stop · 7h 05m</div>
+        <div class="cta">
+          <button class="ff-btn ff-btn--violet" style="flex:1">Grab →</button>
+          <button class="ff-btn ff-btn--ghost" style="padding:10px 14px">♡</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="deal-card">
+      <div class="banner" style="background:#FF4E64">
+        <div class="route" style="color:#fff">BLR <span class="arrow" style="color:#D8FF3C">→</span> NRT</div>
+        <span class="ff-pill ff-pill--lime">MISTAKE</span>
+      </div>
+      <div class="body">
+        <div class="price">₹ 18,700<span class="unit">one-way</span></div>
+        <div class="strike">₹ 58,400 · Sep 18</div>
+        <div class="meta">ANA · Biz class · 8h 40m</div>
+        <div class="cta">
+          <button class="ff-btn" style="flex:1">Grab →</button>
+          <button class="ff-btn ff-btn--ghost" style="padding:10px 14px">♡</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ---------------- FORMS ---------------- -->
+<section id="forms" class="section">
+  <div class="section-title"><h2>Forms · inputs</h2></div>
+  <div class="grid grid-2">
+    <div>
+      <label class="ff-mono" style="font-size:11px;color:var(--ff-gray-500);display:block;margin-bottom:6px">EMAIL</label>
+      <input class="ff-input" placeholder="you@flock.com" type="email"/>
+    </div>
+    <div>
+      <label class="ff-mono" style="font-size:11px;color:var(--ff-gray-500);display:block;margin-bottom:6px">HOME AIRPORT</label>
+      <input class="ff-input" placeholder="BOM, DEL, BLR, MAA…" />
+    </div>
+  </div>
+  <div style="margin-top:22px" class="group">
+    <button class="ff-btn ff-btn--violet">Join the flock →</button>
+    <span class="ff-mono" style="font-size:12px;color:var(--ff-gray-500)">≤ 5 alerts / week · unsubscribe anytime</span>
+  </div>
+</section>
+
+<!-- ---------------- MASCOT BLOCKS ---------------- -->
+<section id="mascot" class="section">
+  <div class="section-title"><h2>Penny · in context</h2></div>
+  <div class="grid grid-3">
+    <div class="ff-card" style="background:var(--ff-violet-tint);text-align:center">
+      <img src="../mascots/penny-puffin/expressions/penny-waving-600.png" style="width:100%;max-height:240px;object-fit:contain" alt=""/>
+      <h3 style="margin-top:8px">Welcome to the flock.</h3>
+      <p style="margin-top:8px;color:var(--ff-gray-600)">Onboarding · first-run</p>
+    </div>
+    <div class="ff-card" style="background:var(--ff-lime-tint);text-align:center">
+      <img src="../mascots/penny-puffin/expressions/penny-celebrating-600.png" style="width:100%;max-height:240px;object-fit:contain" alt=""/>
+      <h3 style="margin-top:8px">New deal incoming!</h3>
+      <p style="margin-top:8px;color:var(--ff-gray-600)">Deal alert · push</p>
+    </div>
+    <div class="ff-card" style="background:var(--ff-coral-tint);text-align:center">
+      <img src="../mascots/penny-puffin/expressions/penny-confused-404-600.png" style="width:100%;max-height:240px;object-fit:contain" alt=""/>
+      <h3 style="margin-top:8px">Penny lost this page.</h3>
+      <p style="margin-top:8px;color:var(--ff-gray-600)">Error 404 · empty state</p>
+    </div>
+  </div>
+</section>
+
+</body>
+</html>

@@ -1,0 +1,75 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" role="img" aria-label="Penny sleeping (empty state)">
+  <defs>
+    <radialGradient id="slBody" cx="50%" cy="40%" r="65%">
+      <stop offset="0%" stop-color="#3F3F52"/>
+      <stop offset="100%" stop-color="#15151E"/>
+    </radialGradient>
+    <radialGradient id="slBelly" cx="50%" cy="45%" r="60%">
+      <stop offset="0%" stop-color="#FFFFFF"/>
+      <stop offset="100%" stop-color="#F1F1F8"/>
+    </radialGradient>
+    <radialGradient id="slCheek" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#FF89A0"/>
+      <stop offset="100%" stop-color="#FF89A0" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="slBeak" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#FFD166"/>
+      <stop offset="50%" stop-color="#FF8A3D"/>
+      <stop offset="100%" stop-color="#FF4E64"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Floor line (like resting on a suitcase) -->
+  <rect x="80" y="320" width="240" height="40" rx="6" fill="#FF4E64" stroke="#0B0B0F" stroke-width="3"/>
+  <line x1="80" y1="336" x2="320" y2="336" stroke="#0B0B0F" stroke-width="1.5" stroke-dasharray="4 4" opacity="0.4"/>
+  <circle cx="110" cy="360" r="8" fill="#0B0B0F"/>
+  <circle cx="290" cy="360" r="8" fill="#0B0B0F"/>
+
+  <!-- body (tilted slightly) -->
+  <g transform="rotate(-6 200 220)">
+    <path d="M90 220 Q 90 130 200 128 Q 310 130 310 220 Q 310 320 200 318 Q 90 320 90 220 Z"
+          fill="url(#slBody)" stroke="#0B0B0F" stroke-width="4"/>
+    <path d="M148 200 Q 148 150 200 148 Q 252 150 252 200 Q 252 296 200 300 Q 148 296 148 200 Z"
+          fill="url(#slBelly)" stroke="#0B0B0F" stroke-width="3"/>
+    <!-- wings tucked in -->
+    <path d="M90 228 Q 68 260 88 300 Q 126 308 138 278 Q 136 250 114 228 Z"
+          fill="#15151E" stroke="#0B0B0F" stroke-width="4"/>
+    <path d="M310 228 Q 332 260 312 300 Q 274 308 262 278 Q 264 250 286 228 Z"
+          fill="#15151E" stroke="#0B0B0F" stroke-width="4"/>
+
+    <!-- head tilted -->
+    <ellipse cx="200" cy="138" rx="96" ry="92" fill="url(#slBody)" stroke="#0B0B0F" stroke-width="4"/>
+    <ellipse cx="200" cy="154" rx="68" ry="60" fill="url(#slBelly)" stroke="#0B0B0F" stroke-width="3"/>
+
+    <!-- cheeks -->
+    <circle cx="148" cy="172" r="14" fill="url(#slCheek)"/>
+    <circle cx="252" cy="172" r="14" fill="url(#slCheek)"/>
+
+    <!-- eyes CLOSED with long eyelashes -->
+    <path d="M158 150 q 12 -4 24 0" stroke="#0B0B0F" stroke-width="4" stroke-linecap="round" fill="none"/>
+    <path d="M218 150 q 12 -4 24 0" stroke="#0B0B0F" stroke-width="4" stroke-linecap="round" fill="none"/>
+    <!-- eyelashes -->
+    <line x1="180" y1="150" x2="186" y2="156" stroke="#0B0B0F" stroke-width="2" stroke-linecap="round"/>
+    <line x1="172" y1="150" x2="176" y2="158" stroke="#0B0B0F" stroke-width="2" stroke-linecap="round"/>
+    <line x1="222" y1="150" x2="226" y2="158" stroke="#0B0B0F" stroke-width="2" stroke-linecap="round"/>
+    <line x1="230" y1="150" x2="236" y2="156" stroke="#0B0B0F" stroke-width="2" stroke-linecap="round"/>
+
+    <!-- beak -->
+    <path d="M168 184 Q 200 170 232 184 Q 220 216 200 222 Q 180 216 168 184 Z"
+          fill="url(#slBeak)" stroke="#0B0B0F" stroke-width="3.5"/>
+
+    <!-- headphones -->
+    <path d="M112 130 Q 200 36 288 130" stroke="#6D28FF" stroke-width="8" stroke-linecap="round" fill="none"/>
+    <circle cx="108" cy="140" r="18" fill="#6D28FF" stroke="#0B0B0F" stroke-width="3"/>
+    <circle cx="108" cy="140" r="9" fill="#D8FF3C"/>
+    <circle cx="292" cy="140" r="18" fill="#6D28FF" stroke="#0B0B0F" stroke-width="3"/>
+    <circle cx="292" cy="140" r="9" fill="#D8FF3C"/>
+  </g>
+
+  <!-- Zzz letters floating up -->
+  <g font-family="'Bricolage Grotesque',system-ui,sans-serif" font-weight="900" fill="#6D28FF">
+    <text x="296" y="132" font-size="34" transform="rotate(-10 296 132)">Z</text>
+    <text x="330" y="92" font-size="40" transform="rotate(-18 330 92)">Z</text>
+    <text x="356" y="58" font-size="50" transform="rotate(-24 356 58)">z</text>
+  </g>
+</svg>

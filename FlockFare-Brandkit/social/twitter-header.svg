@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1500 500" role="img" aria-label="FlockFare Twitter / X header">
+  <rect x="0" y="0" width="1500" height="500" fill="#0B0B0F"/>
+
+  <!-- Diagonal colour band -->
+  <polygon points="0,500 0,300 1500,60 1500,0 0,0" fill="none"/>
+  <polygon points="0,500 0,320 1500,80 1500,500" fill="#6D28FF"/>
+  <polygon points="0,500 0,380 1500,140 1500,500" fill="#D8FF3C"/>
+  <polygon points="0,500 0,440 1500,200 1500,500" fill="#FF4E64"/>
+  <rect x="0" y="464" width="1500" height="36" fill="#0B0B0F"/>
+
+  <!-- Bold tagline top -->
+  <text x="70" y="130"
+        font-family="'Bricolage Grotesque',system-ui,sans-serif"
+        font-weight="900" font-size="84" letter-spacing="-4"
+        fill="#F6F3EC">Deals.<tspan fill="#D8FF3C"> Drops.</tspan><tspan fill="#FF4E64"> Departures.</tspan></text>
+
+  <text x="70" y="188"
+        font-family="'JetBrains Mono',monospace"
+        font-weight="700" font-size="22" letter-spacing="6"
+        fill="#CBCBD6">CHEAP FLIGHT ALERTS · FOR THE FLOCK</text>
+
+  <!-- Avatar placeholder marker (bottom-left, where X puts the circle) -->
+  <circle cx="220" cy="420" r="118" fill="#0B0B0F" stroke="#0B0B0F" stroke-width="8" stroke-dasharray="12 10" opacity="0.4"/>
+  <text x="360" y="440"
+        font-family="'JetBrains Mono',monospace" font-weight="700" font-size="16" letter-spacing="3"
+        fill="#D8FF3C" opacity="0.7">← @flockfare</text>
+</svg>

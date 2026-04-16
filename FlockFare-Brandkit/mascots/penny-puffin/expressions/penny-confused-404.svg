@@ -1,0 +1,95 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" role="img" aria-label="Penny confused — 404 or empty search">
+  <defs>
+    <radialGradient id="cfBody" cx="50%" cy="40%" r="65%">
+      <stop offset="0%" stop-color="#3F3F52"/>
+      <stop offset="100%" stop-color="#15151E"/>
+    </radialGradient>
+    <radialGradient id="cfBelly" cx="50%" cy="45%" r="60%">
+      <stop offset="0%" stop-color="#FFFFFF"/>
+      <stop offset="100%" stop-color="#F1F1F8"/>
+    </radialGradient>
+    <radialGradient id="cfCheek" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#FF89A0"/>
+      <stop offset="100%" stop-color="#FF89A0" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="cfBeak" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#FFD166"/>
+      <stop offset="50%" stop-color="#FF8A3D"/>
+      <stop offset="100%" stop-color="#FF4E64"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Floating "?" -->
+  <text x="332" y="86"
+        font-family="'Bricolage Grotesque',system-ui,sans-serif"
+        font-weight="900" font-size="78"
+        fill="#6D28FF" stroke="#0B0B0F" stroke-width="3"
+        paint-order="stroke">?</text>
+  <text x="54" y="72"
+        font-family="'Bricolage Grotesque',system-ui,sans-serif"
+        font-weight="900" font-size="54"
+        fill="#FF4E64" stroke="#0B0B0F" stroke-width="2.5"
+        paint-order="stroke" transform="rotate(-18 54 72)">?</text>
+
+  <!-- ground shadow -->
+  <ellipse cx="200" cy="372" rx="110" ry="8" fill="#0B0B0F" opacity="0.13"/>
+
+  <!-- feet -->
+  <rect x="164" y="340" width="32" height="20" rx="8" fill="#FFD166" stroke="#0B0B0F" stroke-width="3.5"/>
+  <rect x="206" y="340" width="32" height="20" rx="8" fill="#FFD166" stroke="#0B0B0F" stroke-width="3.5"/>
+
+  <!-- body -->
+  <path d="M90 220 Q 90 130 200 128 Q 310 130 310 220 Q 310 320 200 340 Q 90 320 90 220 Z"
+        fill="url(#cfBody)" stroke="#0B0B0F" stroke-width="4"/>
+  <path d="M148 200 Q 148 150 200 148 Q 252 150 252 200 Q 252 300 200 318 Q 148 300 148 200 Z"
+        fill="url(#cfBelly)" stroke="#0B0B0F" stroke-width="3"/>
+
+  <!-- wings — one up scratching head, one at side -->
+  <path d="M90 228 Q 66 260 86 302 Q 126 310 140 280 Q 138 248 116 228 Z"
+        fill="#15151E" stroke="#0B0B0F" stroke-width="4"/>
+  <!-- right wing up scratching -->
+  <g transform="rotate(-20 292 180)">
+    <path d="M282 200 Q 298 134 312 110 Q 340 114 334 154 Q 324 186 306 208 Z"
+          fill="#15151E" stroke="#0B0B0F" stroke-width="4" stroke-linejoin="round"/>
+  </g>
+
+  <!-- head TILTED to one side (confusion pose) -->
+  <g transform="rotate(-8 200 138)">
+    <ellipse cx="200" cy="138" rx="96" ry="92" fill="url(#cfBody)" stroke="#0B0B0F" stroke-width="4"/>
+    <ellipse cx="200" cy="154" rx="68" ry="60" fill="url(#cfBelly)" stroke="#0B0B0F" stroke-width="3"/>
+
+    <!-- cheeks -->
+    <circle cx="148" cy="172" r="14" fill="url(#cfCheek)"/>
+    <circle cx="252" cy="172" r="14" fill="url(#cfCheek)"/>
+
+    <!-- EYES — one wider, one squinty (confused) -->
+    <ellipse cx="172" cy="148" rx="13" ry="17" fill="#0B0B0F"/>
+    <ellipse cx="174" cy="143" rx="4.5" ry="5" fill="#FFFFFF"/>
+    <path d="M216 152 q 12 -8 24 -2" stroke="#0B0B0F" stroke-width="4.5" stroke-linecap="round" fill="none"/>
+
+    <!-- one raised eyebrow -->
+    <path d="M156 122 q 14 -10 32 0" stroke="#0B0B0F" stroke-width="3.5" stroke-linecap="round" fill="none"/>
+    <path d="M212 114 q 14 -4 28 6" stroke="#0B0B0F" stroke-width="3.5" stroke-linecap="round" fill="none"/>
+
+    <!-- beak slightly open, uncertain -->
+    <path d="M168 184 Q 200 172 232 184 Q 222 216 200 218 Q 178 216 168 184 Z"
+          fill="url(#cfBeak)" stroke="#0B0B0F" stroke-width="3.5"/>
+    <!-- slight frown line -->
+    <path d="M188 208 Q 200 202 212 208" stroke="#0B0B0F" stroke-width="2" fill="none"/>
+
+    <!-- headphones -->
+    <path d="M112 130 Q 200 36 288 130" stroke="#6D28FF" stroke-width="8" stroke-linecap="round" fill="none"/>
+    <circle cx="108" cy="140" r="18" fill="#6D28FF" stroke="#0B0B0F" stroke-width="3"/>
+    <circle cx="108" cy="140" r="9" fill="#D8FF3C"/>
+    <circle cx="292" cy="140" r="18" fill="#6D28FF" stroke="#0B0B0F" stroke-width="3"/>
+    <circle cx="292" cy="140" r="9" fill="#D8FF3C"/>
+  </g>
+
+  <!-- 404 banner behind shoulder -->
+  <g transform="translate(30, 300)">
+    <rect x="0" y="0" width="96" height="40" rx="10" fill="#0B0B0F"/>
+    <text x="48" y="28" text-anchor="middle"
+          font-family="'JetBrains Mono',monospace" font-weight="800" font-size="22"
+          fill="#D8FF3C" letter-spacing="3">404</text>
+  </g>
+</svg>
