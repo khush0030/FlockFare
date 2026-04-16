@@ -44,6 +44,8 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           .from("allowed_emails")
           .update({ used_at: new Date().toISOString() })
           .eq("email", user.email);
+
+        return true;
       }
 
       return true;

@@ -1,6 +1,7 @@
 "use client";
 
 import { useSearchParams } from "next/navigation";
+import { signIn } from "next-auth/react";
 import { Suspense } from "react";
 import { Header } from "@/components/header";
 
@@ -20,9 +21,7 @@ function LoginForm() {
   const next = searchParams.get("next") ?? "/profile";
 
   const handleGoogleSignIn = () => {
-    // NextAuth v5 sign-in via redirect
-    const callbackUrl = encodeURIComponent(next);
-    window.location.href = `/api/auth/signin/google?callbackUrl=${callbackUrl}`;
+    signIn("google", { callbackUrl: next });
   };
 
   return (

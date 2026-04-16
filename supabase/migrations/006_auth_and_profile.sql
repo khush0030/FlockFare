@@ -20,6 +20,7 @@ create table if not exists public.user_profiles (
   referral_code text unique,
   referred_by text,
   plan_tier text not null default 'free',
+  onboarded boolean not null default false,
   created_at timestamptz default now()
 );
 alter table public.user_profiles enable row level security;

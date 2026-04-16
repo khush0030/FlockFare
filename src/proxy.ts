@@ -20,5 +20,18 @@ export async function proxy(request: NextRequest) {
     return NextResponse.redirect(loginUrl);
   }
 
+  // Check onboarding status — redirect new users to /onboarding
+  if (pathname !== "/onboarding") {
+    const profile = (session as unknown as Record<string, unknown>).profile as
+      | { onboarded?: boolean }
+      | null;
+
+    if (profile && profile.onboarded === false) {
+      const onboardUrl = request.nextUrl.clone();
+      onboardUrl.pathname = "/onboarding";
+      return NextResponse.redirect(onboardUrl);
+    }
+  }
+
   return NextResponse.next();
 }

@@ -1014,7 +1014,10 @@ export default function OnboardingPage() {
                   </div>
 
                   <button
-                    onClick={() => router.push("/deals")}
+                    onClick={async () => {
+                      await fetch("/api/profile/onboarded", { method: "POST" });
+                      router.push("/deals");
+                    }}
                     style={{
                       width: "100%",
                       fontFamily: "var(--font-display)",
