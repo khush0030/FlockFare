@@ -40,7 +40,8 @@ export function Header({
           </>
         ) : (
           <>
-            <Link href="/#join">Pricing</Link>
+            <Link href="/upgrade-pro">Pricing</Link>
+            <Link href="/#how">How it works</Link>
             <Link href="/#proof">About</Link>
           </>
         )}
