@@ -56,7 +56,7 @@ export function DealFilters({
         <div className="flex flex-wrap gap-2 mb-8">
           <button
             onClick={() => setActiveOrigin(null)}
-            className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full font-mono font-bold text-[11px] tracking-[0.15em] uppercase border-2 border-ink cursor-pointer transition-all ${
+            className={`inline-flex items-center gap-1.5 min-h-[44px] px-4 py-2 rounded-full font-mono font-bold text-xs tracking-[0.15em] uppercase border-2 border-ink cursor-pointer transition-all ${
               activeOrigin === null
                 ? "bg-ink text-lime"
                 : "bg-paper text-ink hover:bg-ffgray-100"
@@ -75,7 +75,7 @@ export function DealFilters({
                 onClick={() =>
                   setActiveOrigin(isActive ? null : origin.code)
                 }
-                className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full font-mono font-bold text-[11px] tracking-[0.15em] uppercase border-2 border-ink cursor-pointer transition-all ${
+                className={`inline-flex items-center gap-1.5 min-h-[44px] px-4 py-2 rounded-full font-mono font-bold text-xs tracking-[0.15em] uppercase border-2 border-ink cursor-pointer transition-all ${
                   isActive
                     ? "bg-ink text-lime"
                     : "bg-paper text-ink hover:bg-ffgray-100"
@@ -83,7 +83,7 @@ export function DealFilters({
               >
                 {origin.code}
                 <span
-                  className={`w-5 h-5 rounded-full flex items-center justify-center text-[10px] ${
+                  className={`w-5 h-5 rounded-full flex items-center justify-center text-xs ${
                     isActive
                       ? "bg-lime text-ink"
                       : "bg-ffgray-200 text-ink"
@@ -101,7 +101,7 @@ export function DealFilters({
       {activeTab === "flights" && (
         <>
           {filteredFlights.length > 0 ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
               {filteredFlights.map((deal) => (
                 <DealCard key={deal.id} deal={deal} />
               ))}
@@ -118,7 +118,7 @@ export function DealFilters({
       {activeTab === "hotels" && (
         <>
           {hasHotels ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
               {hotelDeals.map((deal) => (
                 <HotelDealCard key={deal.id} deal={deal} />
               ))}

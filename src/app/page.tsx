@@ -1,9 +1,21 @@
+import type { Metadata } from "next";
 import Image from "next/image";
 import { ORIGINS, DESTINATIONS } from "@/config/watchlist";
 import { getActiveDeals, type Deal } from "@/lib/supabase/deals";
 import { DealCard } from "@/components/deal-card";
 import { SubscribeForm } from "@/components/subscribe-form";
 import { Header } from "@/components/header";
+
+export const metadata: Metadata = {
+  title: "FlockFare — Cheap Flight & Hotel Deals for Your Flock",
+  description:
+    "Penny watches hundreds of fare databases and alerts you when mistake fares, flash sales, and price drops appear. Join for free.",
+  openGraph: {
+    title: "FlockFare — Cheap Flight & Hotel Deals for Your Flock",
+    description:
+      "Penny watches hundreds of fare databases and alerts you when mistake fares, flash sales, and price drops appear. Join for free.",
+  },
+};
 
 // Sample deals shown when no live deals exist yet (baseline building)
 const SAMPLE_DEALS: Deal[] = [
@@ -65,7 +77,7 @@ export default async function Home() {
   const deals = liveDeals.length > 0 ? liveDeals : SAMPLE_DEALS;
   const isLive = liveDeals.length > 0;
   return (
-    <main className="flex-1">
+    <main id="main" className="flex-1">
       <Header variant="dark" />
 
       {/* HERO */}
@@ -122,7 +134,7 @@ export default async function Home() {
               <div className="font-display font-black text-2xl text-ink">
                 {stat.value}
               </div>
-              <div className="font-mono text-[11px] tracking-[0.15em] uppercase text-ink/70">
+              <div className="font-mono text-xs tracking-[0.15em] uppercase text-ink/70">
                 {stat.label}
               </div>
             </div>
@@ -180,7 +192,7 @@ export default async function Home() {
             Five steps. Zero effort.
           </h2>
 
-          <div className="grid grid-cols-1 md:grid-cols-5 gap-6 mt-10">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6 mt-10">
             {[
               {
                 step: "01",
@@ -246,7 +258,7 @@ export default async function Home() {
               alerts a week &mdash; only when there&apos;s something worth grabbing.
             </p>
             <SubscribeForm />
-            <p className="mt-3 font-mono text-[11px] tracking-[0.15em] uppercase text-ffgray-400">
+            <p className="mt-3 font-mono text-xs tracking-[0.15em] uppercase text-ffgray-400">
               &le; 5 alerts / week &middot; unsubscribe anytime
             </p>
           </div>
@@ -262,7 +274,7 @@ export default async function Home() {
             width={140}
             height={32}
           />
-          <p className="font-mono text-[11px] tracking-[0.15em] uppercase text-ffgray-500">
+          <p className="font-mono text-xs tracking-[0.15em] uppercase text-ffgray-500">
             Built for the flock &middot; 2026
           </p>
         </div>

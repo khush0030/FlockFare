@@ -1,9 +1,12 @@
 import Image from "next/image";
 import Link from "next/link";
+import { Header } from "@/components/header";
 
 export default function NotFound() {
   return (
-    <main className="flex-1 flex items-center justify-center bg-coral-tint">
+    <main id="main" className="flex-1 flex flex-col bg-coral-tint">
+      <Header variant="light" />
+      <div className="flex-1 flex items-center justify-center">
       <div className="text-center px-6 py-20 max-w-md">
         <Image
           src="/mascots/penny-confused-404-600.png"
@@ -27,6 +30,7 @@ export default function NotFound() {
         >
           Back to home &rarr;
         </Link>
+      </div>
       </div>
     </main>
   );

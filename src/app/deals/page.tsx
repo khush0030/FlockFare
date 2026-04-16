@@ -1,8 +1,20 @@
+import type { Metadata } from "next";
 import Image from "next/image";
 import { getActiveDeals } from "@/lib/supabase/deals";
 import { getActiveHotelDeals } from "@/lib/supabase/hotels";
 import { DealFilters } from "@/components/deal-filters";
 import { Header } from "@/components/header";
+
+export const metadata: Metadata = {
+  title: "Active Deals — FlockFare",
+  description:
+    "Browse live flight and hotel deals from Penny. Every deal links straight to Google Flights with verified prices.",
+  openGraph: {
+    title: "Active Deals — FlockFare",
+    description:
+      "Browse live flight and hotel deals from Penny. Every deal links straight to Google Flights with verified prices.",
+  },
+};
 
 export const revalidate = 300; // ISR: refresh every 5 minutes
 
@@ -15,10 +27,10 @@ export default async function DealsPage() {
   const totalDeals = flightDeals.length + hotelDeals.length;
 
   return (
-    <main className="flex-1">
+    <main id="main" className="flex-1">
       <Header variant="dark" />
 
-      <section className="max-w-[1200px] mx-auto px-6 py-12">
+      <section className="max-w-[1200px] mx-auto px-4 sm:px-6 py-8 sm:py-12">
         <p className="ff-eyebrow mb-3">ALL ACTIVE DEALS</p>
         <h1 className="text-[clamp(2rem,4vw,3.75rem)] font-display font-black tracking-tight leading-tight">
           Penny&apos;s latest finds.
