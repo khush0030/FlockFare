@@ -2,6 +2,7 @@ import Image from "next/image";
 import { ORIGINS, DESTINATIONS } from "@/config/watchlist";
 import { getActiveDeals, type Deal } from "@/lib/supabase/deals";
 import { DealCard } from "@/components/deal-card";
+import { SubscribeForm } from "@/components/subscribe-form";
 
 // Sample deals shown when no live deals exist yet (baseline building)
 const SAMPLE_DEALS: Deal[] = [
@@ -241,16 +242,7 @@ export default async function Home() {
               Drop your home airport and Penny gets to work. You&apos;ll get 3&ndash;5
               alerts a week &mdash; only when there&apos;s something worth grabbing.
             </p>
-            <div className="mt-6 flex flex-wrap gap-3">
-              <input
-                type="email"
-                placeholder="you@flock.com"
-                className="w-full max-w-xs font-body text-base px-4 py-3 bg-paper border-4 border-ink rounded-[12px] shadow-brut-sm focus:outline-none focus:shadow-brut-violet transition-shadow"
-              />
-              <button className="inline-flex items-center gap-2 font-display font-bold text-base px-6 py-3 rounded-full border-4 border-ink bg-violet text-cream shadow-brut cursor-pointer transition-transform duration-[120ms] ease-[var(--ease-ff-out)] hover:translate-x-[-2px] hover:translate-y-[-2px] hover:shadow-brut-lg active:translate-x-[3px] active:translate-y-[3px] active:shadow-brut-sm">
-                Join the flock &rarr;
-              </button>
-            </div>
+            <SubscribeForm />
             <p className="mt-3 font-mono text-[11px] tracking-[0.15em] uppercase text-ffgray-400">
               &le; 5 alerts / week &middot; unsubscribe anytime
             </p>
