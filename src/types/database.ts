@@ -187,12 +187,152 @@ export interface Database {
           created_at?: string;
         };
       };
+      allowed_emails: {
+        Row: {
+          email: string;
+          invited_by: string | null;
+          created_at: string;
+          used_at: string | null;
+        };
+        Insert: {
+          email: string;
+          invited_by?: string | null;
+          created_at?: string;
+          used_at?: string | null;
+        };
+        Update: {
+          email?: string;
+          invited_by?: string | null;
+          created_at?: string;
+          used_at?: string | null;
+        };
+      };
+      user_profiles: {
+        Row: {
+          id: string;
+          display_name: string | null;
+          avatar_url: string | null;
+          referral_code: string | null;
+          referred_by: string | null;
+          plan_tier: string;
+          created_at: string;
+        };
+        Insert: {
+          id: string;
+          display_name?: string | null;
+          avatar_url?: string | null;
+          referral_code?: string | null;
+          referred_by?: string | null;
+          plan_tier?: string;
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          display_name?: string | null;
+          avatar_url?: string | null;
+          referral_code?: string | null;
+          referred_by?: string | null;
+          plan_tier?: string;
+          created_at?: string;
+        };
+      };
+      saved_deals: {
+        Row: {
+          id: string;
+          user_id: string;
+          deal_id: string;
+          status: "active" | "booked" | "expired";
+          saved_at: string;
+          booked_at: string | null;
+        };
+        Insert: {
+          id?: string;
+          user_id: string;
+          deal_id: string;
+          status?: "active" | "booked" | "expired";
+          saved_at?: string;
+          booked_at?: string | null;
+        };
+        Update: {
+          id?: string;
+          user_id?: string;
+          deal_id?: string;
+          status?: "active" | "booked" | "expired";
+          saved_at?: string;
+          booked_at?: string | null;
+        };
+      };
+      bookings: {
+        Row: {
+          id: string;
+          user_id: string;
+          deal_id: string | null;
+          route: string;
+          airline: string | null;
+          cabin: string | null;
+          travel_month: string | null;
+          price_paid_inr: number;
+          baseline_inr: number;
+          booked_at: string;
+        };
+        Insert: {
+          id?: string;
+          user_id: string;
+          deal_id?: string | null;
+          route: string;
+          airline?: string | null;
+          cabin?: string | null;
+          travel_month?: string | null;
+          price_paid_inr: number;
+          baseline_inr: number;
+          booked_at?: string;
+        };
+        Update: {
+          id?: string;
+          user_id?: string;
+          deal_id?: string | null;
+          route?: string;
+          airline?: string | null;
+          cabin?: string | null;
+          travel_month?: string | null;
+          price_paid_inr?: number;
+          baseline_inr?: number;
+          booked_at?: string;
+        };
+      };
+      notification_prefs: {
+        Row: {
+          user_id: string;
+          deals_email: boolean;
+          weekly_digest: boolean;
+          push: boolean;
+          updates: boolean;
+          analytics: boolean;
+        };
+        Insert: {
+          user_id: string;
+          deals_email?: boolean;
+          weekly_digest?: boolean;
+          push?: boolean;
+          updates?: boolean;
+          analytics?: boolean;
+        };
+        Update: {
+          user_id?: string;
+          deals_email?: boolean;
+          weekly_digest?: boolean;
+          push?: boolean;
+          updates?: boolean;
+          analytics?: boolean;
+        };
+      };
     };
     Views: Record<string, never>;
     Functions: Record<string, never>;
     Enums: {
       deal_type: "common" | "rare" | "unique";
       cabin_class: "economy" | "premium_economy" | "business" | "first";
+      saved_deal_status: "active" | "booked" | "expired";
     };
   };
 }
