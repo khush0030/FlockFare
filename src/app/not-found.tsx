@@ -5,7 +5,7 @@ import { Header } from "@/components/header";
 export default function NotFound() {
   return (
     <main id="main" className="flex-1 flex flex-col bg-coral-tint">
-      <Header variant="light" />
+      <Header />
       <div className="flex-1 flex items-center justify-center">
       <div className="text-center px-6 py-20 max-w-md">
         <Image

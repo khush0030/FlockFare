@@ -1,0 +1,1378 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>FlockFare — Alert Preferences</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,700;12..96,900&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,700&family=JetBrains+Mono:wght@400;700;800&display=swap" rel="stylesheet"/>
+<style>
+/* ── TOKENS ──────────────────────────────────────────────── */
+:root{
+  --ink:#0B0B0F; --ink-soft:#1A1A22; --cream:#F6F3EC; --paper:#FFFFFF;
+  --violet:#6D28FF; --violet-deep:#2A1470; --violet-tint:#EFE6FF;
+  --lime:#D8FF3C; --lime-tint:#F3FFC7;
+  --coral:#FF4E64; --coral-tint:#FFE5ED;
+  --sun:#FFD166; --sun-tint:#FFF6D6;
+  --success:#00B775; --success-tint:#E6FBF3;
+  --g50:#FAFAF6; --g100:#F1F1EC; --g200:#E2E2DD;
+  --g300:#C9C9C4; --g400:#9C9C98; --g500:#6A6A67; --g600:#4A4A48;
+  --brut:6px 6px 0 var(--ink);
+  --brut-sm:3px 3px 0 var(--ink);
+  --brut-lg:10px 10px 0 var(--ink);
+  --ease:cubic-bezier(.2,.8,.2,1);
+  --ease-spring:cubic-bezier(.34,1.56,.64,1);
+  --fd:'Bricolage Grotesque',sans-serif;
+  --fb:'DM Sans',sans-serif;
+  --fm:'JetBrains Mono',monospace;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{font-family:var(--fb);background:var(--g50);color:var(--ink);-webkit-font-smoothing:antialiased;min-height:100vh;}
+button{cursor:pointer;font-family:inherit;border:none;}
+input,select,textarea{font-family:inherit;}
+a{text-decoration:none;color:inherit;}
+
+/* ── NAV ─────────────────────────────────────────────────── */
+nav{
+  position:sticky;top:0;z-index:200;
+  background:var(--ink);border-bottom:4px solid var(--ink);
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 40px;height:64px;
+}
+.nav-logo{font-family:var(--fd);font-weight:900;font-size:22px;color:var(--cream);letter-spacing:-.03em;}
+.nav-logo span{color:var(--lime);}
+.nav-links{display:flex;gap:28px;}
+.nav-links a{font-family:var(--fd);font-weight:700;font-size:14px;color:rgba(246,243,236,.6);transition:color .12s;}
+.nav-links a:hover{color:var(--lime);}
+.nav-links a.active{color:var(--cream);}
+.nav-user{
+  display:flex;align-items:center;gap:10px;
+}
+.nav-avatar{
+  width:34px;height:34px;border-radius:50%;
+  background:var(--violet);color:#fff;
+  font-family:var(--fm);font-size:12px;font-weight:700;
+  display:flex;align-items:center;justify-content:center;
+  border:2px solid var(--cream);
+}
+.nav-email{font-family:var(--fm);font-size:11px;color:rgba(246,243,236,.5);letter-spacing:.06em;}
+
+/* ── PAGE HEADER ─────────────────────────────────────────── */
+.page-header{
+  background:var(--ink);
+  border-bottom:4px solid var(--lime);
+  padding:28px 40px;
+}
+.page-header-inner{max-width:1200px;margin:0 auto;display:flex;align-items:flex-end;justify-content:space-between;gap:20px;flex-wrap:wrap;}
+.page-eyebrow{font-family:var(--fm);font-size:10px;font-weight:700;letter-spacing:.18em;color:var(--lime);margin-bottom:8px;}
+.page-title{font-family:var(--fd);font-weight:900;font-size:clamp(1.8rem,3vw,2.4rem);letter-spacing:-.035em;color:var(--cream);line-height:1.04;}
+.page-sub{font-size:14px;color:rgba(246,243,236,.45);margin-top:6px;}
+.header-status{
+  display:flex;align-items:center;gap:8px;
+  font-family:var(--fm);font-size:11px;font-weight:700;letter-spacing:.1em;
+  padding:8px 16px;border-radius:999px;
+  background:var(--success-tint);color:var(--success);
+  border:2px solid var(--success);
+  flex-shrink:0;
+}
+.status-dot{width:7px;height:7px;border-radius:50%;background:var(--success);animation:pulse 2s ease-in-out infinite;}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.6;transform:scale(.85)}}
+
+/* ── LAYOUT ──────────────────────────────────────────────── */
+.page-body{max-width:1200px;margin:0 auto;padding:36px 40px;display:grid;grid-template-columns:240px 1fr;gap:24px;align-items:start;}
+@media(max-width:900px){.page-body{grid-template-columns:1fr;padding:20px;}}
+
+/* ── SIDEBAR NAV ─────────────────────────────────────────── */
+.side-nav{position:sticky;top:84px;}
+.side-nav-card{background:var(--paper);border:4px solid var(--ink);border-radius:20px;box-shadow:var(--brut);overflow:hidden;margin-bottom:16px;}
+.side-nav-head{background:var(--ink);padding:12px 16px;}
+.side-nav-head span{font-family:var(--fm);font-size:10px;font-weight:700;letter-spacing:.16em;color:var(--lime);}
+.side-nav-item{
+  display:flex;align-items:center;gap:10px;
+  padding:12px 16px;
+  font-family:var(--fd);font-weight:700;font-size:14px;
+  cursor:pointer;transition:background .1s;
+  border-bottom:2px solid var(--g100);
+}
+.side-nav-item:last-child{border-bottom:none;}
+.side-nav-item:hover{background:var(--g50);}
+.side-nav-item.active{background:var(--lime-tint);color:var(--ink);}
+.side-nav-item .nav-icon{font-size:16px;flex-shrink:0;}
+.side-nav-item .nav-badge{
+  margin-left:auto;
+  font-family:var(--fm);font-size:9px;font-weight:700;letter-spacing:.1em;
+  padding:2px 7px;border-radius:999px;
+  background:var(--coral);color:#fff;
+}
+.penny-card{
+  background:var(--violet);border:4px solid var(--ink);border-radius:20px;
+  box-shadow:var(--brut);padding:16px;
+  text-align:center;
+}
+.penny-card h4{font-family:var(--fd);font-weight:900;font-size:14px;color:#fff;margin-bottom:4px;}
+.penny-card p{font-size:12px;color:rgba(255,255,255,.65);line-height:1.5;margin-bottom:12px;}
+.penny-card-btn{
+  display:block;width:100%;
+  font-family:var(--fd);font-weight:700;font-size:13px;
+  padding:10px;border-radius:999px;text-align:center;
+  background:var(--lime);color:var(--ink);border:3px solid var(--ink);
+  box-shadow:var(--brut-sm);transition:all .12s;
+}
+.penny-card-btn:hover{transform:translate(-1px,-1px);box-shadow:var(--brut);}
+
+/* ── SECTION CARDS ───────────────────────────────────────── */
+.section-card{
+  background:var(--paper);border:4px solid var(--ink);border-radius:20px;
+  box-shadow:var(--brut);overflow:hidden;margin-bottom:20px;
+  scroll-margin-top:100px;
+}
+.section-head{
+  background:var(--ink);padding:16px 22px;
+  display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;
+}
+.section-head-left{}
+.section-eyebrow{font-family:var(--fm);font-size:10px;font-weight:700;letter-spacing:.16em;color:var(--lime);margin-bottom:4px;}
+.section-head h2{font-family:var(--fd);font-weight:900;font-size:17px;color:var(--cream);}
+.section-body{padding:22px;}
+
+/* ── TOGGLE SWITCH ───────────────────────────────────────── */
+.toggle-wrap{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;}
+.toggle-info h3{font-family:var(--fd);font-weight:700;font-size:15px;margin-bottom:3px;}
+.toggle-info p{font-size:13px;color:var(--g500);line-height:1.5;}
+.toggle{
+  position:relative;
+  width:52px;height:28px;flex-shrink:0;
+}
+.toggle input{opacity:0;width:0;height:0;position:absolute;}
+.toggle-track{
+  position:absolute;inset:0;
+  background:var(--g200);border:3px solid var(--ink);border-radius:999px;
+  cursor:pointer;transition:background .2s;
+  box-shadow:var(--brut-sm);
+}
+.toggle input:checked + .toggle-track{background:var(--lime);}
+.toggle-thumb{
+  position:absolute;top:3px;left:3px;
+  width:18px;height:18px;border-radius:50%;
+  background:var(--ink);
+  transition:transform .2s var(--ease-spring);
+}
+.toggle input:checked ~ .toggle-thumb{transform:translateX(24px);}
+.divider{height:2px;background:var(--g100);margin:18px 0;}
+
+/* ── AIRPORT CHIPS ───────────────────────────────────────── */
+.airport-chip-row{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:14px;}
+.airport-chip{
+  display:inline-flex;align-items:center;gap:8px;
+  font-family:var(--fm);font-size:12px;font-weight:700;letter-spacing:.08em;
+  padding:9px 14px;border-radius:999px;
+  border:3px solid var(--ink);background:var(--lime);color:var(--ink);
+  box-shadow:var(--brut-sm);position:relative;
+  transition:all .12s var(--ease);
+}
+.airport-chip:hover{transform:translate(-1px,-1px);box-shadow:var(--brut);}
+.chip-remove{
+  width:16px;height:16px;border-radius:50%;
+  background:var(--ink);color:var(--lime);
+  font-size:10px;font-weight:900;
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;transition:background .1s;
+  border:none;
+  flex-shrink:0;
+}
+.chip-remove:hover{background:var(--coral);}
+.add-chip{
+  display:inline-flex;align-items:center;gap:6px;
+  font-family:var(--fm);font-size:11px;font-weight:700;letter-spacing:.1em;
+  padding:9px 14px;border-radius:999px;
+  border:3px dashed var(--g300);background:transparent;color:var(--g500);
+  cursor:pointer;transition:all .12s;
+}
+.add-chip:hover{border-color:var(--ink);color:var(--ink);}
+
+/* ── DESTINATION MAP GRID ────────────────────────────────── */
+.dest-region{margin-bottom:20px;}
+.dest-region:last-child{margin-bottom:0;}
+.dest-region-label{
+  font-family:var(--fm);font-size:10px;font-weight:700;letter-spacing:.16em;
+  text-transform:uppercase;color:var(--g500);
+  margin-bottom:10px;display:flex;align-items:center;gap:8px;
+}
+.dest-region-label::after{content:'';flex:1;height:1px;background:var(--g200);}
+.dest-grid{display:flex;flex-wrap:wrap;gap:8px;}
+.dest-pill{
+  display:inline-flex;align-items:center;gap:6px;
+  font-family:var(--fm);font-size:11px;font-weight:700;letter-spacing:.06em;
+  padding:7px 13px;border-radius:999px;
+  border:2.5px solid var(--ink);cursor:pointer;
+  transition:all .12s var(--ease);box-shadow:var(--brut-sm);
+  user-select:none;
+}
+.dest-pill:hover{transform:translate(-1px,-1px);box-shadow:var(--brut);}
+.dest-pill.on{background:var(--violet);color:#fff;border-color:var(--violet-deep);}
+.dest-pill.off{background:var(--paper);color:var(--g400);border-color:var(--g200);box-shadow:none;}
+.dest-pill.off:hover{border-color:var(--ink);color:var(--ink);box-shadow:var(--brut-sm);}
+.dest-pill .flag{font-size:14px;}
+.dest-count-note{font-family:var(--fm);font-size:11px;color:var(--g500);letter-spacing:.06em;margin-top:12px;}
+.dest-count-note strong{color:var(--ink);}
+.region-toggle-all{
+  font-family:var(--fm);font-size:10px;font-weight:700;color:var(--violet);
+  cursor:pointer;margin-left:6px;background:none;border:none;letter-spacing:.08em;
+}
+
+/* ── THRESHOLD SELECTOR ──────────────────────────────────── */
+.threshold-row{
+  display:grid;grid-template-columns:repeat(3,1fr);gap:12px;
+  margin-bottom:16px;
+}
+.thresh-card{
+  border:4px solid var(--ink);border-radius:16px;padding:18px 16px;
+  cursor:pointer;box-shadow:var(--brut);
+  transition:transform .12s var(--ease),box-shadow .12s,background .12s;
+  position:relative;
+}
+.thresh-card:hover{transform:translate(-2px,-2px);box-shadow:var(--brut-lg);}
+.thresh-card.active-c{background:var(--lime-tint);}
+.thresh-card.active-r{background:var(--coral-tint);}
+.thresh-card.active-u{background:var(--violet);transform:translate(-2px,-2px);box-shadow:var(--brut-lg);}
+.thresh-radio{
+  width:18px;height:18px;border-radius:50%;border:3px solid var(--g300);
+  display:flex;align-items:center;justify-content:center;
+  margin-bottom:12px;transition:all .15s var(--ease-spring);
+}
+.thresh-card.active-c .thresh-radio,.thresh-card.active-r .thresh-radio{border-color:var(--ink);background:var(--ink);}
+.thresh-card.active-u .thresh-radio{border-color:#fff;background:#fff;}
+.thresh-radio-dot{width:7px;height:7px;border-radius:50%;background:var(--lime);display:none;}
+.thresh-card.active-c .thresh-radio-dot,.thresh-card.active-r .thresh-radio-dot,.thresh-card.active-u .thresh-radio-dot{display:block;}
+.thresh-card.active-u .thresh-radio-dot{background:var(--violet);}
+.thresh-pct{
+  font-family:var(--fd);font-weight:900;font-size:28px;letter-spacing:-.03em;
+  margin-bottom:4px;
+}
+.thresh-card.active-u .thresh-pct,.thresh-card.active-u h3,.thresh-card.active-u p{color:#fff;}
+.thresh-card h3{font-family:var(--fd);font-weight:700;font-size:14px;margin-bottom:4px;}
+.thresh-card p{font-size:12px;color:var(--g500);line-height:1.45;}
+.thresh-card.active-u p{color:rgba(255,255,255,.7);}
+.thresh-tag{
+  display:inline-block;margin-top:8px;
+  font-family:var(--fm);font-size:9px;font-weight:700;letter-spacing:.12em;
+  padding:3px 8px;border-radius:999px;
+}
+.tag-lime{background:var(--lime);color:var(--ink);}
+.tag-coral{background:var(--coral-tint);color:var(--coral);}
+.tag-violet{background:rgba(255,255,255,.2);color:#fff;}
+
+/* ── CHANNEL ROWS ────────────────────────────────────────── */
+.channel-row{
+  display:flex;align-items:flex-start;gap:16px;
+  padding:16px 0;border-bottom:2px solid var(--g100);
+}
+.channel-row:last-child{border-bottom:none;}
+.channel-icon-wrap{
+  width:44px;height:44px;border-radius:12px;border:3px solid var(--ink);
+  display:flex;align-items:center;justify-content:center;font-size:20px;
+  flex-shrink:0;
+}
+.channel-body{flex:1;}
+.channel-body h3{font-family:var(--fd);font-weight:700;font-size:15px;margin-bottom:3px;}
+.channel-body p{font-size:13px;color:var(--g500);line-height:1.5;}
+.channel-detail{
+  margin-top:10px;padding:10px 12px;
+  background:var(--g50);border:2px solid var(--g200);border-radius:10px;
+  font-family:var(--fm);font-size:12px;color:var(--g600);
+  display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;
+}
+.channel-detail input{
+  flex:1;min-width:160px;
+  font-family:var(--fm);font-size:12px;
+  border:none;background:transparent;outline:none;color:var(--ink);
+}
+.ch-edit-btn{
+  font-family:var(--fm);font-size:10px;font-weight:700;letter-spacing:.1em;
+  color:var(--violet);cursor:pointer;background:none;border:none;
+}
+.ch-verified{
+  display:inline-flex;align-items:center;gap:4px;
+  font-family:var(--fm);font-size:10px;font-weight:700;letter-spacing:.1em;
+  color:var(--success);
+}
+
+/* ── FREQUENCY CONTROL ───────────────────────────────────── */
+.freq-grid{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:16px;}
+.freq-btn{
+  font-family:var(--fm);font-size:11px;font-weight:700;letter-spacing:.08em;
+  padding:9px 16px;border-radius:999px;
+  border:3px solid var(--ink);background:var(--paper);
+  cursor:pointer;transition:all .12s;box-shadow:var(--brut-sm);
+}
+.freq-btn:hover{background:var(--cream);}
+.freq-btn.active{background:var(--ink);color:var(--lime);}
+.time-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px;}
+.time-label{font-family:var(--fm);font-size:10px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--g500);margin-bottom:6px;}
+.time-select{
+  width:100%;padding:10px 14px;
+  font-family:var(--fm);font-size:12px;
+  border:3px solid var(--ink);border-radius:10px;background:var(--paper);
+  box-shadow:var(--brut-sm);outline:none;cursor:pointer;
+  appearance:none;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%230B0B0F' stroke-width='2' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;
+  background-position:right 12px center;
+  padding-right:32px;
+}
+
+/* ── QUIET HOURS ─────────────────────────────────────────── */
+.quiet-wrap{
+  display:flex;align-items:center;gap:14px;flex-wrap:wrap;
+  padding:14px 16px;background:var(--sun-tint);border:3px solid var(--sun);border-radius:12px;
+  margin-top:14px;
+}
+.quiet-wrap .quiet-label{font-family:var(--fm);font-size:11px;font-weight:700;color:var(--ink);letter-spacing:.06em;}
+.quiet-time{
+  font-family:var(--fm);font-size:12px;
+  padding:7px 10px;border:2.5px solid var(--ink);border-radius:8px;
+  background:var(--paper);outline:none;width:96px;
+}
+
+/* ── CABIN FILTER ────────────────────────────────────────── */
+.cabin-grid{display:flex;gap:10px;flex-wrap:wrap;}
+.cabin-pill{
+  display:inline-flex;align-items:center;gap:6px;
+  font-family:var(--fm);font-size:11px;font-weight:700;letter-spacing:.08em;
+  padding:8px 14px;border-radius:999px;
+  border:3px solid var(--ink);cursor:pointer;
+  transition:all .12s var(--ease);box-shadow:var(--brut-sm);
+  user-select:none;
+}
+.cabin-pill:hover{transform:translate(-1px,-1px);box-shadow:var(--brut);}
+.cabin-pill.on{background:var(--ink);color:var(--lime);}
+.cabin-pill.off{background:var(--paper);color:var(--g400);border-color:var(--g200);box-shadow:none;}
+
+/* ── STOPS FILTER ────────────────────────────────────────── */
+.stops-row{display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;}
+.stops-btn{
+  font-family:var(--fm);font-size:11px;font-weight:700;letter-spacing:.08em;
+  padding:8px 16px;border-radius:999px;
+  border:3px solid var(--ink);background:var(--paper);
+  cursor:pointer;transition:all .12s;box-shadow:var(--brut-sm);
+}
+.stops-btn:hover{background:var(--cream);}
+.stops-btn.active{background:var(--ink);color:var(--lime);}
+
+/* ── WATCHED ROUTES ──────────────────────────────────────── */
+.route-list{display:flex;flex-direction:column;gap:10px;}
+.route-item{
+  display:flex;align-items:center;gap:12px;
+  padding:14px 16px;
+  border:3px solid var(--ink);border-radius:14px;
+  background:var(--paper);box-shadow:var(--brut-sm);
+  transition:all .12s;
+}
+.route-item:hover{box-shadow:var(--brut);}
+.route-badge{
+  font-family:var(--fd);font-weight:900;font-size:16px;letter-spacing:-.02em;
+  flex-shrink:0;
+}
+.route-badge .arr{color:var(--violet);margin:0 4px;}
+.route-meta{flex:1;}
+.route-meta-top{font-size:13px;color:var(--g500);}
+.route-alerts{
+  display:inline-flex;align-items:center;gap:4px;
+  font-family:var(--fm);font-size:10px;font-weight:700;letter-spacing:.1em;
+  padding:3px 8px;border-radius:999px;
+  background:var(--lime-tint);color:var(--ink);
+  border:2px solid var(--lime);margin-top:4px;
+}
+.route-remove{
+  font-family:var(--fm);font-size:10px;font-weight:700;letter-spacing:.08em;
+  color:var(--g400);cursor:pointer;background:none;border:none;
+  padding:6px;border-radius:6px;transition:all .12s;
+}
+.route-remove:hover{color:var(--coral);background:var(--coral-tint);}
+.add-route-form{
+  display:flex;gap:8px;margin-top:12px;flex-wrap:wrap;
+}
+.route-input{
+  flex:1;min-width:120px;
+  font-family:var(--fm);font-size:13px;font-weight:700;letter-spacing:.08em;
+  padding:10px 14px;border:3px solid var(--ink);border-radius:10px;
+  background:var(--paper);box-shadow:var(--brut-sm);outline:none;
+  text-transform:uppercase;
+}
+.route-input:focus{box-shadow:var(--brut);border-color:var(--violet);}
+.route-add-btn{
+  font-family:var(--fd);font-weight:700;font-size:14px;
+  padding:10px 18px;border-radius:10px;
+  background:var(--lime);color:var(--ink);border:3px solid var(--ink);box-shadow:var(--brut-sm);
+  transition:all .12s;
+}
+.route-add-btn:hover{transform:translate(-1px,-1px);box-shadow:var(--brut);}
+
+/* ── ALERT PREVIEW ───────────────────────────────────────── */
+.preview-box{
+  border:4px solid var(--ink);border-radius:16px;overflow:hidden;box-shadow:var(--brut);
+}
+.preview-phone{
+  background:var(--ink-soft);padding:16px;
+  display:flex;align-items:flex-start;gap:12px;
+}
+.preview-notif{
+  flex:1;background:var(--paper);border-radius:12px;padding:12px 14px;
+}
+.notif-app{font-family:var(--fm);font-size:9px;letter-spacing:.14em;color:var(--g500);margin-bottom:4px;display:flex;align-items:center;gap:6px;}
+.notif-app::before{content:'🐧';font-size:12px;}
+.notif-title{font-family:var(--fd);font-weight:900;font-size:14px;margin-bottom:2px;}
+.notif-body{font-size:12px;color:var(--g500);line-height:1.4;}
+.preview-email{
+  padding:20px;background:var(--g50);border-top:3px solid var(--ink);
+}
+.email-preview-from{font-family:var(--fm);font-size:11px;color:var(--g500);margin-bottom:6px;}
+.email-preview-subj{font-family:var(--fd);font-weight:700;font-size:14px;margin-bottom:8px;}
+.email-preview-body{font-size:13px;color:var(--g500);line-height:1.5;}
+.preview-tabs{display:flex;border-bottom:3px solid var(--ink);}
+.ptab{
+  font-family:var(--fm);font-size:11px;font-weight:700;letter-spacing:.1em;
+  padding:10px 18px;cursor:pointer;border-right:2px solid var(--g200);
+  background:var(--g100);transition:background .1s;
+}
+.ptab:hover{background:var(--g200);}
+.ptab.active{background:var(--ink);color:var(--lime);}
+
+/* ── DANGER ZONE ─────────────────────────────────────────── */
+.danger-zone{
+  background:var(--coral-tint);border:4px solid var(--coral);border-radius:20px;
+  padding:20px 22px;margin-top:4px;
+  display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;
+}
+.danger-text h4{font-family:var(--fd);font-weight:700;font-size:15px;color:var(--coral);margin-bottom:4px;}
+.danger-text p{font-size:13px;color:var(--g500);line-height:1.5;}
+.btn-danger{
+  font-family:var(--fd);font-weight:700;font-size:13px;
+  padding:10px 20px;border-radius:999px;
+  background:transparent;color:var(--coral);
+  border:3px solid var(--coral);transition:all .12s;flex-shrink:0;
+}
+.btn-danger:hover{background:var(--coral);color:#fff;}
+
+/* ── SAVE BUTTON ─────────────────────────────────────────── */
+.save-bar{
+  position:sticky;bottom:0;left:0;right:0;z-index:100;
+  background:var(--paper);border-top:4px solid var(--ink);
+  padding:16px 40px;
+  display:flex;align-items:center;justify-content:space-between;gap:16px;
+  box-shadow:0 -4px 0 var(--ink);
+}
+.save-bar-note{font-family:var(--fm);font-size:11px;color:var(--g500);letter-spacing:.06em;}
+.save-bar-note strong{color:var(--success);font-weight:700;}
+.save-bar-actions{display:flex;gap:10px;}
+.btn-discard{
+  font-family:var(--fd);font-weight:700;font-size:14px;
+  padding:12px 22px;border-radius:999px;
+  background:transparent;color:var(--g500);border:3px solid var(--g200);
+  transition:all .12s;
+}
+.btn-discard:hover{border-color:var(--ink);color:var(--ink);}
+.btn-save{
+  font-family:var(--fd);font-weight:900;font-size:15px;
+  padding:13px 28px;border-radius:999px;
+  background:var(--lime);color:var(--ink);border:4px solid var(--ink);
+  box-shadow:var(--brut);transition:all .12s var(--ease);
+}
+.btn-save:hover{transform:translate(-2px,-2px);box-shadow:var(--brut-lg);}
+.btn-save:active{transform:translate(2px,2px);box-shadow:var(--brut-sm);}
+
+/* ── TOAST ───────────────────────────────────────────────── */
+.toast{
+  position:fixed;bottom:100px;left:50%;transform:translateX(-50%) translateY(20px);
+  background:var(--ink);color:var(--lime);
+  font-family:var(--fm);font-size:12px;font-weight:700;letter-spacing:.1em;
+  padding:12px 24px;border-radius:999px;border:3px solid var(--lime);
+  opacity:0;transition:all .3s var(--ease);z-index:999;
+  white-space:nowrap;box-shadow:var(--brut);
+}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+
+/* ── MISC ────────────────────────────────────────────────── */
+.pro-lock{
+  display:inline-flex;align-items:center;gap:6px;
+  font-family:var(--fm);font-size:10px;font-weight:700;letter-spacing:.1em;
+  padding:4px 10px;border-radius:999px;
+  background:var(--violet);color:#fff;
+  margin-left:8px;vertical-align:middle;
+}
+.row-between{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-bottom:14px;}
+.label-with-count{display:flex;align-items:center;gap:8px;}
+.count-badge{
+  font-family:var(--fm);font-size:10px;font-weight:700;letter-spacing:.08em;
+  padding:3px 8px;border-radius:999px;background:var(--lime);color:var(--ink);
+}
+
+@media(max-width:768px){
+  nav{padding:0 20px;}.nav-links{display:none;}
+  .page-header{padding:20px;}
+  .threshold-row{grid-template-columns:1fr;}
+  .save-bar{padding:12px 20px;}
+  .side-nav{display:none;}
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">Flock<span>Fare</span></div>
+  <div class="nav-links">
+    <a href="#">Deals</a>
+    <a href="#" class="active">Preferences</a>
+    <a href="#">Pro</a>
+  </div>
+  <div class="nav-user">
+    <div class="nav-avatar">AK</div>
+    <span class="nav-email">aryan@gmail.com</span>
+  </div>
+</nav>
+
+<!-- PAGE HEADER -->
+<div class="page-header">
+  <div class="page-header-inner">
+    <div>
+      <div class="page-eyebrow">✦ Your account</div>
+      <h1 class="page-title">Alert preferences</h1>
+      <p class="page-sub">Configure what Penny watches, when she alerts you, and how loud she is about it.</p>
+    </div>
+    <div class="header-status">
+      <span class="status-dot"></span>
+      PENNY IS WATCHING · 14 ROUTES ACTIVE
+    </div>
+  </div>
+</div>
+
+<!-- BODY -->
+<div class="page-body">
+
+  <!-- SIDEBAR NAV -->
+  <div class="side-nav">
+    <div class="side-nav-card">
+      <div class="side-nav-head"><span>JUMP TO</span></div>
+      <div class="side-nav-item active" onclick="scrollTo('airports')"><span class="nav-icon">🏠</span> Home airports</div>
+      <div class="side-nav-item" onclick="scrollTo('destinations')"><span class="nav-icon">🌍</span> Destinations</div>
+      <div class="side-nav-item" onclick="scrollTo('threshold')"><span class="nav-icon">⚡</span> Alert threshold</div>
+      <div class="side-nav-item" onclick="scrollTo('channels')"><span class="nav-icon">🔔</span> Channels <span class="nav-badge">1 unverified</span></div>
+      <div class="side-nav-item" onclick="scrollTo('frequency')"><span class="nav-icon">🕐</span> Frequency & quiet</div>
+      <div class="side-nav-item" onclick="scrollTo('filters')"><span class="nav-icon">🎚️</span> Deal filters</div>
+      <div class="side-nav-item" onclick="scrollTo('routes')"><span class="nav-icon">✈️</span> Custom routes</div>
+      <div class="side-nav-item" onclick="scrollTo('preview')"><span class="nav-icon">👁️</span> Alert preview</div>
+    </div>
+    <div class="penny-card">
+      <div style="font-size:36px;margin-bottom:8px">🐧</div>
+      <h4>Penny's watching 14 routes.</h4>
+      <p>Pro members get instant alerts, not 4h delayed. Unlock more airports too.</p>
+      <button class="penny-card-btn">Upgrade to Pro →</button>
+    </div>
+  </div>
+
+  <!-- MAIN CONTENT -->
+  <div class="main-col">
+
+    <!-- ── 1. HOME AIRPORTS ────────────────────────────── -->
+    <div class="section-card" id="airports">
+      <div class="section-head">
+        <div class="section-head-left">
+          <div class="section-eyebrow">✦ Section 1</div>
+          <h2>Home airports</h2>
+        </div>
+        <div style="font-family:var(--fm);font-size:11px;color:rgba(246,243,236,.5);">Penny watches departures from these cities</div>
+      </div>
+      <div class="section-body">
+        <p style="font-size:14px;color:var(--g500);margin-bottom:16px;line-height:1.6;">
+          All deals shown in your feed will depart from these airports. Add up to 2 on free plan, unlimited on Pro.
+        </p>
+        <div class="airport-chip-row" id="airport-chips">
+          <div class="airport-chip" data-code="BOM">
+            BOM · Mumbai
+            <button class="chip-remove" onclick="removeAirport(this,'BOM')" title="Remove">✕</button>
+          </div>
+          <div class="airport-chip" data-code="DEL">
+            DEL · Delhi
+            <button class="chip-remove" onclick="removeAirport(this,'DEL')" title="Remove">✕</button>
+          </div>
+          <button class="add-chip" onclick="addAirportPrompt()">+ Add airport</button>
+        </div>
+
+        <!-- Add airport inline form -->
+        <div id="add-airport-form" style="display:none;margin-top:10px;">
+          <div style="display:flex;gap:8px;flex-wrap:wrap;">
+            <input id="new-airport-input" type="text" placeholder="e.g. BLR" maxlength="3"
+              style="font-family:var(--fm);font-size:14px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;width:90px;padding:10px 12px;border:3px solid var(--ink);border-radius:10px;background:var(--paper);outline:none;box-shadow:var(--brut-sm);"
+              oninput="this.value=this.value.toUpperCase()"
+            />
+            <button onclick="confirmAddAirport()" style="font-family:var(--fd);font-weight:700;font-size:13px;padding:10px 16px;border-radius:10px;background:var(--lime);color:var(--ink);border:3px solid var(--ink);box-shadow:var(--brut-sm);cursor:pointer;">Add</button>
+            <button onclick="document.getElementById('add-airport-form').style.display='none'" style="font-family:var(--fd);font-weight:700;font-size:13px;padding:10px 14px;border-radius:10px;background:transparent;color:var(--g500);border:3px solid var(--g200);cursor:pointer;">Cancel</button>
+          </div>
+          <p style="font-family:var(--fm);font-size:10px;color:var(--g400);margin-top:6px;letter-spacing:.06em;">You're on the free plan — max 2 airports. <a href="#" style="color:var(--violet);font-weight:700;">Upgrade for unlimited →</a></p>
+        </div>
+
+        <div class="divider"></div>
+        <div class="toggle-wrap">
+          <div class="toggle-info">
+            <h3>Include nearby airports</h3>
+            <p>For BOM, also watch deals from PNQ (Pune). For DEL, include AGR (Agra) when fares are dramatically lower.</p>
+          </div>
+          <label class="toggle">
+            <input type="checkbox" id="nearby-toggle" onchange="markDirty()">
+            <div class="toggle-track"></div>
+            <div class="toggle-thumb"></div>
+          </label>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── 2. DESTINATIONS ─────────────────────────────── -->
+    <div class="section-card" id="destinations">
+      <div class="section-head">
+        <div class="section-head-left">
+          <div class="section-eyebrow">✦ Section 2</div>
+          <h2>Destinations</h2>
+        </div>
+        <div class="label-with-count">
+          <span class="count-badge" id="dest-count-badge">13 / 20</span>
+          <span style="font-family:var(--fm);font-size:11px;color:rgba(246,243,236,.5);">active</span>
+        </div>
+      </div>
+      <div class="section-body">
+        <p style="font-size:14px;color:var(--g500);margin-bottom:18px;line-height:1.6;">
+          Toggle destinations on or off. Penny only alerts you for routes you're watching.
+        </p>
+
+        <div id="dest-regions-container"></div>
+
+        <div class="dest-count-note" id="dest-count-note">
+          <strong id="dest-on-count">13</strong> destinations active · <strong>7</strong> paused
+        </div>
+      </div>
+    </div>
+
+    <!-- ── 3. ALERT THRESHOLD ──────────────────────────── -->
+    <div class="section-card" id="threshold">
+      <div class="section-head">
+        <div class="section-head-left">
+          <div class="section-eyebrow">✦ Section 3</div>
+          <h2>Alert threshold</h2>
+        </div>
+      </div>
+      <div class="section-body">
+        <p style="font-size:14px;color:var(--g500);margin-bottom:18px;line-height:1.6;">
+          Penny only pings you when a deal crosses this threshold. Higher = fewer alerts, better deals.
+        </p>
+        <div class="threshold-row">
+          <div class="thresh-card active-c" data-type="common" onclick="selectThresh(this)">
+            <div class="thresh-radio"><div class="thresh-radio-dot"></div></div>
+            <div class="thresh-pct" style="color:var(--g500)">40%</div>
+            <h3>Any deal</h3>
+            <p>All discounts 40%+ off baseline. ~3–5 alerts/week.</p>
+            <span class="thresh-tag tag-lime">COMMON</span>
+          </div>
+          <div class="thresh-card" data-type="rare" onclick="selectThresh(this)">
+            <div class="thresh-radio"><div class="thresh-radio-dot"></div></div>
+            <div class="thresh-pct" style="color:var(--coral)">60%</div>
+            <h3>Rare deals</h3>
+            <p>Exceptional drops only. ~1–2 per week.</p>
+            <span class="thresh-tag tag-coral">RARE · RECOMMENDED</span>
+          </div>
+          <div class="thresh-card" data-type="unique" onclick="selectThresh(this)">
+            <div class="thresh-radio"><div class="thresh-radio-dot"></div></div>
+            <div class="thresh-pct" style="color:var(--violet)">70%</div>
+            <h3>Mistake fares only</h3>
+            <p>Extreme drops. Act in minutes. Ultra-rare.</p>
+            <span class="thresh-tag tag-violet">UNIQUE</span>
+          </div>
+        </div>
+        <div style="padding:12px 14px;background:var(--lime-tint);border:3px solid var(--lime);border-radius:12px;font-size:13px;line-height:1.55;">
+          💡 <strong>Pro tip:</strong> Set to "Rare" and enable Telegram for the fastest response time. Penny fires Telegram before email — on mistake fares, every second matters.
+        </div>
+      </div>
+    </div>
+
+    <!-- ── 4. CHANNELS ─────────────────────────────────── -->
+    <div class="section-card" id="channels">
+      <div class="section-head">
+        <div class="section-head-left">
+          <div class="section-eyebrow">✦ Section 4</div>
+          <h2>Notification channels</h2>
+        </div>
+      </div>
+      <div class="section-body">
+
+        <!-- Email -->
+        <div class="channel-row">
+          <div class="channel-icon-wrap" style="background:var(--lime-tint);">📧</div>
+          <div class="channel-body">
+            <h3>Email</h3>
+            <p>Deal digest every time Penny finds something. Instant for Unique deals, up to 4h delay on free plan.</p>
+            <div class="channel-detail">
+              <span>aryan@gmail.com</span>
+              <span class="ch-verified">✓ Verified</span>
+            </div>
+          </div>
+          <label class="toggle">
+            <input type="checkbox" checked onchange="markDirty()">
+            <div class="toggle-track"></div>
+            <div class="toggle-thumb"></div>
+          </label>
+        </div>
+
+        <div class="divider" style="margin:0;"></div>
+
+        <!-- Push -->
+        <div class="channel-row">
+          <div class="channel-icon-wrap" style="background:var(--violet-tint);">🔔</div>
+          <div class="channel-body">
+            <h3>Browser push</h3>
+            <p>Desktop and mobile pop-ups. Best for catching mistake fares before they vanish.</p>
+            <div class="channel-detail" style="margin-top:10px;">
+              <span style="color:var(--coral);font-family:var(--fm);font-size:11px;font-weight:700;">⚠ Permission not granted yet</span>
+              <button class="ch-edit-btn" onclick="requestPush()">Enable push →</button>
+            </div>
+          </div>
+          <label class="toggle">
+            <input type="checkbox" id="push-toggle" onchange="togglePush(this)">
+            <div class="toggle-track"></div>
+            <div class="toggle-thumb"></div>
+          </label>
+        </div>
+
+        <div class="divider" style="margin:0;"></div>
+
+        <!-- Telegram -->
+        <div class="channel-row">
+          <div class="channel-icon-wrap" style="background:#e8f4fd;">✈</div>
+          <div class="channel-body">
+            <h3>Telegram</h3>
+            <p>Real-time deal cards in the FlockFare channel. Fastest channel — alerts fire the instant Penny detects a drop.</p>
+            <div class="channel-detail">
+              <input type="text" value="@aryankhanna" placeholder="@yourusername" id="tg-input" onchange="markDirty()"/>
+              <span class="ch-verified">✓ Connected</span>
+            </div>
+          </div>
+          <label class="toggle">
+            <input type="checkbox" checked onchange="markDirty()">
+            <div class="toggle-track"></div>
+            <div class="toggle-thumb"></div>
+          </label>
+        </div>
+
+        <div class="divider" style="margin:0;"></div>
+
+        <!-- WhatsApp -->
+        <div class="channel-row">
+          <div class="channel-icon-wrap" style="background:#dcfce7;">💬</div>
+          <div class="channel-body">
+            <h3>WhatsApp</h3>
+            <p>Get deal cards straight to WhatsApp. Great for sharing with travel buddies instantly.</p>
+            <div class="channel-detail">
+              <input type="tel" value="" placeholder="+91 98765 43210" id="wa-input" onchange="markDirty()"/>
+              <button class="ch-edit-btn">Connect →</button>
+            </div>
+          </div>
+          <label class="toggle">
+            <input type="checkbox" onchange="markDirty()">
+            <div class="toggle-track"></div>
+            <div class="toggle-thumb"></div>
+          </label>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ── 5. FREQUENCY & QUIET HOURS ──────────────────── -->
+    <div class="section-card" id="frequency">
+      <div class="section-head">
+        <div class="section-head-left">
+          <div class="section-eyebrow">✦ Section 5</div>
+          <h2>Frequency & quiet hours</h2>
+        </div>
+      </div>
+      <div class="section-body">
+
+        <div class="row-between">
+          <div>
+            <h3 style="font-family:var(--fd);font-weight:700;font-size:15px;margin-bottom:4px;">Alert frequency</h3>
+            <p style="font-size:13px;color:var(--g500);">How often can Penny ping you per week?</p>
+          </div>
+        </div>
+        <div class="freq-grid">
+          <button class="freq-btn" data-freq="1" onclick="setFreq(this)">1×/week</button>
+          <button class="freq-btn" data-freq="3" onclick="setFreq(this)">3×/week</button>
+          <button class="freq-btn active" data-freq="5" onclick="setFreq(this)">5×/week</button>
+          <button class="freq-btn" data-freq="daily" onclick="setFreq(this)">Daily</button>
+          <button class="freq-btn" data-freq="instant" onclick="setFreq(this)">
+            Instant <span class="pro-lock">PRO</span>
+          </button>
+        </div>
+
+        <div class="divider"></div>
+
+        <div class="row-between">
+          <div>
+            <h3 style="font-family:var(--fd);font-weight:700;font-size:15px;margin-bottom:4px;">Best time for alerts</h3>
+            <p style="font-size:13px;color:var(--g500);">When do you want Penny to send your daily digest?</p>
+          </div>
+        </div>
+        <div class="time-grid">
+          <div>
+            <div class="time-label">Timezone</div>
+            <select class="time-select" onchange="markDirty()">
+              <option selected>IST (UTC+5:30)</option>
+              <option>GMT (UTC+0)</option>
+              <option>PST (UTC-8)</option>
+              <option>EST (UTC-5)</option>
+            </select>
+          </div>
+          <div>
+            <div class="time-label">Send digest at</div>
+            <select class="time-select" onchange="markDirty()">
+              <option>7:00 AM</option>
+              <option selected>8:00 AM</option>
+              <option>9:00 AM</option>
+              <option>12:00 PM</option>
+              <option>6:00 PM</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="quiet-wrap">
+          <span style="font-size:18px">🌙</span>
+          <div class="quiet-label">Quiet hours — no alerts between</div>
+          <input type="time" class="quiet-time" value="22:00" onchange="markDirty()"/>
+          <span style="font-family:var(--fm);font-size:12px;color:var(--g600);">and</span>
+          <input type="time" class="quiet-time" value="07:00" onchange="markDirty()"/>
+          <label class="toggle" style="margin-left:auto;">
+            <input type="checkbox" checked onchange="markDirty()">
+            <div class="toggle-track"></div>
+            <div class="toggle-thumb"></div>
+          </label>
+        </div>
+
+        <div class="divider"></div>
+        <div class="toggle-wrap">
+          <div class="toggle-info">
+            <h3>Override quiet hours for mistake fares</h3>
+            <p>Mistake fares expire in hours. If Penny finds a -70% deal at 3am, wake you up anyway.</p>
+          </div>
+          <label class="toggle">
+            <input type="checkbox" checked onchange="markDirty()">
+            <div class="toggle-track"></div>
+            <div class="toggle-thumb"></div>
+          </label>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ── 6. DEAL FILTERS ─────────────────────────────── -->
+    <div class="section-card" id="filters">
+      <div class="section-head">
+        <div class="section-head-left">
+          <div class="section-eyebrow">✦ Section 6</div>
+          <h2>Deal filters</h2>
+        </div>
+      </div>
+      <div class="section-body">
+
+        <div class="row-between" style="margin-bottom:10px;">
+          <div>
+            <h3 style="font-family:var(--fd);font-weight:700;font-size:15px;margin-bottom:4px;">Cabin class</h3>
+            <p style="font-size:13px;color:var(--g500);">Only alert me for deals in these classes.</p>
+          </div>
+        </div>
+        <div class="cabin-grid">
+          <div class="cabin-pill on" onclick="toggleCabin(this)">Economy</div>
+          <div class="cabin-pill on" onclick="toggleCabin(this)">Premium Economy</div>
+          <div class="cabin-pill on" onclick="toggleCabin(this)">Business</div>
+          <div class="cabin-pill off" onclick="toggleCabin(this)">First Class</div>
+        </div>
+
+        <div class="divider"></div>
+
+        <div class="row-between" style="margin-bottom:6px;">
+          <div>
+            <h3 style="font-family:var(--fd);font-weight:700;font-size:15px;margin-bottom:4px;">Maximum stops</h3>
+            <p style="font-size:13px;color:var(--g500);">Connections allowed per leg.</p>
+          </div>
+        </div>
+        <div class="stops-row">
+          <button class="stops-btn" data-stops="0" onclick="setStops(this)">Non-stop only</button>
+          <button class="stops-btn active" data-stops="1" onclick="setStops(this)">Up to 1 stop</button>
+          <button class="stops-btn" data-stops="2" onclick="setStops(this)">Up to 2 stops</button>
+        </div>
+
+        <div class="divider"></div>
+
+        <div class="toggle-wrap">
+          <div class="toggle-info">
+            <h3>Exclude transit visa required routes</h3>
+            <p>Some routings through the US, UK, or Schengen require Indian passport holders to hold transit visas. Filter these out.</p>
+          </div>
+          <label class="toggle">
+            <input type="checkbox" checked onchange="markDirty()">
+            <div class="toggle-track"></div>
+            <div class="toggle-thumb"></div>
+          </label>
+        </div>
+
+        <div class="divider"></div>
+
+        <div class="toggle-wrap">
+          <div class="toggle-info">
+            <h3>Baggage must be included</h3>
+            <p>Only show deals where checked baggage (23kg+) is included in the fare. No hidden surprises.</p>
+          </div>
+          <label class="toggle">
+            <input type="checkbox" onchange="markDirty()">
+            <div class="toggle-track"></div>
+            <div class="toggle-thumb"></div>
+          </label>
+        </div>
+
+        <div class="divider"></div>
+
+        <div class="row-between" style="margin-bottom:6px;">
+          <div>
+            <h3 style="font-family:var(--fd);font-weight:700;font-size:15px;margin-bottom:4px;">Travel months <span class="pro-lock">PRO</span></h3>
+            <p style="font-size:13px;color:var(--g500);">Only alert for deals departing in specific months.</p>
+          </div>
+        </div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;opacity:.45;pointer-events:none;">
+          <div class="freq-btn active" style="font-size:11px;">All months</div>
+          <div class="freq-btn" style="font-size:11px;">Apr–Jun</div>
+          <div class="freq-btn" style="font-size:11px;">Jul–Sep</div>
+          <div class="freq-btn" style="font-size:11px;">Oct–Dec</div>
+          <div class="freq-btn" style="font-size:11px;">Jan–Mar</div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ── 7. CUSTOM ROUTES ────────────────────────────── -->
+    <div class="section-card" id="routes">
+      <div class="section-head">
+        <div class="section-head-left">
+          <div class="section-eyebrow">✦ Section 7</div>
+          <h2>Custom watched routes</h2>
+        </div>
+        <div style="font-family:var(--fm);font-size:11px;color:rgba(246,243,236,.5);">
+          3 / 3 on free plan · <a href="#" style="color:var(--lime);">Upgrade for unlimited</a>
+        </div>
+      </div>
+      <div class="section-body">
+        <p style="font-size:14px;color:var(--g500);margin-bottom:18px;line-height:1.6;">
+          Watch specific routes Penny doesn't cover by default. She'll alert you the moment any of these drop.
+        </p>
+
+        <div class="route-list" id="route-list">
+          <div class="route-item">
+            <div class="route-badge">BOM <span class="arr">→</span> HND</div>
+            <div class="route-meta">
+              <div class="route-meta-top">Tokyo Haneda · Any airline · Economy</div>
+              <div class="route-alerts">⚡ 2 alerts sent so far</div>
+            </div>
+            <button class="route-remove" onclick="removeRoute(this)">Remove ✕</button>
+          </div>
+          <div class="route-item">
+            <div class="route-badge">DEL <span class="arr">→</span> AMS</div>
+            <div class="route-meta">
+              <div class="route-meta-top">Amsterdam · Any airline · Economy or Business</div>
+              <div class="route-alerts">⚡ 1 alert sent so far</div>
+            </div>
+            <button class="route-remove" onclick="removeRoute(this)">Remove ✕</button>
+          </div>
+          <div class="route-item">
+            <div class="route-badge">BOM <span class="arr">→</span> GRU</div>
+            <div class="route-meta">
+              <div class="route-meta-top">São Paulo · Any airline · Economy</div>
+              <div class="route-alerts">⚡ 0 alerts yet · building baseline</div>
+            </div>
+            <button class="route-remove" onclick="removeRoute(this)">Remove ✕</button>
+          </div>
+        </div>
+
+        <div class="add-route-form" id="add-route-form" style="display:none">
+          <input class="route-input" id="route-from" type="text" placeholder="FROM" maxlength="3" oninput="this.value=this.value.toUpperCase()"/>
+          <span style="font-family:var(--fm);font-size:18px;font-weight:700;align-self:center;color:var(--violet)">→</span>
+          <input class="route-input" id="route-to" type="text" placeholder="TO" maxlength="3" oninput="this.value=this.value.toUpperCase()"/>
+          <button class="route-add-btn" onclick="confirmAddRoute()">Add route</button>
+          <button onclick="document.getElementById('add-route-form').style.display='none';document.getElementById('show-route-form-btn').style.display='';" style="font-family:var(--fd);font-weight:700;font-size:13px;padding:10px 14px;border-radius:10px;background:transparent;color:var(--g500);border:3px solid var(--g200);cursor:pointer;">Cancel</button>
+        </div>
+
+        <button id="show-route-form-btn" onclick="document.getElementById('add-route-form').style.display='flex';this.style.display='none';"
+          style="margin-top:12px;font-family:var(--fm);font-size:11px;font-weight:700;letter-spacing:.1em;color:var(--g500);background:none;border:3px dashed var(--g300);padding:10px 16px;border-radius:10px;cursor:pointer;width:100%;transition:all .12s;"
+          onmouseover="this.style.borderColor='var(--ink)';this.style.color='var(--ink)'"
+          onmouseout="this.style.borderColor='var(--g300)';this.style.color='var(--g500)'">
+          + Watch a custom route (3 / 3 used — upgrade for more)
+        </button>
+      </div>
+    </div>
+
+    <!-- ── 8. ALERT PREVIEW ────────────────────────────── -->
+    <div class="section-card" id="preview">
+      <div class="section-head">
+        <div class="section-head-left">
+          <div class="section-eyebrow">✦ Section 8</div>
+          <h2>Alert preview</h2>
+        </div>
+      </div>
+      <div class="section-body">
+        <p style="font-size:14px;color:var(--g500);margin-bottom:18px;line-height:1.6;">
+          Here's what your alerts will look like based on your current settings.
+        </p>
+        <div class="preview-box">
+          <div class="preview-tabs">
+            <div class="ptab active" onclick="switchPreview('push',this)">Push notification</div>
+            <div class="ptab" onclick="switchPreview('email',this)">Email</div>
+            <div class="ptab" onclick="switchPreview('telegram',this)">Telegram</div>
+          </div>
+
+          <!-- Push preview -->
+          <div id="prev-push">
+            <div class="preview-phone">
+              <div style="flex:1">
+                <div class="preview-notif">
+                  <div class="notif-app">FLOCKFARE · now</div>
+                  <div class="notif-title">🔥 BOM → LHR · -61% off</div>
+                  <div class="notif-body">₹21,400 round-trip (was ₹54,800). Air India · Direct. Book in the next 90 min.</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Email preview -->
+          <div id="prev-email" style="display:none;">
+            <div class="preview-email">
+              <div class="email-preview-from">From: Penny @ FlockFare &lt;penny@flockfare.com&gt;</div>
+              <div class="email-preview-subj">🔥 BOM → LHR just dropped 61%. ₹21,400 round-trip.</div>
+              <div class="email-preview-body">
+                Hey Aryan — Penny found a rare deal on one of your watched routes.<br><br>
+                <strong>Mumbai → London Heathrow</strong><br>
+                ₹21,400 round-trip · Was ₹54,800 · -61% off baseline<br>
+                Air India · Direct · Economy · 25kg baggage included<br><br>
+                This price is the lowest BOM→LHR fare in our 90-day dataset. Book before the airline notices.
+              </div>
+            </div>
+          </div>
+
+          <!-- Telegram preview -->
+          <div id="prev-telegram" style="display:none;">
+            <div class="preview-phone" style="padding:20px;">
+              <div style="background:#212b36;border-radius:16px;padding:14px 16px;max-width:320px;font-size:13px;line-height:1.6;color:#e8eaed;">
+                🔴 <strong>RARE DEAL · BOM → LHR</strong><br><br>
+                <span style="font-size:18px;font-weight:900;color:#fff">₹21,400</span> round-trip (61% off)<br>
+                <span style="text-decoration:line-through;color:#888">₹54,800</span> usual fare<br><br>
+                ✈ Air India · July 2026<br><br>
+                <span style="color:#4fc3f7">Book on Google Flights →</span><br><br>
+                <em style="color:#888">Penny found this one. Grab before it disappears.</em>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div style="margin-top:14px;padding:12px 14px;background:var(--g50);border:2px solid var(--g200);border-radius:12px;font-size:13px;color:var(--g500);line-height:1.5;">
+          Based on your current settings: <strong style="color:var(--ink)">Rare (60%+)</strong> threshold · <strong style="color:var(--ink)">Email + Telegram</strong> · Sent at <strong style="color:var(--ink)">8:00 AM IST</strong> (quiet hours 10pm–7am).
+        </div>
+      </div>
+    </div>
+
+    <!-- ── DANGER ZONE ──────────────────────────────────── -->
+    <div class="danger-zone">
+      <div class="danger-text">
+        <h4>Pause all alerts</h4>
+        <p>Going offline for a while? Pause Penny without losing your settings. Resume anytime.</p>
+      </div>
+      <button class="btn-danger" onclick="pauseAlerts()">Pause alerts</button>
+    </div>
+
+  </div><!-- /main-col -->
+</div><!-- /page-body -->
+
+<!-- SAVE BAR -->
+<div class="save-bar" id="save-bar" style="opacity:.4;pointer-events:none;transition:opacity .2s;">
+  <div class="save-bar-note" id="save-note">No unsaved changes</div>
+  <div class="save-bar-actions">
+    <button class="btn-discard" onclick="discardChanges()">Discard</button>
+    <button class="btn-save" onclick="savePrefs()">Save preferences →</button>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script>
+/* ── DESTINATION DATA ────────────────────────────────────── */
+const DESTS = [
+  {code:'BKK',city:'Bangkok',flag:'🇹🇭',region:'Southeast Asia',on:true},
+  {code:'DPS',city:'Bali',flag:'🇮🇩',region:'Southeast Asia',on:true},
+  {code:'SGN',city:'Ho Chi Minh',flag:'🇻🇳',region:'Southeast Asia',on:false},
+  {code:'SIN',city:'Singapore',flag:'🇸🇬',region:'Southeast Asia',on:true},
+  {code:'KUL',city:'Kuala Lumpur',flag:'🇲🇾',region:'Southeast Asia',on:true},
+  {code:'CMB',city:'Colombo',flag:'🇱🇰',region:'South Asia',on:false},
+  {code:'MLE',city:'Malé',flag:'🇲🇻',region:'South Asia',on:true},
+  {code:'DXB',city:'Dubai',flag:'🇦🇪',region:'Middle East',on:true},
+  {code:'IST',city:'Istanbul',flag:'🇹🇷',region:'Middle East',on:true},
+  {code:'NRT',city:'Tokyo',flag:'🇯🇵',region:'East Asia',on:true},
+  {code:'ICN',city:'Seoul',flag:'🇰🇷',region:'East Asia',on:true},
+  {code:'LHR',city:'London',flag:'🇬🇧',region:'Europe',on:true},
+  {code:'CDG',city:'Paris',flag:'🇫🇷',region:'Europe',on:true},
+  {code:'FCO',city:'Rome',flag:'🇮🇹',region:'Europe',on:false},
+  {code:'ZRH',city:'Zurich',flag:'🇨🇭',region:'Europe',on:false},
+  {code:'JFK',city:'New York',flag:'🇺🇸',region:'North America',on:false},
+  {code:'SFO',city:'San Francisco',flag:'🇺🇸',region:'North America',on:false},
+  {code:'YYZ',city:'Toronto',flag:'🇨🇦',region:'North America',on:false},
+  {code:'SYD',city:'Sydney',flag:'🇦🇺',region:'Oceania',on:true},
+  {code:'AKL',city:'Auckland',flag:'🇳🇿',region:'Oceania',on:false},
+];
+
+/* ── RENDER DESTINATIONS ─────────────────────────────────── */
+function renderDests() {
+  const regions = [...new Set(DESTS.map(d => d.region))];
+  const container = document.getElementById('dest-regions-container');
+  container.innerHTML = regions.map(region => {
+    const dests = DESTS.filter(d => d.region === region);
+    const pills = dests.map(d =>
+      `<div class="dest-pill ${d.on?'on':'off'}" data-code="${d.code}" onclick="toggleDest(this)">
+        <span class="flag">${d.flag}</span> ${d.code} · ${d.city}
+      </div>`
+    ).join('');
+    return `<div class="dest-region">
+      <div class="dest-region-label">
+        ${region}
+        <button class="region-toggle-all" onclick="toggleRegion('${region}',this)">toggle all</button>
+      </div>
+      <div class="dest-grid">${pills}</div>
+    </div>`;
+  }).join('');
+  updateDestCount();
+}
+
+function toggleDest(pill) {
+  const code = pill.dataset.code;
+  const dest = DESTS.find(d => d.code === code);
+  dest.on = !dest.on;
+  pill.classList.toggle('on', dest.on);
+  pill.classList.toggle('off', !dest.on);
+  updateDestCount();
+  markDirty();
+}
+
+function toggleRegion(region, btn) {
+  const regionDests = DESTS.filter(d => d.region === region);
+  const allOn = regionDests.every(d => d.on);
+  regionDests.forEach(d => d.on = !allOn);
+  renderDests();
+  markDirty();
+}
+
+function updateDestCount() {
+  const on = DESTS.filter(d => d.on).length;
+  const off = DESTS.length - on;
+  document.getElementById('dest-on-count').textContent = on;
+  document.getElementById('dest-count-note').innerHTML =
+    `<strong>${on}</strong> destinations active · <strong>${off}</strong> paused`;
+  document.getElementById('dest-count-badge').textContent = `${on} / ${DESTS.length}`;
+}
+
+renderDests();
+
+/* ── THRESHOLD ───────────────────────────────────────────── */
+function selectThresh(card) {
+  document.querySelectorAll('.thresh-card').forEach(c => {
+    c.classList.remove('active-c','active-r','active-u');
+  });
+  const type = card.dataset.type;
+  card.classList.add(type==='common'?'active-c':type==='rare'?'active-r':'active-u');
+  markDirty();
+}
+
+/* ── CABIN ───────────────────────────────────────────────── */
+function toggleCabin(pill) {
+  const isOn = pill.classList.contains('on');
+  const onCount = document.querySelectorAll('.cabin-pill.on').length;
+  if (isOn && onCount === 1) return;
+  pill.classList.toggle('on', !isOn);
+  pill.classList.toggle('off', isOn);
+  markDirty();
+}
+
+/* ── STOPS ───────────────────────────────────────────────── */
+function setStops(btn) {
+  document.querySelectorAll('.stops-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  markDirty();
+}
+
+/* ── FREQUENCY ───────────────────────────────────────────── */
+function setFreq(btn) {
+  const freq = btn.dataset.freq;
+  if (freq === 'instant') { showToast('⚡ Instant alerts — Pro only'); return; }
+  document.querySelectorAll('.freq-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  markDirty();
+}
+
+/* ── AIRPORTS ────────────────────────────────────────────── */
+function removeAirport(btn, code) {
+  const chips = document.querySelectorAll('[data-code]');
+  if (chips.length <= 1) { showToast('You need at least one home airport.'); return; }
+  btn.closest('.airport-chip').remove();
+  markDirty();
+}
+function addAirportPrompt() {
+  document.getElementById('add-airport-form').style.display = 'block';
+  document.getElementById('new-airport-input').focus();
+}
+function confirmAddAirport() {
+  const val = document.getElementById('new-airport-input').value.trim().toUpperCase();
+  if (val.length !== 3) { showToast('Enter a 3-letter IATA code.'); return; }
+  const chips = document.getElementById('airport-chips');
+  const existing = chips.querySelector(`[data-code="${val}"]`);
+  if (existing) { showToast(`${val} is already added.`); return; }
+  const addBtn = chips.querySelector('.add-chip');
+  const chip = document.createElement('div');
+  chip.className = 'airport-chip';
+  chip.dataset.code = val;
+  chip.innerHTML = `${val} <button class="chip-remove" onclick="removeAirport(this,'${val}')" title="Remove">✕</button>`;
+  chips.insertBefore(chip, addBtn);
+  document.getElementById('new-airport-input').value = '';
+  document.getElementById('add-airport-form').style.display = 'none';
+  markDirty();
+  showToast(`${val} added to your home airports.`);
+}
+
+/* ── ROUTES ──────────────────────────────────────────────── */
+function removeRoute(btn) {
+  btn.closest('.route-item').style.opacity = '0';
+  btn.closest('.route-item').style.transform = 'translateX(10px)';
+  btn.closest('.route-item').style.transition = 'all .2s';
+  setTimeout(() => { btn.closest('.route-item').remove(); markDirty(); }, 200);
+}
+function confirmAddRoute() {
+  const from = document.getElementById('route-from').value.trim().toUpperCase();
+  const to = document.getElementById('route-to').value.trim().toUpperCase();
+  if (from.length !== 3 || to.length !== 3) { showToast('Enter valid 3-letter IATA codes.'); return; }
+  const list = document.getElementById('route-list');
+  const item = document.createElement('div');
+  item.className = 'route-item';
+  item.style.opacity = '0';
+  item.innerHTML = `
+    <div class="route-badge">${from} <span class="arr">→</span> ${to}</div>
+    <div class="route-meta">
+      <div class="route-meta-top">Custom route · Any airline · Economy</div>
+      <div class="route-alerts">⚡ Just added · building baseline</div>
+    </div>
+    <button class="route-remove" onclick="removeRoute(this)">Remove ✕</button>`;
+  list.appendChild(item);
+  requestAnimationFrame(() => { item.style.transition='opacity .3s'; item.style.opacity='1'; });
+  document.getElementById('route-from').value = '';
+  document.getElementById('route-to').value = '';
+  document.getElementById('add-route-form').style.display = 'none';
+  document.getElementById('show-route-form-btn').style.display = '';
+  markDirty();
+  showToast(`${from} → ${to} added to watched routes.`);
+}
+
+/* ── PUSH ────────────────────────────────────────────────── */
+function requestPush() {
+  if ('Notification' in window) {
+    Notification.requestPermission().then(perm => {
+      if (perm === 'granted') {
+        showToast('✓ Push notifications enabled!');
+        document.getElementById('push-toggle').checked = true;
+        markDirty();
+      } else {
+        showToast('Push permission denied in browser settings.');
+      }
+    });
+  } else {
+    showToast('Push notifications not supported in this browser.');
+  }
+}
+function togglePush(input) {
+  if (input.checked) requestPush();
+  markDirty();
+}
+
+/* ── PREVIEW TABS ────────────────────────────────────────── */
+function switchPreview(type, btn) {
+  document.querySelectorAll('.ptab').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  ['push','email','telegram'].forEach(t => {
+    document.getElementById(`prev-${t}`).style.display = t === type ? '' : 'none';
+  });
+}
+
+/* ── SIDEBAR NAV ACTIVE ──────────────────────────────────── */
+function scrollTo(id) {
+  document.getElementById(id).scrollIntoView({behavior:'smooth', block:'start'});
+  document.querySelectorAll('.side-nav-item').forEach(i => i.classList.remove('active'));
+  event.currentTarget.classList.add('active');
+}
+
+/* ── DIRTY / SAVE ────────────────────────────────────────── */
+let isDirty = false;
+function markDirty() {
+  if (!isDirty) {
+    isDirty = true;
+    const bar = document.getElementById('save-bar');
+    bar.style.opacity = '1';
+    bar.style.pointerEvents = 'auto';
+    document.getElementById('save-note').innerHTML = '⚠ <strong style="color:var(--coral)">Unsaved changes</strong> — don\'t forget to save';
+  }
+}
+function discardChanges() {
+  isDirty = false;
+  document.getElementById('save-bar').style.opacity = '.4';
+  document.getElementById('save-bar').style.pointerEvents = 'none';
+  document.getElementById('save-note').textContent = 'No unsaved changes';
+  showToast('Changes discarded.');
+}
+function savePrefs() {
+  isDirty = false;
+  document.getElementById('save-bar').style.opacity = '.4';
+  document.getElementById('save-bar').style.pointerEvents = 'none';
+  document.getElementById('save-note').innerHTML = '<strong style="color:var(--success)">✓ All preferences saved</strong>';
+  showToast('✓ Preferences saved — Penny is updated!');
+}
+
+/* ── PAUSE ───────────────────────────────────────────────── */
+function pauseAlerts() {
+  showToast('Alerts paused. Resume anytime from preferences.');
+}
+
+/* ── TOAST ───────────────────────────────────────────────── */
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(window._toastTimer);
+  window._toastTimer = setTimeout(() => t.classList.remove('show'), 3000);
+}
+
+/* ── INTERSECT FOR SIDEBAR ───────────────────────────────── */
+const sections = ['airports','destinations','threshold','channels','frequency','filters','routes','preview'];
+const sectionMap = {airports:0,destinations:1,threshold:2,channels:3,frequency:4,filters:5,routes:6,preview:7};
+const iObs = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      const items = document.querySelectorAll('.side-nav-item');
+      items.forEach(i => i.classList.remove('active'));
+      if (items[sectionMap[e.target.id]]) items[sectionMap[e.target.id]].classList.add('active');
+    }
+  });
+}, {threshold:.3, rootMargin:'-60px 0px -60% 0px'});
+sections.forEach(id => {
+  const el = document.getElementById(id);
+  if (el) iObs.observe(el);
+});
+</script>
+</body>
+</html>

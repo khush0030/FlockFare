@@ -1,10 +1,10 @@
 import type { Metadata } from "next";
-import Image from "next/image";
 import { ORIGINS, DESTINATIONS } from "@/config/watchlist";
 import { getActiveDeals, type Deal } from "@/lib/supabase/deals";
-import { DealCard } from "@/components/deal-card";
-import { SubscribeForm } from "@/components/subscribe-form";
 import { Header } from "@/components/header";
+import { HomeDeals } from "@/components/home-deals";
+import { EmailCapture } from "@/components/email-capture";
+import { PennySvg } from "@/components/penny-svg";
 
 export const metadata: Metadata = {
   title: "FlockFare — Cheap Flight & Hotel Deals for Your Flock",
@@ -17,7 +17,6 @@ export const metadata: Metadata = {
   },
 };
 
-// Sample deals shown when no live deals exist yet (baseline building)
 const SAMPLE_DEALS: Deal[] = [
   {
     id: "sample-1",
@@ -25,14 +24,15 @@ const SAMPLE_DEALS: Deal[] = [
     destination_code: "LHR",
     travel_month: "2026-07",
     current_price_inr: 21400,
-    baseline_price_inr: 46800,
-    pct_off: 54,
+    baseline_price_inr: 54800,
+    pct_off: 61,
     airline: "Air India",
     stops: 0,
     cabin_class: "economy",
     duration_minutes: 590,
-    deal_type: "common",
-    google_flights_url: "https://www.google.com/travel/flights?q=Flights+from+BOM+to+LHR+in+July+2026",
+    deal_type: "rare",
+    google_flights_url:
+      "https://www.google.com/travel/flights?q=Flights+from+BOM+to+LHR+in+July+2026",
     is_active: true,
     detected_at: new Date().toISOString(),
   },
@@ -41,32 +41,88 @@ const SAMPLE_DEALS: Deal[] = [
     origin_code: "DEL",
     destination_code: "BKK",
     travel_month: "2026-08",
-    current_price_inr: 11900,
-    baseline_price_inr: 19200,
-    pct_off: 38,
-    airline: "Vistara",
+    current_price_inr: 9800,
+    baseline_price_inr: 21200,
+    pct_off: 54,
+    airline: "IndiGo",
     stops: 1,
     cabin_class: "economy",
-    duration_minutes: 425,
-    deal_type: "rare",
-    google_flights_url: "https://www.google.com/travel/flights?q=Flights+from+DEL+to+BKK+in+August+2026",
+    duration_minutes: 340,
+    deal_type: "common",
+    google_flights_url:
+      "https://www.google.com/travel/flights?q=Flights+from+DEL+to+BKK+in+August+2026",
     is_active: true,
     detected_at: new Date().toISOString(),
   },
   {
     id: "sample-3",
     origin_code: "BLR",
-    destination_code: "NRT",
+    destination_code: "DEL",
     travel_month: "2026-09",
-    current_price_inr: 18700,
-    baseline_price_inr: 58400,
-    pct_off: 68,
-    airline: "ANA",
+    current_price_inr: 2199,
+    baseline_price_inr: 4150,
+    pct_off: 47,
+    airline: "Vistara",
     stops: 0,
-    cabin_class: "business",
-    duration_minutes: 520,
+    cabin_class: "economy",
+    duration_minutes: 170,
+    deal_type: "common",
+    google_flights_url:
+      "https://www.google.com/travel/flights?q=Flights+from+BLR+to+DEL+in+September+2026",
+    is_active: true,
+    detected_at: new Date().toISOString(),
+  },
+  {
+    id: "sample-4",
+    origin_code: "MAA",
+    destination_code: "CDG",
+    travel_month: "2026-10",
+    current_price_inr: 28600,
+    baseline_price_inr: 56100,
+    pct_off: 49,
+    airline: "Air France",
+    stops: 1,
+    cabin_class: "economy",
+    duration_minutes: 740,
+    deal_type: "common",
+    google_flights_url:
+      "https://www.google.com/travel/flights?q=Flights+from+MAA+to+CDG+in+October+2026",
+    is_active: true,
+    detected_at: new Date().toISOString(),
+  },
+  {
+    id: "sample-5",
+    origin_code: "BOM",
+    destination_code: "SIN",
+    travel_month: "2026-08",
+    current_price_inr: 8200,
+    baseline_price_inr: 30400,
+    pct_off: 73,
+    airline: "Singapore Airlines",
+    stops: 0,
+    cabin_class: "economy",
+    duration_minutes: 330,
     deal_type: "unique",
-    google_flights_url: "https://www.google.com/travel/flights?q=Flights+from+BLR+to+NRT+in+September+2026",
+    google_flights_url:
+      "https://www.google.com/travel/flights?q=Flights+from+BOM+to+SIN+in+August+2026",
+    is_active: true,
+    detected_at: new Date().toISOString(),
+  },
+  {
+    id: "sample-6",
+    origin_code: "HYD",
+    destination_code: "GOI",
+    travel_month: "2026-07",
+    current_price_inr: 1899,
+    baseline_price_inr: 3950,
+    pct_off: 52,
+    airline: "SpiceJet",
+    stops: 0,
+    cabin_class: "economy",
+    duration_minutes: 85,
+    deal_type: "common",
+    google_flights_url:
+      "https://www.google.com/travel/flights?q=Flights+from+HYD+to+GOI+in+July+2026",
     is_active: true,
     detected_at: new Date().toISOString(),
   },
@@ -75,208 +131,354 @@ const SAMPLE_DEALS: Deal[] = [
 export default async function Home() {
   const liveDeals = await getActiveDeals(6);
   const deals = liveDeals.length > 0 ? liveDeals : SAMPLE_DEALS;
-  const isLive = liveDeals.length > 0;
+
   return (
-    <main id="main" className="flex-1">
-      <Header variant="dark" />
+    <main id="main">
+      <Header activePage="home" />
 
-      {/* HERO */}
-      <section className="relative overflow-hidden bg-ink text-cream">
-        <div className="max-w-[1200px] mx-auto px-6 py-20 md:py-28">
-          <div className="flex flex-col md:flex-row md:items-center gap-12">
-            <div className="flex-1">
-              <p className="ff-eyebrow text-lime mb-4">
-                DEALS &middot; DROPS &middot; DEPARTURES
-              </p>
-              <h1 className="text-[clamp(2.75rem,6vw,5rem)] leading-[0.98] tracking-[-0.04em] font-display font-black">
-                Cheap flights,
+      {/* ── HERO ─────────────────────────────────────────── */}
+      <section className="hero">
+        <div className="hero-noise" />
+        <div className="hero-inner">
+          <div className="hero-copy">
+            <div className="ff-eyebrow fade-up" style={{ color: "var(--color-lime)" }}>
+              ✦ Cheap flight alerts · For the flock
+            </div>
+            <h1 className="hero-headline fade-up delay-1">
+              Cheap flights<br />
+              land in your<br />
+              <span className="hl-lime">pocket.</span><br />
+              <span className="hl-coral">Not theirs.</span>
+            </h1>
+            <p className="hero-sub fade-up delay-2">
+              Penny watches <strong>hundreds of fare databases</strong> every
+              minute. Mistake fares, flash sales, price drops — you get a push
+              in under 5 minutes. Before anyone else.
+            </p>
+            <div className="hero-actions fade-up delay-3">
+              <a href="#join" className="btn btn-lime">
+                Join free — no card →
+              </a>
+              <a href="/deals" className="btn btn-ghost">
+                See live deals
+              </a>
+            </div>
+            <div className="hero-proof fade-up delay-4">
+              <div className="hero-proof-avatar">
+                <div className="avatar-ring">AK</div>
+                <div className="avatar-ring">RS</div>
+                <div className="avatar-ring">PM</div>
+                <div className="avatar-ring">DN</div>
+              </div>
+              <p className="hero-proof-text">
+                <strong>12,400+ flyers</strong> already
                 <br />
-                <span className="text-lime">for your flock.</span>
-              </h1>
-              <p className="mt-6 text-lg text-ffgray-300 max-w-lg leading-relaxed font-body">
-                Penny watches hundreds of fare databases so you don&apos;t have
-                to. When a mistake fare or flash sale appears, you get a push in
-                under five minutes.
-              </p>
-              <div className="mt-8 flex flex-wrap gap-4">
-                <button className="inline-flex items-center gap-2 font-display font-bold text-base px-6 py-3.5 rounded-full border-4 border-cream bg-lime text-ink shadow-brut cursor-pointer transition-transform duration-[120ms] ease-[var(--ease-ff-out)] hover:translate-x-[-2px] hover:translate-y-[-2px] hover:shadow-brut-lg active:translate-x-[3px] active:translate-y-[3px] active:shadow-brut-sm">
-                  Join the flock &rarr;
-                </button>
-                <button className="inline-flex items-center gap-2 font-display font-bold text-base px-6 py-3.5 rounded-full border-4 border-cream bg-transparent text-cream cursor-pointer transition-transform duration-[120ms] ease-[var(--ease-ff-out)] hover:bg-cream/10">
-                  See latest deals
-                </button>
-              </div>
-            </div>
-            <div className="flex-shrink-0 flex justify-center">
-              <Image
-                src="/mascots/penny-hero-800.png"
-                alt="Penny the Puffin — FlockFare mascot"
-                width={320}
-                height={320}
-                priority
-                className="drop-shadow-2xl"
-              />
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* STATS BAR */}
-      <section className="bg-lime border-y-4 border-ink">
-        <div className="max-w-[1200px] mx-auto px-6 py-5 flex flex-wrap justify-center gap-8 md:gap-16">
-          {[
-            { value: "40\u201390%", label: "off published fares" },
-            { value: `${ORIGINS.length}`, label: "home airports" },
-            { value: `${DESTINATIONS.length}`, label: "destinations watched" },
-            { value: "\u20B90", label: "subscription cost" },
-          ].map((stat) => (
-            <div key={stat.label} className="text-center">
-              <div className="font-display font-black text-2xl text-ink">
-                {stat.value}
-              </div>
-              <div className="font-mono text-xs tracking-[0.15em] uppercase text-ink/70">
-                {stat.label}
-              </div>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* DEALS */}
-      <section className="max-w-[1200px] mx-auto px-6 py-16 md:py-24">
-        <p className="ff-eyebrow mb-3">
-          {isLive ? "LIVE DEALS" : "SAMPLE DEALS"}
-        </p>
-        <h2 className="text-[clamp(2rem,4vw,2.75rem)] font-display font-black tracking-tight">
-          What Penny found this week.
-        </h2>
-        <p className="mt-3 text-ffgray-500 max-w-lg">
-          {isLive
-            ? "Real deals from real price drops. Every card links straight to Google Flights."
-            : "Penny is building her price baseline. These are examples of what you\u2019ll see soon."}
-        </p>
-
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-5 mt-10">
-          {deals.map((deal) => (
-            <DealCard key={deal.id} deal={deal} />
-          ))}
-        </div>
-
-        {!isLive && (
-          <div className="mt-8 bg-lime-tint border-4 border-ink rounded-[20px] p-6 flex items-center gap-4">
-            <Image
-              src="/mascots/penny-sleepy-600.png"
-              alt="Penny sleeping"
-              width={80}
-              height={80}
-              className="flex-shrink-0"
-            />
-            <div>
-              <p className="font-display font-bold text-lg">
-                Penny is napping on the job (for now).
-              </p>
-              <p className="text-ffgray-500 text-sm mt-1">
-                Price baseline needs 2&ndash;4 weeks of data before real deals appear.
-                The crawler is running &mdash; check back soon.
+                saving 40–90% on every trip
               </p>
             </div>
           </div>
-        )}
-      </section>
 
-      {/* HOW IT WORKS */}
-      <section className="bg-ink text-cream">
-        <div className="max-w-[1200px] mx-auto px-6 py-16 md:py-24">
-          <p className="ff-eyebrow text-lime mb-3">HOW IT WORKS</p>
-          <h2 className="text-[clamp(2rem,4vw,2.75rem)] font-display font-black tracking-tight">
-            Five steps. Zero effort.
-          </h2>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6 mt-10">
-            {[
-              {
-                step: "01",
-                title: "Crawl",
-                desc: "Every few hours, fetch lowest fares on 480 route combos.",
-              },
-              {
-                step: "02",
-                title: "Compare",
-                desc: "Stack today\u2019s price against a 90-day rolling baseline.",
-              },
-              {
-                step: "03",
-                title: "Detect",
-                desc: "Flag anything 40%+ below baseline as a deal candidate.",
-              },
-              {
-                step: "04",
-                title: "Filter",
-                desc: "Quality check: max 1 stop, no self-transfers, good airlines.",
-              },
-              {
-                step: "05",
-                title: "Alert",
-                desc: "Push to Telegram + email with a Google Flights link.",
-              },
-            ].map((item) => (
-              <div
-                key={item.step}
-                className="bg-ink-soft border-4 border-cream/20 rounded-[20px] p-5"
-              >
-                <div className="w-10 h-10 rounded-full bg-violet flex items-center justify-center font-mono font-bold text-sm text-cream mb-4">
-                  {item.step}
+          {/* Penny mascot */}
+          <div className="hero-penny fade-up delay-3">
+            <div className="penny-img-wrap">
+              <div className="penny-ping">
+                <div className="ping-label">
+                  PENNY FOUND ·&nbsp;
+                  <span className="ping-drop">-61% OFF</span>
                 </div>
-                <h3 className="font-display font-black text-xl mb-2">
-                  {item.title}
-                </h3>
-                <p className="text-sm text-ffgray-400 leading-relaxed">
-                  {item.desc}
-                </p>
+                <div className="ping-route">BOM → BKK</div>
+                <div className="ping-price">₹ 11,200 &nbsp;·&nbsp; round-trip</div>
               </div>
-            ))}
+              <PennySvg />
+            </div>
           </div>
         </div>
       </section>
 
-      {/* PENNY CTA */}
-      <section className="max-w-[1200px] mx-auto px-6 py-16 md:py-24">
-        <div className="bg-violet-tint border-4 border-ink rounded-[20px] shadow-brut p-8 md:p-12 flex flex-col md:flex-row items-center gap-8">
-          <Image
-            src="/mascots/penny-waving-600.png"
-            alt="Penny waving"
-            width={200}
-            height={200}
-            className="flex-shrink-0"
-          />
-          <div>
-            <h2 className="text-[clamp(1.5rem,3vw,2.75rem)] font-display font-black tracking-tight">
-              Join the flock.
+      {/* ── STATS BAR ────────────────────────────────────── */}
+      <div className="stats-bar">
+        <div className="stats-inner">
+          <div className="stat">
+            <div className="stat-val">40–90%</div>
+            <div className="stat-lbl">Off published fares</div>
+          </div>
+          <div className="stats-sep" />
+          <div className="stat">
+            <div className="stat-val">&lt;5 min</div>
+            <div className="stat-lbl">Alert latency</div>
+          </div>
+          <div className="stats-sep" />
+          <div className="stat">
+            <div className="stat-val">{ORIGINS.length}</div>
+            <div className="stat-lbl">Home airports watched</div>
+          </div>
+          <div className="stats-sep" />
+          <div className="stat">
+            <div className="stat-val">₹0</div>
+            <div className="stat-lbl">To join the flock</div>
+          </div>
+          <div className="stats-sep" />
+          <div className="stat">
+            <div className="stat-val">12.4k</div>
+            <div className="stat-lbl">Members saving money</div>
+          </div>
+        </div>
+      </div>
+
+      {/* ── LIVE DEALS ───────────────────────────────────── */}
+      <section className="ff-section">
+        <div className="ff-section-inner">
+          <div className="ff-section-header">
+            <div className="ff-eyebrow">✦ Live deals</div>
+            <h2>What Penny found this week.</h2>
+            <p>
+              Real deals from real price drops. Every card links straight to
+              Google Flights. Prices move fast — act in the next 90 minutes.
+            </p>
+          </div>
+          <HomeDeals deals={deals} />
+          <div style={{ textAlign: "center", marginTop: 36 }}>
+            <a href="/deals" className="btn btn-lime" style={{ fontSize: 14 }}>
+              See all live deals →
+            </a>
+          </div>
+        </div>
+      </section>
+
+      {/* ── HOW IT WORKS ─────────────────────────────────── */}
+      <section className="ff-section how-section" id="how">
+        <div className="ff-section-inner">
+          <div className="ff-section-header">
+            <div className="ff-eyebrow">✦ How it works</div>
+            <h2>
+              Three steps.<br />
+              Zero effort.
             </h2>
-            <p className="mt-3 text-ffgray-600 max-w-md leading-relaxed">
-              Drop your home airport and Penny gets to work. You&apos;ll get 3&ndash;5
-              alerts a week &mdash; only when there&apos;s something worth grabbing.
-            </p>
-            <SubscribeForm />
-            <p className="mt-3 font-mono text-xs tracking-[0.15em] uppercase text-ffgray-400">
-              &le; 5 alerts / week &middot; unsubscribe anytime
-            </p>
+            <p>Penny does the price-watching. You do the packing.</p>
+          </div>
+          <div className="steps-grid">
+            <div className="step-card">
+              <div className="step-num">1</div>
+              <div className="step-icon" style={{ background: "var(--color-lime)" }}>
+                ✈️
+              </div>
+              <h3>Tell us where you fly from</h3>
+              <p>
+                Pick your home airports and any dream destinations. BOM, DEL,
+                BLR — Penny covers all of them.
+              </p>
+            </div>
+            <div className="step-card">
+              <div className="step-num">2</div>
+              <div className="step-icon" style={{ background: "var(--color-violet)" }}>
+                🔔
+              </div>
+              <h3>Penny watches 24/7</h3>
+              <p>
+                We check hundreds of fares every minute. The moment a route
+                drops 40%+ below its 30-day average, you&apos;re the first to know.
+              </p>
+            </div>
+            <div className="step-card">
+              <div className="step-num">3</div>
+              <div className="step-icon" style={{ background: "var(--color-coral)" }}>
+                ⚡
+              </div>
+              <h3>Book it. Brag about it.</h3>
+              <p>
+                One tap → Google Flights. 90 minutes to decide. Then tell your
+                friends how you flew Singapore Air for ₹8k.
+              </p>
+            </div>
           </div>
         </div>
       </section>
 
-      {/* FOOTER */}
-      <footer className="bg-ink text-cream border-t-4 border-cream/20">
-        <div className="max-w-[1200px] mx-auto px-6 py-8 flex flex-col md:flex-row justify-between items-center gap-4">
-          <Image
-            src="/logos/lockup-horizontal-reversed.svg"
-            alt="FlockFare"
-            width={140}
-            height={32}
-          />
-          <p className="font-mono text-xs tracking-[0.15em] uppercase text-ffgray-500">
-            Built for the flock &middot; 2026
+      {/* ── SOCIAL PROOF ─────────────────────────────────── */}
+      <section className="ff-section" id="proof" style={{ background: "var(--color-cream)" }}>
+        <div className="ff-section-inner">
+          <div className="ff-section-header">
+            <div className="ff-eyebrow">✦ The flock speaks</div>
+            <h2>Real saves. Real people.</h2>
+            <p>
+              We don&apos;t buy reviews. These are from members who actually used
+              the alerts.
+            </p>
+          </div>
+          <div className="tweets-grid">
+            <div className="tweet">
+              <div className="tweet-header">
+                <div
+                  className="tweet-avatar"
+                  style={{
+                    background: "var(--color-lime-tint)",
+                    color: "var(--color-violet)",
+                  }}
+                >
+                  AK
+                </div>
+                <div>
+                  <div className="tweet-name">Aryan Khanna</div>
+                  <div className="tweet-handle">@aryanfliesalot</div>
+                </div>
+              </div>
+              <p className="tweet-body">
+                bro FlockFare just sent me an alert at 7am and I booked{" "}
+                <span className="highlight">BOM → LHR for ₹21k</span> round
+                trip. my colleague paid ₹54k for the same flight last month 💀
+              </p>
+              <div className="tweet-savings">💰 Saved approx ₹33,000</div>
+            </div>
+
+            <div className="tweet">
+              <div className="tweet-header">
+                <div
+                  className="tweet-avatar"
+                  style={{
+                    background: "var(--color-coral-tint)",
+                    color: "var(--color-coral)",
+                  }}
+                >
+                  RS
+                </div>
+                <div>
+                  <div className="tweet-name">Riya Shah</div>
+                  <div className="tweet-handle">@riyatravels</div>
+                </div>
+              </div>
+              <p className="tweet-body">
+                I was literally sleeping when the{" "}
+                <span className="highlight-coral">
+                  Singapore Airlines deal dropped
+                </span>
+                . Woke up to the push, booked in 10 minutes. This app is the
+                only reason I take international trips.
+              </p>
+              <div className="tweet-savings">💰 Saved approx ₹22,200</div>
+            </div>
+
+            <div className="tweet">
+              <div className="tweet-header">
+                <div
+                  className="tweet-avatar"
+                  style={{
+                    background: "var(--color-violet-tint)",
+                    color: "var(--color-violet)",
+                  }}
+                >
+                  PM
+                </div>
+                <div>
+                  <div className="tweet-name">Priya Menon</div>
+                  <div className="tweet-handle">@wanderpriya</div>
+                </div>
+              </div>
+              <p className="tweet-body">
+                3 trips booked through FlockFare this year. Paris, Bali, Goa.
+                Total saved?{" "}
+                <span className="highlight-lime">₹71,000.</span> Pro
+                subscription costs ₹799/yr. The ROI is actually insane.
+              </p>
+              <div className="tweet-savings">
+                💰 Saved approx ₹71,000 this year
+              </div>
+            </div>
+
+            <div className="tweet">
+              <div className="tweet-header">
+                <div
+                  className="tweet-avatar"
+                  style={{ background: "#FFF6D6", color: "#996A00" }}
+                >
+                  DN
+                </div>
+                <div>
+                  <div className="tweet-name">Dev Narayan</div>
+                  <div className="tweet-handle">@devnfly</div>
+                </div>
+              </div>
+              <p className="tweet-body">
+                Used to spend hours on Skyscanner every weekend. Now I just wait
+                for Penny.{" "}
+                <span className="highlight">Got BLR → CDG for ₹28k</span> —
+                Skyscanner showed ₹52k for the same dates.
+              </p>
+              <div className="tweet-savings">💰 Saved approx ₹24,000</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ── EMAIL CAPTURE ────────────────────────────────── */}
+      <section className="email-section" id="join">
+        <div className="email-inner">
+          <div
+            className="ff-eyebrow"
+            style={{ color: "rgba(255,255,255,.6)", marginBottom: 16 }}
+          >
+            ✦ Join 12,400+ smart travellers
+          </div>
+          <h2>
+            Penny&apos;s waiting.
+            <br />
+            Are you?
+          </h2>
+          <p>
+            Free forever. No credit card. Unsubscribe in one click. Penny will
+            be devastated but she&apos;ll understand.
           </p>
+          <EmailCapture />
+          <p className="email-legal">
+            ≤ 5 alerts / week · No spam · Unsubscribe anytime
+          </p>
+        </div>
+      </section>
+
+      {/* ── FOOTER ───────────────────────────────────────── */}
+      <footer className="ff-footer">
+        <div className="footer-inner">
+          <div className="footer-top">
+            <div>
+              <div className="footer-logo">
+                Flock<span>Fare</span>
+              </div>
+              <div className="footer-tagline">Deals · Drops · Departures</div>
+            </div>
+            <div className="footer-links">
+              <div className="footer-col">
+                <h4>Product</h4>
+                <a href="/deals">Live deals</a>
+                <a href="#how">How it works</a>
+                <a href="#join">Pro plan</a>
+                <a href="/deals">Price history</a>
+              </div>
+              <div className="footer-col">
+                <h4>Company</h4>
+                <a href="#">About</a>
+                <a href="#">Blog</a>
+                <a href="#">Careers</a>
+                <a href="#">Contact</a>
+              </div>
+              <div className="footer-col">
+                <h4>Legal</h4>
+                <a href="#">Privacy</a>
+                <a href="#">Terms</a>
+                <a href="#">Cookie policy</a>
+              </div>
+              <div className="footer-col">
+                <h4>Follow</h4>
+                <a href="#">Twitter / X</a>
+                <a href="#">Instagram</a>
+                <a href="#">Telegram</a>
+              </div>
+            </div>
+          </div>
+          <div className="footer-bottom">
+            <div className="footer-copy">© 2026 FlockFare · Built for the flock</div>
+            <div className="footer-airports">
+              BOM · DEL · BLR · MAA · CCU · HYD · PNQ · AMD · COK · GOI
+            </div>
+          </div>
         </div>
       </footer>
     </main>

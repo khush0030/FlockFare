@@ -44,7 +44,7 @@ export default async function DestinationPage({
 
   return (
     <main id="main" className="flex-1">
-      <Header variant="dark" />
+      <Header />
 
       <section className="max-w-[1200px] mx-auto px-6 py-12">
         {/* Breadcrumb */}

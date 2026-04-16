@@ -3,6 +3,7 @@
 import os
 import json
 import logging
+from html import escape as html_escape
 from urllib.request import Request, urlopen
 from urllib.error import URLError
 
@@ -52,14 +53,14 @@ def send_telegram_deal(deal: dict) -> bool:
         "unique": "MISTAKE FARE",
     }.get(deal.get("deal_type", "common"), "DEAL")
 
-    origin = deal["origin_code"]
-    dest = deal["destination_code"]
+    origin = html_escape(deal["origin_code"])
+    dest = html_escape(deal["destination_code"])
     price = f"₹{deal['current_price_inr']:,.0f}"
     baseline = f"₹{deal['baseline_price_inr']:,.0f}"
     pct = deal["pct_off"]
-    airline = deal.get("airline") or "Multiple airlines"
-    month = deal.get("travel_month", "")
-    gf_url = deal.get("google_flights_url", "")
+    airline = html_escape(deal.get("airline") or "Multiple airlines")
+    month = html_escape(deal.get("travel_month", ""))
+    gf_url = html_escape(deal.get("google_flights_url", ""), quote=True)
 
     text = (
         f"{type_emoji} <b>{type_label} · {origin} → {dest}</b>\n"
@@ -108,14 +109,14 @@ def send_email_deal(deal: dict, to_emails: list[str]) -> bool:
     if not to_emails:
         return False
 
-    origin = deal["origin_code"]
-    dest = deal["destination_code"]
+    origin = html_escape(deal["origin_code"])
+    dest = html_escape(deal["destination_code"])
     price = f"₹{deal['current_price_inr']:,.0f}"
     baseline = f"₹{deal['baseline_price_inr']:,.0f}"
     pct = deal["pct_off"]
-    airline = deal.get("airline") or "Multiple airlines"
-    month = deal.get("travel_month", "")
-    gf_url = deal.get("google_flights_url", "")
+    airline = html_escape(deal.get("airline") or "Multiple airlines")
+    month = html_escape(deal.get("travel_month", ""))
+    gf_url = html_escape(deal.get("google_flights_url", ""), quote=True)
     deal_type = deal.get("deal_type", "common")
 
     type_label = {

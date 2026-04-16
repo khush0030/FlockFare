@@ -1,0 +1,1554 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>FlockFare — Join the flock</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,700;12..96,900&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,700&family=JetBrains+Mono:wght@400;700;800&display=swap" rel="stylesheet"/>
+<style>
+/* ── TOKENS ─────────────────────────────────────────── */
+:root {
+  --ink:#0B0B0F; --ink-soft:#1A1A22; --cream:#F6F3EC; --paper:#FFFFFF;
+  --violet:#6D28FF; --violet-deep:#2A1470; --violet-tint:#EFE6FF;
+  --lime:#D8FF3C; --lime-tint:#F3FFC7;
+  --coral:#FF4E64; --coral-tint:#FFE5ED;
+  --sun:#FFD166; --sun-tint:#FFF6D6;
+  --success:#00B775;
+  --g100:#F1F1EC; --g200:#E2E2DD; --g300:#C9C9C4;
+  --g400:#9C9C98; --g500:#6A6A67; --g600:#4A4A48;
+  --ease:cubic-bezier(.2,.8,.2,1);
+  --ease-spring:cubic-bezier(.34,1.4,.64,1);
+  --brut:6px 6px 0 var(--ink);
+  --brut-sm:3px 3px 0 var(--ink);
+  --brut-lg:10px 10px 0 var(--ink);
+  --fd:'Bricolage Grotesque',sans-serif;
+  --fb:'DM Sans',sans-serif;
+  --fm:'JetBrains Mono',monospace;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html,body{height:100%;}
+body{
+  font-family:var(--fb);
+  background:var(--ink);
+  color:var(--ink);
+  -webkit-font-smoothing:antialiased;
+  overflow-x:hidden;
+  min-height:100vh;
+  display:flex;
+  flex-direction:column;
+}
+button{cursor:pointer;font-family:inherit;border:none;background:none;}
+input{font-family:inherit;}
+
+/* ── LAYOUT SHELL ───────────────────────────────────── */
+.shell {
+  display:flex;
+  min-height:100vh;
+}
+
+/* ── LEFT PANEL (branding) ──────────────────────────── */
+.left-panel {
+  width:400px;
+  flex-shrink:0;
+  background:var(--ink);
+  padding:40px;
+  display:flex;
+  flex-direction:column;
+  justify-content:space-between;
+  position:relative;
+  overflow:hidden;
+}
+.left-panel::before {
+  content:'';
+  position:absolute;
+  bottom:-120px; left:-80px;
+  width:380px; height:380px;
+  background:var(--violet);
+  opacity:.15;
+  border-radius:50%;
+}
+.left-panel::after {
+  content:'';
+  position:absolute;
+  top:-60px; right:-60px;
+  width:200px; height:200px;
+  background:var(--lime);
+  opacity:.08;
+  border-radius:50%;
+}
+.logo {
+  font-family:var(--fd);
+  font-weight:900;
+  font-size:24px;
+  color:var(--cream);
+  letter-spacing:-.03em;
+  position:relative;
+  z-index:2;
+}
+.logo span{color:var(--lime);}
+
+.left-content {
+  position:relative;
+  z-index:2;
+}
+.left-penny {
+  margin-bottom:28px;
+  /* SVG Penny inline */
+}
+.left-headline {
+  font-family:var(--fd);
+  font-weight:900;
+  font-size:clamp(2rem,3vw,2.6rem);
+  line-height:1.02;
+  letter-spacing:-.035em;
+  color:var(--cream);
+  margin-bottom:16px;
+}
+.left-headline .hl { color:var(--lime); }
+.left-sub {
+  font-size:14px;
+  color:rgba(246,243,236,.5);
+  line-height:1.65;
+  margin-bottom:28px;
+}
+.left-stats {
+  display:flex;
+  flex-direction:column;
+  gap:12px;
+}
+.left-stat {
+  display:flex;
+  align-items:center;
+  gap:12px;
+}
+.left-stat-dot {
+  width:8px; height:8px;
+  border-radius:50%;
+  flex-shrink:0;
+}
+.left-stat p {
+  font-family:var(--fm);
+  font-size:11px;
+  letter-spacing:.06em;
+  color:rgba(246,243,236,.5);
+}
+.left-stat p strong { color:var(--cream); font-weight:700; }
+
+.left-footer {
+  position:relative; z-index:2;
+  font-family:var(--fm);
+  font-size:10px;
+  letter-spacing:.1em;
+  color:rgba(246,243,236,.25);
+}
+
+/* ── RIGHT PANEL (form) ─────────────────────────────── */
+.right-panel {
+  flex:1;
+  background:var(--cream);
+  display:flex;
+  flex-direction:column;
+  overflow:hidden;
+}
+
+/* progress bar */
+.progress-bar-wrap {
+  background:var(--g200);
+  height:6px;
+  position:relative;
+}
+.progress-bar-fill {
+  height:100%;
+  background:var(--lime);
+  border-right:3px solid var(--ink);
+  transition:width .5s var(--ease);
+}
+
+/* step header */
+.step-header {
+  background:var(--paper);
+  border-bottom:3px solid var(--ink);
+  padding:20px 48px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+}
+.step-chips {
+  display:flex;
+  gap:6px;
+  align-items:center;
+}
+.step-chip {
+  display:flex;
+  align-items:center;
+  gap:6px;
+  font-family:var(--fm);
+  font-size:10px;
+  font-weight:700;
+  letter-spacing:.12em;
+  padding:5px 12px;
+  border-radius:999px;
+  border:2px solid var(--g200);
+  color:var(--g400);
+  white-space:nowrap;
+  transition:all .2s var(--ease);
+}
+.step-chip.done {
+  border-color:var(--lime);
+  background:var(--lime-tint);
+  color:var(--ink);
+}
+.step-chip.active {
+  border-color:var(--ink);
+  background:var(--ink);
+  color:var(--lime);
+}
+.step-chip .chip-num {
+  width:16px; height:16px;
+  border-radius:50%;
+  background:currentColor;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:9px;
+  flex-shrink:0;
+}
+.step-chip.active .chip-num { background:var(--lime); color:var(--ink); }
+.step-chip.done .chip-num { background:var(--success); color:#fff; }
+.step-chip-sep { color:var(--g300); font-size:12px; }
+.skip-link {
+  font-family:var(--fm);
+  font-size:11px;
+  color:var(--g500);
+  letter-spacing:.08em;
+  cursor:pointer;
+  transition:color .12s;
+}
+.skip-link:hover { color:var(--ink); }
+
+/* step content area */
+.step-content {
+  flex:1;
+  display:flex;
+  align-items:flex-start;
+  justify-content:center;
+  padding:48px;
+  overflow-y:auto;
+}
+.step-inner {
+  width:100%;
+  max-width:560px;
+}
+
+/* step transitions */
+.step-panel {
+  display:none;
+  animation:step-in .35s var(--ease-spring) both;
+}
+.step-panel.active {
+  display:block;
+}
+@keyframes step-in {
+  from { opacity:0; transform:translateX(24px); }
+  to   { opacity:1; transform:translateX(0); }
+}
+@keyframes step-out {
+  from { opacity:1; transform:translateX(0); }
+  to   { opacity:0; transform:translateX(-24px); }
+}
+
+/* step title */
+.step-eyebrow {
+  font-family:var(--fm);
+  font-size:10px;
+  font-weight:700;
+  letter-spacing:.18em;
+  text-transform:uppercase;
+  color:var(--violet);
+  margin-bottom:10px;
+}
+.step-title {
+  font-family:var(--fd);
+  font-weight:900;
+  font-size:clamp(1.8rem,3vw,2.4rem);
+  letter-spacing:-.035em;
+  line-height:1.04;
+  margin-bottom:8px;
+}
+.step-subtitle {
+  font-size:15px;
+  color:var(--g500);
+  line-height:1.6;
+  margin-bottom:32px;
+}
+
+/* ── STEP 0: EMAIL ──────────────────────────────────── */
+.email-input-wrap {
+  position:relative;
+  margin-bottom:14px;
+}
+.email-label {
+  display:block;
+  font-family:var(--fm);
+  font-size:10px;
+  font-weight:700;
+  letter-spacing:.14em;
+  text-transform:uppercase;
+  color:var(--g600);
+  margin-bottom:8px;
+}
+.email-input {
+  width:100%;
+  font-size:17px;
+  font-family:var(--fb);
+  padding:16px 20px;
+  border:4px solid var(--ink);
+  border-radius:14px;
+  background:var(--paper);
+  color:var(--ink);
+  outline:none;
+  box-shadow:var(--brut);
+  transition:box-shadow .12s, border-color .12s;
+}
+.email-input:focus {
+  border-color:var(--violet);
+  box-shadow:6px 6px 0 var(--violet);
+}
+.email-input::placeholder { color:var(--g300); }
+.or-divider {
+  display:flex;
+  align-items:center;
+  gap:14px;
+  margin:20px 0;
+}
+.or-divider::before,.or-divider::after {
+  content:'';flex:1;height:2px;background:var(--g200);
+}
+.or-divider span {
+  font-family:var(--fm);
+  font-size:10px;
+  letter-spacing:.14em;
+  color:var(--g400);
+}
+.google-btn {
+  width:100%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:10px;
+  font-family:var(--fd);
+  font-weight:700;
+  font-size:15px;
+  padding:15px;
+  border-radius:14px;
+  border:4px solid var(--ink);
+  background:var(--paper);
+  color:var(--ink);
+  box-shadow:var(--brut);
+  transition:transform .12s, box-shadow .12s;
+}
+.google-btn:hover { transform:translate(-2px,-2px); box-shadow:var(--brut-lg); }
+.google-icon {
+  width:20px; height:20px;
+  background:linear-gradient(135deg,#4285F4,#34A853,#FBBC05,#EA4335);
+  border-radius:50%;
+  flex-shrink:0;
+}
+.email-legal {
+  margin-top:16px;
+  font-family:var(--fm);
+  font-size:10px;
+  color:var(--g400);
+  letter-spacing:.06em;
+  line-height:1.6;
+}
+
+/* ── STEP 1: HOME AIRPORTS ──────────────────────────── */
+.airport-grid {
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:12px;
+  margin-bottom:14px;
+}
+.airport-tile {
+  position:relative;
+  border:4px solid var(--ink);
+  border-radius:16px;
+  padding:20px 18px;
+  background:var(--paper);
+  cursor:pointer;
+  box-shadow:var(--brut);
+  transition:transform .12s var(--ease), box-shadow .12s var(--ease), background .12s;
+  user-select:none;
+}
+.airport-tile:hover {
+  transform:translate(-2px,-2px);
+  box-shadow:var(--brut-lg);
+}
+.airport-tile.selected {
+  background:var(--lime);
+  transform:translate(-2px,-2px);
+  box-shadow:var(--brut-lg);
+}
+.airport-tile .check {
+  position:absolute;
+  top:12px; right:12px;
+  width:22px; height:22px;
+  border-radius:50%;
+  border:3px solid var(--g300);
+  background:var(--paper);
+  display:flex; align-items:center; justify-content:center;
+  font-size:11px;
+  transition:all .15s var(--ease-spring);
+  flex-shrink:0;
+}
+.airport-tile.selected .check {
+  background:var(--ink);
+  border-color:var(--ink);
+  color:var(--lime);
+}
+.airport-code-lg {
+  font-family:var(--fd);
+  font-weight:900;
+  font-size:32px;
+  letter-spacing:-.04em;
+  line-height:1;
+}
+.airport-city-sm {
+  font-family:var(--fm);
+  font-size:11px;
+  letter-spacing:.1em;
+  color:var(--g500);
+  margin-top:4px;
+  text-transform:uppercase;
+}
+.airport-tile.selected .airport-city-sm { color:var(--g600); }
+.airport-tag {
+  display:inline-block;
+  margin-top:10px;
+  font-family:var(--fm);
+  font-size:9px;
+  font-weight:700;
+  letter-spacing:.12em;
+  padding:3px 8px;
+  border-radius:999px;
+  background:var(--g100);
+  color:var(--g500);
+  text-transform:uppercase;
+}
+.airport-tile.selected .airport-tag {
+  background:rgba(11,11,15,.1);
+  color:var(--g600);
+}
+.airport-note {
+  font-family:var(--fm);
+  font-size:11px;
+  color:var(--g500);
+  letter-spacing:.06em;
+  margin-top:6px;
+}
+
+/* ── STEP 2: DESTINATIONS ───────────────────────────── */
+.region-tabs {
+  display:flex;
+  gap:6px;
+  flex-wrap:wrap;
+  margin-bottom:20px;
+}
+.rtab {
+  font-family:var(--fm);
+  font-size:10px;
+  font-weight:700;
+  letter-spacing:.1em;
+  padding:6px 14px;
+  border-radius:999px;
+  border:2.5px solid var(--ink);
+  background:var(--paper);
+  cursor:pointer;
+  transition:all .1s;
+  box-shadow:var(--brut-sm);
+}
+.rtab:hover { background:var(--cream); }
+.rtab.active { background:var(--ink); color:var(--lime); }
+
+.dest-grid {
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(120px,1fr));
+  gap:10px;
+  margin-bottom:16px;
+}
+.dest-tile {
+  border:3px solid var(--ink);
+  border-radius:14px;
+  padding:14px 12px;
+  background:var(--paper);
+  cursor:pointer;
+  box-shadow:var(--brut-sm);
+  transition:transform .1s var(--ease), box-shadow .1s, background .1s;
+  text-align:center;
+  user-select:none;
+  position:relative;
+}
+.dest-tile:hover { transform:translate(-1px,-1px); box-shadow:var(--brut); }
+.dest-tile.selected { background:var(--violet); transform:translate(-2px,-2px); box-shadow:var(--brut); }
+.dest-tile.selected .dest-code { color:#fff; }
+.dest-tile.selected .dest-city { color:rgba(255,255,255,.7); }
+.dest-check {
+  position:absolute;
+  top:6px; right:6px;
+  width:16px; height:16px;
+  border-radius:50%;
+  border:2px solid var(--g300);
+  background:var(--paper);
+  font-size:8px;
+  display:flex; align-items:center; justify-content:center;
+  transition:all .15s var(--ease-spring);
+}
+.dest-tile.selected .dest-check {
+  background:var(--lime);
+  border-color:var(--lime);
+  color:var(--ink);
+}
+.dest-flag { font-size:22px; margin-bottom:6px; }
+.dest-code {
+  font-family:var(--fd);
+  font-weight:900;
+  font-size:15px;
+  letter-spacing:-.02em;
+}
+.dest-city {
+  font-family:var(--fm);
+  font-size:9px;
+  letter-spacing:.08em;
+  color:var(--g500);
+  margin-top:2px;
+  text-transform:uppercase;
+}
+.dest-selection-note {
+  font-family:var(--fm);
+  font-size:11px;
+  color:var(--g500);
+  letter-spacing:.06em;
+}
+.dest-selection-note strong { color:var(--ink); font-weight:700; }
+.select-all-btn {
+  font-family:var(--fm);
+  font-size:10px;
+  font-weight:700;
+  letter-spacing:.1em;
+  color:var(--violet);
+  cursor:pointer;
+  text-decoration:underline;
+  text-underline-offset:3px;
+  background:none;
+  border:none;
+  margin-left:8px;
+}
+
+/* ── STEP 3: ALERT THRESHOLD ────────────────────────── */
+.threshold-cards {
+  display:flex;
+  flex-direction:column;
+  gap:12px;
+  margin-bottom:20px;
+}
+.threshold-card {
+  position:relative;
+  border:4px solid var(--ink);
+  border-radius:16px;
+  padding:20px 20px;
+  background:var(--paper);
+  cursor:pointer;
+  box-shadow:var(--brut);
+  transition:transform .12s var(--ease), box-shadow .12s var(--ease), background .12s;
+  display:flex;
+  align-items:flex-start;
+  gap:16px;
+  user-select:none;
+}
+.threshold-card:hover { transform:translate(-2px,-2px); box-shadow:var(--brut-lg); }
+.threshold-card.selected {
+  transform:translate(-2px,-2px);
+  box-shadow:var(--brut-lg);
+}
+.threshold-card.sel-common.selected { background:var(--lime-tint); border-color:var(--ink); }
+.threshold-card.sel-rare.selected   { background:var(--coral-tint); }
+.threshold-card.sel-unique.selected { background:var(--violet); }
+.threshold-card.sel-unique.selected h3,
+.threshold-card.sel-unique.selected p { color:#fff; }
+.threshold-card.sel-unique.selected .threshold-tag { background:rgba(255,255,255,.15); color:#fff; }
+
+.threshold-radio {
+  width:22px; height:22px;
+  border-radius:50%;
+  border:3px solid var(--g300);
+  flex-shrink:0;
+  margin-top:2px;
+  display:flex; align-items:center; justify-content:center;
+  transition:all .15s var(--ease-spring);
+}
+.threshold-card.selected .threshold-radio {
+  border-color:var(--ink);
+  background:var(--ink);
+}
+.threshold-card.selected .threshold-radio::after {
+  content:'';
+  width:8px; height:8px;
+  border-radius:50%;
+  background:var(--lime);
+}
+.threshold-card.sel-unique.selected .threshold-radio { border-color:#fff; background:#fff; }
+.threshold-card.sel-unique.selected .threshold-radio::after { background:var(--violet); }
+
+.threshold-body { flex:1; }
+.threshold-body h3 {
+  font-family:var(--fd);
+  font-weight:900;
+  font-size:17px;
+  letter-spacing:-.02em;
+  margin-bottom:4px;
+}
+.threshold-body p { font-size:13px; color:var(--g500); line-height:1.5; }
+.threshold-tag {
+  display:inline-block;
+  margin-top:8px;
+  font-family:var(--fm);
+  font-size:9px;
+  font-weight:700;
+  letter-spacing:.12em;
+  padding:4px 10px;
+  border-radius:999px;
+  text-transform:uppercase;
+}
+.tag-lime   { background:var(--lime); color:var(--ink); }
+.tag-coral  { background:var(--coral-tint); color:var(--coral); }
+.tag-violet { background:var(--violet-tint); color:var(--violet); }
+.threshold-pct {
+  font-family:var(--fd);
+  font-weight:900;
+  font-size:28px;
+  letter-spacing:-.03em;
+  flex-shrink:0;
+  margin-top:2px;
+}
+
+/* ── STEP 4: CHANNELS ───────────────────────────────── */
+.channel-grid {
+  display:flex;
+  flex-direction:column;
+  gap:12px;
+  margin-bottom:20px;
+}
+.channel-card {
+  border:4px solid var(--ink);
+  border-radius:16px;
+  padding:18px 20px;
+  background:var(--paper);
+  box-shadow:var(--brut);
+  display:flex;
+  align-items:center;
+  gap:16px;
+  cursor:pointer;
+  transition:transform .12s var(--ease), box-shadow .12s, background .12s;
+  user-select:none;
+}
+.channel-card:hover { transform:translate(-1px,-1px); box-shadow:var(--brut-lg); }
+.channel-card.selected { background:var(--lime-tint); transform:translate(-2px,-2px); box-shadow:var(--brut-lg); }
+.channel-icon {
+  width:48px; height:48px;
+  border-radius:14px;
+  border:3px solid var(--ink);
+  display:flex; align-items:center; justify-content:center;
+  font-size:24px;
+  flex-shrink:0;
+}
+.channel-body { flex:1; }
+.channel-body h3 {
+  font-family:var(--fd);
+  font-weight:700;
+  font-size:15px;
+  margin-bottom:2px;
+}
+.channel-body p { font-size:13px; color:var(--g500); line-height:1.4; }
+.channel-input-wrap {
+  margin-top:10px;
+  display:none;
+}
+.channel-card.selected .channel-input-wrap { display:block; }
+.channel-input {
+  width:100%;
+  font-size:14px;
+  padding:10px 14px;
+  border:3px solid var(--ink);
+  border-radius:10px;
+  background:var(--paper);
+  outline:none;
+  box-shadow:var(--brut-sm);
+  transition:box-shadow .12s;
+}
+.channel-input:focus { box-shadow:var(--brut); }
+.channel-toggle {
+  width:22px; height:22px;
+  border-radius:50%;
+  border:3px solid var(--g300);
+  flex-shrink:0;
+  display:flex; align-items:center; justify-content:center;
+  transition:all .15s var(--ease-spring);
+  font-size:11px;
+}
+.channel-card.selected .channel-toggle {
+  background:var(--success);
+  border-color:var(--success);
+  color:#fff;
+}
+.freq-note {
+  display:flex;
+  align-items:center;
+  gap:10px;
+  padding:14px 16px;
+  background:var(--sun-tint);
+  border:3px solid var(--sun);
+  border-radius:12px;
+  font-size:13px;
+  line-height:1.5;
+}
+
+/* ── STEP 5: ALL DONE ───────────────────────────────── */
+.done-panel {
+  text-align:center;
+  padding:20px 0;
+}
+.done-penny {
+  margin:0 auto 24px;
+  position:relative;
+  width:160px;
+  animation:penny-pop .6s var(--ease-spring) both;
+}
+@keyframes penny-pop {
+  from { opacity:0; transform:scale(.6) translateY(20px); }
+  to   { opacity:1; transform:scale(1) translateY(0); }
+}
+.done-title {
+  font-family:var(--fd);
+  font-weight:900;
+  font-size:clamp(2rem,4vw,2.8rem);
+  letter-spacing:-.035em;
+  line-height:1.04;
+  margin-bottom:12px;
+}
+.done-sub {
+  font-size:15px;
+  color:var(--g500);
+  line-height:1.65;
+  margin-bottom:32px;
+  max-width:400px;
+  margin-left:auto;
+  margin-right:auto;
+}
+.done-summary {
+  background:var(--paper);
+  border:4px solid var(--ink);
+  border-radius:20px;
+  box-shadow:var(--brut);
+  padding:24px;
+  text-align:left;
+  margin-bottom:24px;
+}
+.done-summary-row {
+  display:flex;
+  align-items:flex-start;
+  gap:12px;
+  padding:10px 0;
+  border-bottom:2px solid var(--g100);
+}
+.done-summary-row:last-child { border-bottom:none; }
+.done-summary-key {
+  font-family:var(--fm);
+  font-size:10px;
+  letter-spacing:.12em;
+  text-transform:uppercase;
+  color:var(--g500);
+  min-width:100px;
+  padding-top:2px;
+}
+.done-summary-val {
+  font-family:var(--fd);
+  font-weight:700;
+  font-size:14px;
+  flex:1;
+}
+.done-chips {
+  display:flex;
+  flex-wrap:wrap;
+  gap:6px;
+}
+.done-chip {
+  font-family:var(--fm);
+  font-size:11px;
+  font-weight:700;
+  letter-spacing:.08em;
+  padding:4px 12px;
+  border-radius:999px;
+  border:2px solid var(--ink);
+  background:var(--cream);
+}
+.done-chip.lime { background:var(--lime); }
+.done-chip.violet { background:var(--violet); color:#fff; border-color:var(--violet); }
+
+/* confetti particles */
+.confetti-wrap {
+  position:fixed; inset:0;
+  pointer-events:none;
+  z-index:999;
+  overflow:hidden;
+}
+.confetti-piece {
+  position:absolute;
+  top:-20px;
+  width:10px; height:10px;
+  border-radius:2px;
+  animation:confetti-fall linear forwards;
+}
+@keyframes confetti-fall {
+  0%   { transform:translateY(0) rotate(0deg); opacity:1; }
+  100% { transform:translateY(110vh) rotate(720deg); opacity:0; }
+}
+
+/* ── CTA BUTTONS ────────────────────────────────────── */
+.cta-row {
+  display:flex;
+  gap:10px;
+  align-items:center;
+  margin-top:8px;
+}
+.btn-primary {
+  flex:1;
+  font-family:var(--fd);
+  font-weight:900;
+  font-size:16px;
+  padding:15px 28px;
+  border-radius:999px;
+  background:var(--lime);
+  color:var(--ink);
+  border:4px solid var(--ink);
+  box-shadow:var(--brut);
+  transition:transform .12s var(--ease), box-shadow .12s;
+}
+.btn-primary:hover { transform:translate(-2px,-2px); box-shadow:var(--brut-lg); }
+.btn-primary:active { transform:translate(2px,2px); box-shadow:var(--brut-sm); }
+.btn-primary:disabled { opacity:.4; cursor:not-allowed; transform:none; box-shadow:var(--brut); }
+.btn-back {
+  font-family:var(--fd);
+  font-weight:700;
+  font-size:14px;
+  padding:13px 20px;
+  border-radius:999px;
+  background:transparent;
+  color:var(--g500);
+  border:3px solid var(--g200);
+  transition:all .12s;
+}
+.btn-back:hover { border-color:var(--ink); color:var(--ink); }
+.btn-done {
+  width:100%;
+  font-family:var(--fd);
+  font-weight:900;
+  font-size:18px;
+  padding:18px;
+  border-radius:999px;
+  background:var(--ink);
+  color:var(--lime);
+  border:4px solid var(--ink);
+  box-shadow:var(--brut);
+  transition:transform .12s var(--ease), box-shadow .12s;
+  margin-bottom:12px;
+}
+.btn-done:hover { transform:translate(-2px,-2px); box-shadow:var(--brut-lg); }
+
+/* ── VALIDATION ─────────────────────────────────────── */
+.field-error {
+  font-family:var(--fm);
+  font-size:11px;
+  color:var(--coral);
+  font-weight:700;
+  letter-spacing:.06em;
+  margin-top:6px;
+  display:none;
+}
+.field-error.show { display:block; }
+
+/* ── MOBILE ─────────────────────────────────────────── */
+@media(max-width:800px) {
+  .left-panel { display:none; }
+  .step-content { padding:24px 20px; }
+  .step-header { padding:16px 20px; }
+  .airport-grid { grid-template-columns:1fr 1fr; }
+}
+</style>
+</head>
+<body>
+
+<div class="shell">
+
+  <!-- ── LEFT PANEL ──────────────────────────────────── -->
+  <div class="left-panel">
+    <div class="logo">Flock<span>Fare</span></div>
+
+    <div class="left-content">
+      <!-- Penny SVG -->
+      <div class="left-penny">
+        <svg viewBox="0 0 200 220" width="140" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <radialGradient id="b" cx="50%" cy="40%" r="55%"><stop offset="0%" stop-color="#26253A"/><stop offset="100%" stop-color="#0E0E18"/></radialGradient>
+            <radialGradient id="w" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="#fff"/><stop offset="100%" stop-color="#EFE9D8"/></radialGradient>
+            <radialGradient id="bk" cx="50%" cy="30%" r="60%"><stop offset="0%" stop-color="#FFD166"/><stop offset="50%" stop-color="#FF8A3D"/><stop offset="100%" stop-color="#FF4E64"/></radialGradient>
+            <radialGradient id="ch" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="#FF9AB0"/><stop offset="100%" stop-color="#FF6B8A" stop-opacity="0"/></radialGradient>
+          </defs>
+          <ellipse cx="100" cy="214" rx="55" ry="7" fill="rgba(0,0,0,.2)"/>
+          <ellipse cx="100" cy="145" rx="65" ry="72" fill="url(#b)" stroke="#0B0B0F" stroke-width="2.5"/>
+          <ellipse cx="100" cy="152" rx="38" ry="52" fill="url(#w)" stroke="#0B0B0F" stroke-width="1.5"/>
+          <path d="M38 140 Q26 162 40 192 Q62 202 74 178 Q74 158 58 145Z" fill="#1A1A2A" stroke="#0B0B0F" stroke-width="2"/>
+          <path d="M162 140 Q174 162 160 192 Q138 202 126 178 Q126 158 142 145Z" fill="#1A1A2A" stroke="#0B0B0F" stroke-width="2"/>
+          <rect x="77" y="202" width="22" height="13" rx="6" fill="#FFD166" stroke="#0B0B0F" stroke-width="2"/>
+          <rect x="101" y="206" width="22" height="13" rx="6" fill="#FFD166" stroke="#0B0B0F" stroke-width="2"/>
+          <ellipse cx="100" cy="86" rx="60" ry="56" fill="url(#b)" stroke="#0B0B0F" stroke-width="2.5"/>
+          <ellipse cx="100" cy="96" rx="42" ry="38" fill="url(#w)" stroke="#0B0B0F" stroke-width="2"/>
+          <circle cx="73" cy="104" r="12" fill="url(#ch)"/>
+          <circle cx="127" cy="104" r="12" fill="url(#ch)"/>
+          <ellipse cx="84" cy="82" rx="9" ry="11" fill="#0B0B0F"/>
+          <ellipse cx="85.5" cy="79" rx="3.5" ry="4" fill="#fff"/>
+          <circle cx="80" cy="86" r="1.8" fill="#fff"/>
+          <ellipse cx="116" cy="82" rx="9" ry="11" fill="#0B0B0F"/>
+          <ellipse cx="117.5" cy="79" rx="3.5" ry="4" fill="#fff"/>
+          <circle cx="112" cy="86" r="1.8" fill="#fff"/>
+          <path d="M83 106 Q100 98 117 106 Q109 130 100 134 Q91 130 83 106Z" fill="url(#bk)" stroke="#0B0B0F" stroke-width="2.5"/>
+          <line x1="83" y1="111" x2="117" y2="111" stroke="#FFD166" stroke-width="1.2" opacity=".6"/>
+          <line x1="86" y1="119" x2="114" y2="119" stroke="#FF8A3D" stroke-width="1.2" opacity=".6"/>
+          <path d="M48 76 Q100 22 152 76" stroke="#6D28FF" stroke-width="6" fill="none" stroke-linecap="round"/>
+          <path d="M48 76 Q100 26 152 76" stroke="#D8FF3C" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+          <circle cx="44" cy="83" r="14" fill="#6D28FF" stroke="#0B0B0F" stroke-width="2"/>
+          <circle cx="44" cy="83" r="7" fill="#D8FF3C"/>
+          <circle cx="156" cy="83" r="14" fill="#6D28FF" stroke="#0B0B0F" stroke-width="2"/>
+          <circle cx="156" cy="83" r="7" fill="#D8FF3C"/>
+          <!-- waving wing right -->
+          <path d="M162 135 Q190 118 186 96 Q182 76 166 82 Q158 100 162 135Z" fill="#1A1A2A" stroke="#0B0B0F" stroke-width="2"/>
+          <path d="M174 108 l3 7 l7 2 l-7 2 l-3 7 l-3-7 l-7-2 l7-2z" fill="#D8FF3C" stroke="#0B0B0F" stroke-width="1"/>
+        </svg>
+      </div>
+
+      <h2 class="left-headline">
+        Cheap flights.<br>
+        Straight to<br>
+        your <span class="hl">pocket.</span>
+      </h2>
+      <p class="left-sub">
+        Takes 90 seconds. Penny will be watching your routes within the hour.
+      </p>
+      <div class="left-stats">
+        <div class="left-stat">
+          <div class="left-stat-dot" style="background:var(--lime)"></div>
+          <p><strong>₹0</strong> to join — always</p>
+        </div>
+        <div class="left-stat">
+          <div class="left-stat-dot" style="background:var(--coral)"></div>
+          <p>Alerts in <strong>&lt;5 minutes</strong> of a drop</p>
+        </div>
+        <div class="left-stat">
+          <div class="left-stat-dot" style="background:var(--violet)"></div>
+          <p><strong>40–90% off</strong> on real flights</p>
+        </div>
+        <div class="left-stat">
+          <div class="left-stat-dot" style="background:var(--sun)"></div>
+          <p><strong>12,400+</strong> flock members saving</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="left-footer">© 2026 FLOCKFARE · DEALS. DROPS. DEPARTURES.</div>
+  </div>
+
+  <!-- ── RIGHT PANEL ─────────────────────────────────── -->
+  <div class="right-panel">
+
+    <!-- Progress bar -->
+    <div class="progress-bar-wrap">
+      <div class="progress-bar-fill" id="progress-fill" style="width:0%"></div>
+    </div>
+
+    <!-- Step header -->
+    <div class="step-header">
+      <div class="step-chips">
+        <div class="step-chip active" id="chip-0">
+          <div class="chip-num">1</div>
+          <span>Account</span>
+        </div>
+        <span class="step-chip-sep">›</span>
+        <div class="step-chip" id="chip-1">
+          <div class="chip-num">2</div>
+          <span>Home airport</span>
+        </div>
+        <span class="step-chip-sep">›</span>
+        <div class="step-chip" id="chip-2">
+          <div class="chip-num">3</div>
+          <span>Destinations</span>
+        </div>
+        <span class="step-chip-sep">›</span>
+        <div class="step-chip" id="chip-3">
+          <div class="chip-num">4</div>
+          <span>Alerts</span>
+        </div>
+        <span class="step-chip-sep">›</span>
+        <div class="step-chip" id="chip-4">
+          <div class="chip-num">5</div>
+          <span>Channels</span>
+        </div>
+      </div>
+      <span class="skip-link" id="skip-link" onclick="skipStep()">Skip this step →</span>
+    </div>
+
+    <!-- Step content -->
+    <div class="step-content">
+      <div class="step-inner">
+
+        <!-- ── STEP 0: EMAIL / ACCOUNT ───────────────── -->
+        <div class="step-panel active" id="step-0">
+          <div class="step-eyebrow">✦ Step 1 of 5</div>
+          <h1 class="step-title">First, where do we<br>send the alerts?</h1>
+          <p class="step-subtitle">Your email. No password needed — we'll magic-link you in. Takes 10 seconds.</p>
+
+          <label class="email-label" for="email-field">Your email address</label>
+          <div class="email-input-wrap">
+            <input
+              class="email-input"
+              id="email-field"
+              type="email"
+              placeholder="you@wherever.com"
+              autocomplete="email"
+              oninput="validateEmail()"
+            />
+          </div>
+          <div class="field-error" id="email-error">Enter a valid email address.</div>
+
+          <div class="or-divider"><span>OR</span></div>
+
+          <button class="google-btn" onclick="googleSignIn()">
+            <div class="google-icon"></div>
+            Continue with Google
+          </button>
+
+          <p class="email-legal">
+            By joining you agree to our Terms of Service and Privacy Policy.
+            We'll send ≤5 alerts per week. Unsubscribe in one click, always.
+          </p>
+
+          <div class="cta-row" style="margin-top:28px;">
+            <button class="btn-primary" id="btn-step0" onclick="goNext(0)" disabled>
+              Continue →
+            </button>
+          </div>
+        </div>
+
+        <!-- ── STEP 1: HOME AIRPORTS ─────────────────── -->
+        <div class="step-panel" id="step-1">
+          <div class="step-eyebrow">✦ Step 2 of 5</div>
+          <h1 class="step-title">Where do you<br>usually fly from?</h1>
+          <p class="step-subtitle">Pick all that apply. Penny will watch deals from every airport you select.</p>
+
+          <div class="airport-grid">
+            <div class="airport-tile selected" data-code="BOM" onclick="toggleAirport(this)">
+              <div class="check">✓</div>
+              <div class="airport-code-lg">BOM</div>
+              <div class="airport-city-sm">Mumbai</div>
+              <span class="airport-tag">Maharashtra</span>
+            </div>
+            <div class="airport-tile" data-code="DEL" onclick="toggleAirport(this)">
+              <div class="check"></div>
+              <div class="airport-code-lg">DEL</div>
+              <div class="airport-city-sm">Delhi</div>
+              <span class="airport-tag">NCR</span>
+            </div>
+            <div class="airport-tile" data-code="BLR" onclick="toggleAirport(this)">
+              <div class="check"></div>
+              <div class="airport-code-lg">BLR</div>
+              <div class="airport-city-sm">Bangalore</div>
+              <span class="airport-tag">Karnataka</span>
+            </div>
+            <div class="airport-tile" data-code="IDR" onclick="toggleAirport(this)">
+              <div class="check"></div>
+              <div class="airport-code-lg">IDR</div>
+              <div class="airport-city-sm">Indore</div>
+              <span class="airport-tag">Madhya Pradesh</span>
+            </div>
+          </div>
+          <p class="airport-note">More airports coming — MAA, HYD, CCU, PNQ, AMD, COK.</p>
+
+          <div class="cta-row" style="margin-top:28px;">
+            <button class="btn-back" onclick="goBack(1)">← Back</button>
+            <button class="btn-primary" onclick="goNext(1)">Continue →</button>
+          </div>
+        </div>
+
+        <!-- ── STEP 2: DESTINATIONS ───────────────────── -->
+        <div class="step-panel" id="step-2">
+          <div class="step-eyebrow">✦ Step 3 of 5</div>
+          <h1 class="step-title">Dream destinations?</h1>
+          <p class="step-subtitle">
+            Pick the places you'd love to fly to.
+            <span id="dest-count-note">Select at least one.</span>
+            <button class="select-all-btn" onclick="selectAllDests()">Select all</button>
+          </p>
+
+          <div class="region-tabs">
+            <button class="rtab active" data-region="all" onclick="filterRegion(this)">All</button>
+            <button class="rtab" data-region="Southeast Asia" onclick="filterRegion(this)">SE Asia</button>
+            <button class="rtab" data-region="Europe" onclick="filterRegion(this)">Europe</button>
+            <button class="rtab" data-region="East Asia" onclick="filterRegion(this)">East Asia</button>
+            <button class="rtab" data-region="Middle East" onclick="filterRegion(this)">Middle East</button>
+            <button class="rtab" data-region="North America" onclick="filterRegion(this)">N. America</button>
+            <button class="rtab" data-region="Oceania" onclick="filterRegion(this)">Oceania</button>
+            <button class="rtab" data-region="South Asia" onclick="filterRegion(this)">S. Asia</button>
+          </div>
+
+          <div class="dest-grid" id="dest-grid">
+            <!-- destinations injected by JS -->
+          </div>
+          <div class="dest-selection-note" id="dest-sel-note">
+            <strong id="dest-sel-count">0</strong> destinations selected
+          </div>
+
+          <div class="cta-row" style="margin-top:24px;">
+            <button class="btn-back" onclick="goBack(2)">← Back</button>
+            <button class="btn-primary" id="btn-step2" onclick="goNext(2)" disabled>Continue →</button>
+          </div>
+        </div>
+
+        <!-- ── STEP 3: ALERT THRESHOLD ────────────────── -->
+        <div class="step-panel" id="step-3">
+          <div class="step-eyebrow">✦ Step 4 of 5</div>
+          <h1 class="step-title">How aggressive<br>should Penny be?</h1>
+          <p class="step-subtitle">We'll only ping you when a deal hits your threshold. Less noise, more signal.</p>
+
+          <div class="threshold-cards">
+            <div class="threshold-card sel-common" onclick="selectThreshold(this,'common')">
+              <div class="threshold-radio"></div>
+              <div class="threshold-body">
+                <h3>Any good deal</h3>
+                <p>Get alerted for all deals 40%+ below the baseline. You'll get 3–5 alerts per week on popular routes.</p>
+                <span class="threshold-tag tag-lime">COMMON · 40%+ OFF</span>
+              </div>
+              <div class="threshold-pct" style="color:var(--g500)">40%</div>
+            </div>
+
+            <div class="threshold-card sel-rare selected" onclick="selectThreshold(this,'rare')">
+              <div class="threshold-radio"></div>
+              <div class="threshold-body">
+                <h3>Rare deals only <span style="font-size:12px;color:var(--g400);font-weight:400">(recommended)</span></h3>
+                <p>Only deals 60%+ below baseline. Usually 1–2 per week. These are genuinely exceptional prices.</p>
+                <span class="threshold-tag tag-coral">RARE · 60%+ OFF</span>
+              </div>
+              <div class="threshold-pct" style="color:var(--coral)">60%</div>
+            </div>
+
+            <div class="threshold-card sel-unique" onclick="selectThreshold(this,'unique')">
+              <div class="threshold-radio"></div>
+              <div class="threshold-body">
+                <h3>Mistake fares only</h3>
+                <p>Alerts only for 70%+ drops — mistake fares and pricing errors. Rare but extraordinary. Act in minutes.</p>
+                <span class="threshold-tag tag-violet">UNIQUE · 70%+ OFF</span>
+              </div>
+              <div class="threshold-pct" style="color:var(--violet)">70%</div>
+            </div>
+          </div>
+
+          <div class="cta-row" style="margin-top:8px;">
+            <button class="btn-back" onclick="goBack(3)">← Back</button>
+            <button class="btn-primary" onclick="goNext(3)">Continue →</button>
+          </div>
+        </div>
+
+        <!-- ── STEP 4: CHANNELS ───────────────────────── -->
+        <div class="step-panel" id="step-4">
+          <div class="step-eyebrow">✦ Step 5 of 5</div>
+          <h1 class="step-title">How should Penny<br>reach you?</h1>
+          <p class="step-subtitle">Pick at least one channel. Email is already set — the others are optional but fast.</p>
+
+          <div class="channel-grid">
+            <div class="channel-card selected" data-channel="email">
+              <div class="channel-icon" style="background:var(--lime-tint)">📧</div>
+              <div class="channel-body">
+                <h3>Email</h3>
+                <p>Weekly digest + instant alerts for urgent deals. Already set up from your email.</p>
+              </div>
+              <div class="channel-toggle">✓</div>
+            </div>
+
+            <div class="channel-card" data-channel="push" onclick="toggleChannel(this)">
+              <div class="channel-icon" style="background:var(--violet-tint)">🔔</div>
+              <div class="channel-body">
+                <h3>Browser push notifications</h3>
+                <p>Instant pop-up on desktop and mobile. Best for mistake fares — they're gone in hours.</p>
+              </div>
+              <div class="channel-toggle"></div>
+            </div>
+
+            <div class="channel-card" data-channel="telegram" onclick="toggleChannel(this)">
+              <div class="channel-icon" style="background:#e8f4fd">✈</div>
+              <div class="channel-body">
+                <h3>Telegram</h3>
+                <p>Join the FlockFare channel for real-time deal cards with one-tap booking links.</p>
+                <div class="channel-input-wrap">
+                  <input class="channel-input" type="text" placeholder="@yourusername (optional)"/>
+                </div>
+              </div>
+              <div class="channel-toggle"></div>
+            </div>
+
+            <div class="channel-card" data-channel="whatsapp" onclick="toggleChannel(this)">
+              <div class="channel-icon" style="background:#dcfce7">💬</div>
+              <div class="channel-body">
+                <h3>WhatsApp</h3>
+                <p>Get deals sent directly to WhatsApp. Perfect for sharing with travel buddies instantly.</p>
+                <div class="channel-input-wrap">
+                  <input class="channel-input" type="tel" placeholder="+91 98765 43210"/>
+                </div>
+              </div>
+              <div class="channel-toggle"></div>
+            </div>
+          </div>
+
+          <div class="freq-note">
+            ⏱ &nbsp;<span>Penny sends <strong>≤5 alerts/week</strong> on free plan. Pro members get instant alerts the moment a deal is detected — usually 4 hours earlier.</span>
+          </div>
+
+          <div class="cta-row" style="margin-top:20px;">
+            <button class="btn-back" onclick="goBack(4)">← Back</button>
+            <button class="btn-primary" onclick="goNext(4)">Join the flock →</button>
+          </div>
+        </div>
+
+        <!-- ── STEP 5: DONE ────────────────────────────── -->
+        <div class="step-panel" id="step-5" style="text-align:center;">
+          <div class="done-penny">
+            <svg viewBox="0 0 200 220" width="150" xmlns="http://www.w3.org/2000/svg">
+              <defs>
+                <radialGradient id="b2" cx="50%" cy="40%" r="55%"><stop offset="0%" stop-color="#26253A"/><stop offset="100%" stop-color="#0E0E18"/></radialGradient>
+                <radialGradient id="w2" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="#fff"/><stop offset="100%" stop-color="#EFE9D8"/></radialGradient>
+                <radialGradient id="bk2" cx="50%" cy="30%" r="60%"><stop offset="0%" stop-color="#FFD166"/><stop offset="50%" stop-color="#FF8A3D"/><stop offset="100%" stop-color="#FF4E64"/></radialGradient>
+              </defs>
+              <ellipse cx="100" cy="214" rx="55" ry="7" fill="rgba(0,0,0,.1)"/>
+              <ellipse cx="100" cy="145" rx="65" ry="72" fill="url(#b2)" stroke="#0B0B0F" stroke-width="2.5"/>
+              <ellipse cx="100" cy="152" rx="38" ry="52" fill="url(#w2)" stroke="#0B0B0F" stroke-width="1.5"/>
+              <path d="M38 140 Q26 162 40 192 Q62 202 74 178 Q74 158 58 145Z" fill="#1A1A2A" stroke="#0B0B0F" stroke-width="2"/>
+              <!-- arms up celebrating -->
+              <path d="M162 130 Q188 108 182 84 Q178 64 162 72 Q156 90 162 130Z" fill="#1A1A2A" stroke="#0B0B0F" stroke-width="2"/>
+              <path d="M38 130 Q12 108 18 84 Q22 64 38 72 Q44 90 38 130Z" fill="#1A1A2A" stroke="#0B0B0F" stroke-width="2"/>
+              <rect x="77" y="202" width="22" height="13" rx="6" fill="#FFD166" stroke="#0B0B0F" stroke-width="2"/>
+              <rect x="101" y="206" width="22" height="13" rx="6" fill="#FFD166" stroke="#0B0B0F" stroke-width="2"/>
+              <ellipse cx="100" cy="86" rx="60" ry="56" fill="url(#b2)" stroke="#0B0B0F" stroke-width="2.5"/>
+              <ellipse cx="100" cy="96" rx="42" ry="38" fill="url(#w2)" stroke="#0B0B0F" stroke-width="2"/>
+              <circle cx="73" cy="104" r="12" fill="rgba(255,154,176,.6)"/>
+              <circle cx="127" cy="104" r="12" fill="rgba(255,154,176,.6)"/>
+              <ellipse cx="84" cy="82" rx="9" ry="11" fill="#0B0B0F"/>
+              <ellipse cx="85.5" cy="79" rx="3.5" ry="4" fill="#fff"/>
+              <ellipse cx="116" cy="82" rx="9" ry="11" fill="#0B0B0F"/>
+              <ellipse cx="117.5" cy="79" rx="3.5" ry="4" fill="#fff"/>
+              <!-- happy closed eyes -->
+              <path d="M75 87 Q84 82 93 87" stroke="#0B0B0F" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+              <path d="M107 87 Q116 82 125 87" stroke="#0B0B0F" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+              <path d="M83 106 Q100 98 117 106 Q109 130 100 134 Q91 130 83 106Z" fill="url(#bk2)" stroke="#0B0B0F" stroke-width="2.5"/>
+              <path d="M48 76 Q100 22 152 76" stroke="#6D28FF" stroke-width="6" fill="none" stroke-linecap="round"/>
+              <path d="M48 76 Q100 26 152 76" stroke="#D8FF3C" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+              <circle cx="44" cy="83" r="14" fill="#6D28FF" stroke="#0B0B0F" stroke-width="2"/>
+              <circle cx="44" cy="83" r="7" fill="#D8FF3C"/>
+              <circle cx="156" cy="83" r="14" fill="#6D28FF" stroke="#0B0B0F" stroke-width="2"/>
+              <circle cx="156" cy="83" r="7" fill="#D8FF3C"/>
+              <!-- sparkles -->
+              <path d="M22 50 l2 6 l6 2 l-6 2 l-2 6 l-2-6 l-6-2 l6-2z" fill="#D8FF3C" stroke="#0B0B0F" stroke-width="1.2"/>
+              <path d="M172 40 l2.5 8 l8 2.5 l-8 2.5 l-2.5 8 l-2.5-8 l-8-2.5 l8-2.5z" fill="#FF4E64" stroke="#0B0B0F" stroke-width="1.2"/>
+              <path d="M12 100 l1.5 5 l5 1.5 l-5 1.5 l-1.5 5 l-1.5-5 l-5-1.5 l5-1.5z" fill="#6D28FF" stroke="#0B0B0F" stroke-width="1"/>
+            </svg>
+          </div>
+
+          <h1 class="done-title">You're in the flock! 🎉</h1>
+          <p class="done-sub">
+            Penny's already scanning fares from your airports. Your first alert could arrive within the hour — or it could be tomorrow. Either way, you'll never miss a deal again.
+          </p>
+
+          <div class="done-summary">
+            <div class="done-summary-row">
+              <span class="done-summary-key">Email</span>
+              <span class="done-summary-val" id="done-email">—</span>
+            </div>
+            <div class="done-summary-row">
+              <span class="done-summary-key">Home airports</span>
+              <div class="done-chips" id="done-airports"></div>
+            </div>
+            <div class="done-summary-row">
+              <span class="done-summary-key">Destinations</span>
+              <span class="done-summary-val" id="done-dests">—</span>
+            </div>
+            <div class="done-summary-row">
+              <span class="done-summary-key">Alert threshold</span>
+              <span class="done-summary-val" id="done-threshold">—</span>
+            </div>
+            <div class="done-summary-row">
+              <span class="done-summary-key">Channels</span>
+              <div class="done-chips" id="done-channels"></div>
+            </div>
+          </div>
+
+          <button class="btn-done" onclick="window.location='#'">
+            See live deals →
+          </button>
+          <div style="font-family:var(--fm);font-size:11px;color:var(--g500);letter-spacing:.08em;">
+            Check your inbox for a confirmation email from Penny.
+          </div>
+        </div>
+
+      </div><!-- /step-inner -->
+    </div><!-- /step-content -->
+
+  </div><!-- /right-panel -->
+</div><!-- /shell -->
+
+<!-- Confetti container -->
+<div class="confetti-wrap" id="confetti-wrap"></div>
+
+<script>
+/* ── STATE ───────────────────────────────────────────── */
+const state = {
+  email: '',
+  airports: ['BOM'],
+  destinations: [],
+  threshold: 'rare',
+  channels: ['email'],
+};
+let currentStep = 0;
+const TOTAL_STEPS = 5;
+
+/* ── DESTINATIONS DATA ───────────────────────────────── */
+const DESTINATIONS = [
+  {code:'BKK',city:'Bangkok',country:'Thailand',region:'Southeast Asia',flag:'🇹🇭'},
+  {code:'DPS',city:'Bali',country:'Indonesia',region:'Southeast Asia',flag:'🇮🇩'},
+  {code:'SGN',city:'Ho Chi Minh',country:'Vietnam',region:'Southeast Asia',flag:'🇻🇳'},
+  {code:'SIN',city:'Singapore',country:'Singapore',region:'Southeast Asia',flag:'🇸🇬'},
+  {code:'KUL',city:'Kuala Lumpur',country:'Malaysia',region:'Southeast Asia',flag:'🇲🇾'},
+  {code:'CMB',city:'Colombo',country:'Sri Lanka',region:'South Asia',flag:'🇱🇰'},
+  {code:'MLE',city:'Malé',country:'Maldives',region:'South Asia',flag:'🇲🇻'},
+  {code:'DXB',city:'Dubai',country:'UAE',region:'Middle East',flag:'🇦🇪'},
+  {code:'IST',city:'Istanbul',country:'Turkey',region:'Middle East',flag:'🇹🇷'},
+  {code:'NRT',city:'Tokyo',country:'Japan',region:'East Asia',flag:'🇯🇵'},
+  {code:'ICN',city:'Seoul',country:'South Korea',region:'East Asia',flag:'🇰🇷'},
+  {code:'LHR',city:'London',country:'UK',region:'Europe',flag:'🇬🇧'},
+  {code:'CDG',city:'Paris',country:'France',region:'Europe',flag:'🇫🇷'},
+  {code:'FCO',city:'Rome',country:'Italy',region:'Europe',flag:'🇮🇹'},
+  {code:'ZRH',city:'Zurich',country:'Switzerland',region:'Europe',flag:'🇨🇭'},
+  {code:'JFK',city:'New York',country:'USA',region:'North America',flag:'🇺🇸'},
+  {code:'SFO',city:'San Francisco',country:'USA',region:'North America',flag:'🇺🇸'},
+  {code:'YYZ',city:'Toronto',country:'Canada',region:'North America',flag:'🇨🇦'},
+  {code:'SYD',city:'Sydney',country:'Australia',region:'Oceania',flag:'🇦🇺'},
+  {code:'AKL',city:'Auckland',country:'NZ',region:'Oceania',flag:'🇳🇿'},
+];
+
+/* ── RENDER DESTINATIONS ─────────────────────────────── */
+function renderDests(region='all') {
+  const grid = document.getElementById('dest-grid');
+  const filtered = region === 'all' ? DESTINATIONS : DESTINATIONS.filter(d => d.region === region);
+  grid.innerHTML = filtered.map(d => {
+    const sel = state.destinations.includes(d.code);
+    return `<div class="dest-tile${sel?' selected':''}" data-code="${d.code}" data-region="${d.region}" onclick="toggleDest(this)">
+      <div class="dest-check">${sel?'✓':''}</div>
+      <div class="dest-flag">${d.flag}</div>
+      <div class="dest-code">${d.code}</div>
+      <div class="dest-city">${d.city}</div>
+    </div>`;
+  }).join('');
+  updateDestCount();
+}
+renderDests();
+
+function toggleDest(tile) {
+  const code = tile.dataset.code;
+  const idx = state.destinations.indexOf(code);
+  if (idx >= 0) {
+    state.destinations.splice(idx, 1);
+    tile.classList.remove('selected');
+    tile.querySelector('.dest-check').textContent = '';
+  } else {
+    state.destinations.push(code);
+    tile.classList.add('selected');
+    tile.querySelector('.dest-check').textContent = '✓';
+  }
+  updateDestCount();
+}
+
+function updateDestCount() {
+  const n = state.destinations.length;
+  document.getElementById('dest-sel-count').textContent = n;
+  document.getElementById('dest-sel-note').innerHTML =
+    `<strong>${n}</strong> destination${n===1?'':'s'} selected`;
+  document.getElementById('btn-step2').disabled = n === 0;
+}
+
+function filterRegion(btn) {
+  document.querySelectorAll('.rtab').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderDests(btn.dataset.region);
+}
+
+function selectAllDests() {
+  DESTINATIONS.forEach(d => {
+    if (!state.destinations.includes(d.code)) state.destinations.push(d.code);
+  });
+  const region = document.querySelector('.rtab.active')?.dataset.region || 'all';
+  renderDests(region);
+}
+
+/* ── AIRPORT TOGGLE ──────────────────────────────────── */
+function toggleAirport(tile) {
+  const code = tile.dataset.code;
+  const idx = state.airports.indexOf(code);
+  if (idx >= 0) {
+    if (state.airports.length === 1) return; // keep at least one
+    state.airports.splice(idx, 1);
+    tile.classList.remove('selected');
+    tile.querySelector('.check').textContent = '';
+  } else {
+    state.airports.push(code);
+    tile.classList.add('selected');
+    tile.querySelector('.check').textContent = '✓';
+  }
+}
+
+/* ── THRESHOLD SELECT ────────────────────────────────── */
+function selectThreshold(card, type) {
+  document.querySelectorAll('.threshold-card').forEach(c => c.classList.remove('selected'));
+  card.classList.add('selected');
+  state.threshold = type;
+}
+
+/* ── CHANNEL TOGGLE ──────────────────────────────────── */
+function toggleChannel(card) {
+  const ch = card.dataset.channel;
+  if (card.classList.contains('selected')) {
+    card.classList.remove('selected');
+    card.querySelector('.channel-toggle').textContent = '';
+    state.channels = state.channels.filter(c => c !== ch);
+  } else {
+    card.classList.add('selected');
+    card.querySelector('.channel-toggle').textContent = '✓';
+    state.channels.push(ch);
+  }
+}
+
+/* ── EMAIL VALIDATION ────────────────────────────────── */
+function validateEmail() {
+  const val = document.getElementById('email-field').value;
+  const valid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val);
+  document.getElementById('btn-step0').disabled = !valid;
+  document.getElementById('email-error').classList.toggle('show', val.length > 4 && !valid);
+  if (valid) state.email = val;
+}
+
+function googleSignIn() {
+  state.email = 'you@gmail.com';
+  document.getElementById('email-field').value = state.email;
+  document.getElementById('btn-step0').disabled = false;
+  setTimeout(() => goNext(0), 200);
+}
+
+/* ── NAVIGATION ──────────────────────────────────────── */
+function goNext(from) {
+  if (from === 0 && !state.email) return;
+  if (from === 2 && state.destinations.length === 0) return;
+  navigateTo(from + 1);
+}
+function goBack(from) {
+  navigateTo(from - 1);
+}
+function skipStep() {
+  navigateTo(currentStep + 1);
+}
+
+function navigateTo(step) {
+  // hide current
+  document.getElementById(`step-${currentStep}`).classList.remove('active');
+  // show next
+  document.getElementById(`step-${step}`).classList.add('active');
+
+  // update chips
+  for (let i = 0; i < TOTAL_STEPS; i++) {
+    const chip = document.getElementById(`chip-${i}`);
+    chip.classList.remove('active','done');
+    if (i < step) chip.classList.add('done'), chip.querySelector('.chip-num').textContent = '✓';
+    else if (i === step) chip.classList.add('active'), chip.querySelector('.chip-num').textContent = i+1;
+    else chip.querySelector('.chip-num').textContent = i+1;
+  }
+
+  // update progress
+  const pct = Math.round((step / TOTAL_STEPS) * 100);
+  document.getElementById('progress-fill').style.width = pct + '%';
+
+  // skip link
+  const skipLink = document.getElementById('skip-link');
+  skipLink.style.display = (step === 0 || step === TOTAL_STEPS) ? 'none' : '';
+
+  currentStep = step;
+
+  // final step
+  if (step === TOTAL_STEPS) {
+    buildDoneSummary();
+    launchConfetti();
+    document.getElementById('skip-link').style.display = 'none';
+  }
+}
+
+/* ── DONE SUMMARY ────────────────────────────────────── */
+function buildDoneSummary() {
+  document.getElementById('done-email').textContent = state.email || 'your email';
+
+  const apChips = state.airports.map(a =>
+    `<span class="done-chip lime">${a}</span>`).join('');
+  document.getElementById('done-airports').innerHTML = apChips;
+
+  const n = state.destinations.length;
+  document.getElementById('done-dests').textContent =
+    n === 0 ? 'All destinations' : `${n} destination${n===1?'':'s'} selected`;
+
+  const tMap = {common:'Common · 40%+ off',rare:'Rare · 60%+ off ⭐',unique:'Unique · 70%+ off (mistake fares)'};
+  document.getElementById('done-threshold').textContent = tMap[state.threshold] || '—';
+
+  const chChips = state.channels.map(c =>
+    `<span class="done-chip violet">${c}</span>`).join('');
+  document.getElementById('done-channels').innerHTML = chChips || '<span class="done-chip">Email only</span>';
+}
+
+/* ── CONFETTI ────────────────────────────────────────── */
+function launchConfetti() {
+  const wrap = document.getElementById('confetti-wrap');
+  const colors = ['#D8FF3C','#FF4E64','#6D28FF','#FFD166','#00B775','#F6F3EC'];
+  for (let i = 0; i < 80; i++) {
+    const el = document.createElement('div');
+    el.className = 'confetti-piece';
+    el.style.cssText = `
+      left:${Math.random()*100}vw;
+      background:${colors[Math.floor(Math.random()*colors.length)]};
+      width:${6+Math.random()*10}px;
+      height:${6+Math.random()*10}px;
+      border-radius:${Math.random()>.5?'50%':'2px'};
+      animation-duration:${1.5+Math.random()*2}s;
+      animation-delay:${Math.random()*.6}s;
+      transform:rotate(${Math.random()*360}deg);
+    `;
+    wrap.appendChild(el);
+    el.addEventListener('animationend', () => el.remove());
+  }
+}
+
+/* ── INIT ────────────────────────────────────────────── */
+document.getElementById('skip-link').style.display = 'none';
+</script>
+</body>
+</html>

@@ -1,0 +1,1123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>FlockFare — BOM → LHR · ₹21,400 · -61% off</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,700;12..96,900&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,700&family=JetBrains+Mono:wght@400;700;800&display=swap" rel="stylesheet"/>
+<style>
+/* ── TOKENS ──────────────────────────────────────────── */
+:root{
+  --ink:#0B0B0F; --ink-soft:#1A1A22; --cream:#F6F3EC; --paper:#FFFFFF;
+  --violet:#6D28FF; --violet-deep:#2A1470; --violet-tint:#EFE6FF;
+  --lime:#D8FF3C; --lime-tint:#F3FFC7;
+  --coral:#FF4E64; --coral-tint:#FFE5ED;
+  --sun:#FFD166; --sun-tint:#FFF6D6;
+  --success:#00B775;
+  --g100:#F1F1EC; --g200:#E2E2DD; --g300:#C9C9C4;
+  --g400:#9C9C98; --g500:#6A6A67; --g600:#4A4A48;
+  --brut:6px 6px 0 var(--ink);
+  --brut-sm:3px 3px 0 var(--ink);
+  --brut-lg:10px 10px 0 var(--ink);
+  --ease:cubic-bezier(.2,.8,.2,1);
+  --fd:'Bricolage Grotesque',sans-serif;
+  --fb:'DM Sans',sans-serif;
+  --fm:'JetBrains Mono',monospace;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{font-family:var(--fb);background:var(--cream);color:var(--ink);-webkit-font-smoothing:antialiased;overflow-x:hidden;}
+button{cursor:pointer;font-family:inherit;border:none;background:none;}
+a{text-decoration:none;color:inherit;}
+
+/* ── NAV ─────────────────────────────────────────────── */
+nav{
+  position:sticky;top:0;z-index:200;
+  background:var(--ink);border-bottom:4px solid var(--ink);
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 40px;height:64px;
+}
+.nav-logo{font-family:var(--fd);font-weight:900;font-size:22px;color:var(--cream);letter-spacing:-.03em;}
+.nav-logo span{color:var(--lime);}
+.nav-links{display:flex;gap:28px;}
+.nav-links a{font-family:var(--fd);font-weight:700;font-size:14px;color:rgba(246,243,236,.6);transition:color .12s;}
+.nav-links a:hover{color:var(--lime);}
+.nav-cta{font-family:var(--fd);font-weight:700;font-size:13px;padding:9px 20px;border-radius:999px;background:var(--lime);color:var(--ink);border:3px solid var(--cream);box-shadow:3px 3px 0 var(--cream);transition:transform .12s,box-shadow .12s;}
+.nav-cta:hover{transform:translate(-1px,-1px);box-shadow:5px 5px 0 var(--cream);}
+
+/* ── BREADCRUMB ──────────────────────────────────────── */
+.breadcrumb{
+  background:var(--ink);border-bottom:4px solid var(--lime);
+  padding:12px 40px;
+  display:flex;align-items:center;gap:8px;
+}
+.breadcrumb a,.breadcrumb span{font-family:var(--fm);font-size:11px;letter-spacing:.1em;color:rgba(246,243,236,.45);}
+.breadcrumb a:hover{color:var(--lime);}
+.breadcrumb .sep{color:rgba(246,243,236,.2);}
+.breadcrumb .current{color:var(--lime);}
+
+/* ── HERO BANNER ─────────────────────────────────────── */
+.deal-hero{
+  background:var(--ink);
+  padding:40px 40px 0;
+  position:relative;overflow:hidden;
+}
+.deal-hero::before{
+  content:'';position:absolute;top:-100px;right:-80px;
+  width:400px;height:400px;
+  background:var(--violet);opacity:.1;border-radius:50%;
+}
+.deal-hero-inner{max-width:1200px;margin:0 auto;position:relative;z-index:2;}
+
+/* top strip: badge + timer */
+.hero-top{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:24px;}
+.deal-type-badge{
+  display:inline-flex;align-items:center;gap:8px;
+  font-family:var(--fm);font-size:11px;font-weight:800;letter-spacing:.16em;
+  padding:7px 16px;border-radius:999px;
+}
+.badge-rare{background:var(--coral);color:#fff;}
+.countdown-wrap{
+  display:flex;align-items:center;gap:10px;
+  font-family:var(--fm);font-size:12px;font-weight:700;color:var(--coral);
+}
+.live-dot{width:7px;height:7px;border-radius:50%;background:var(--coral);animation:blink 1s ease-in-out infinite;flex-shrink:0;}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.2}}
+.countdown-digits{
+  display:flex;gap:6px;align-items:center;
+}
+.cd-block{
+  background:var(--coral);color:#fff;
+  font-family:var(--fm);font-size:16px;font-weight:800;
+  padding:6px 10px;border-radius:8px;border:2px solid rgba(255,255,255,.2);
+  min-width:38px;text-align:center;
+  font-variant-numeric:tabular-nums;
+}
+.cd-sep{color:var(--coral);font-size:18px;font-weight:900;margin:0 -2px;}
+
+/* route display */
+.route-display{display:flex;align-items:flex-start;gap:20px;flex-wrap:wrap;margin-bottom:28px;}
+.route-airports{display:flex;align-items:center;gap:0;}
+.airport-block{text-align:center;}
+.airport-code{
+  font-family:var(--fd);font-weight:900;
+  font-size:clamp(3rem,7vw,5.5rem);
+  line-height:.9;letter-spacing:-.04em;
+  color:var(--cream);
+}
+.airport-city{font-family:var(--fm);font-size:11px;letter-spacing:.14em;color:rgba(246,243,236,.4);margin-top:6px;text-transform:uppercase;}
+.route-arrow-wrap{
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  padding:0 16px;padding-bottom:20px;
+}
+.route-arrow-line{
+  width:80px;height:3px;background:linear-gradient(90deg,var(--violet),var(--lime));
+  border-radius:2px;position:relative;
+}
+.route-arrow-line::after{
+  content:'';position:absolute;right:-1px;top:-4px;
+  border:5px solid transparent;border-left:10px solid var(--lime);
+}
+.plane-icon{font-size:20px;margin-bottom:4px;animation:fly 3s ease-in-out infinite;}
+@keyframes fly{0%,100%{transform:translateX(0)}50%{transform:translateX(6px)}}
+
+/* price block */
+.price-block{margin-bottom:32px;}
+.price-main{
+  font-family:var(--fd);font-weight:900;
+  font-size:clamp(3rem,6vw,5rem);
+  line-height:.9;letter-spacing:-.04em;
+  color:var(--cream);
+}
+.price-main .unit{font-size:clamp(1rem,2vw,1.4rem);font-weight:400;color:rgba(246,243,236,.5);margin-left:6px;}
+.price-was{
+  display:inline-flex;align-items:center;gap:12px;
+  margin-top:10px;
+}
+.price-struck{font-family:var(--fm);font-size:16px;color:rgba(246,243,236,.35);text-decoration:line-through;}
+.pct-badge{
+  font-family:var(--fm);font-weight:800;font-size:14px;letter-spacing:.1em;
+  padding:5px 14px;border-radius:999px;
+  background:var(--lime);color:var(--ink);
+}
+.price-note{font-family:var(--fm);font-size:11px;color:rgba(246,243,236,.3);margin-top:8px;letter-spacing:.06em;}
+
+/* hero CTAs */
+.hero-actions{
+  display:flex;gap:12px;flex-wrap:wrap;align-items:center;
+  padding-bottom:36px;
+}
+.btn-book{
+  display:inline-flex;align-items:center;gap:10px;
+  font-family:var(--fd);font-weight:900;font-size:17px;
+  padding:16px 32px;border-radius:999px;
+  background:var(--lime);color:var(--ink);
+  border:4px solid var(--cream);
+  box-shadow:6px 6px 0 var(--cream);
+  transition:transform .12s var(--ease),box-shadow .12s var(--ease);
+}
+.btn-book:hover{transform:translate(-2px,-2px);box-shadow:10px 10px 0 var(--cream);}
+.btn-book:active{transform:translate(2px,2px);box-shadow:2px 2px 0 var(--cream);}
+.btn-save{
+  display:inline-flex;align-items:center;gap:8px;
+  font-family:var(--fd);font-weight:700;font-size:15px;
+  padding:14px 24px;border-radius:999px;
+  background:transparent;color:var(--cream);
+  border:4px solid rgba(246,243,236,.3);
+  transition:all .12s;
+}
+.btn-save:hover{border-color:var(--cream);background:rgba(246,243,236,.08);}
+.btn-share{
+  display:inline-flex;align-items:center;gap:8px;
+  font-family:var(--fd);font-weight:700;font-size:15px;
+  padding:14px 20px;border-radius:999px;
+  background:transparent;color:rgba(246,243,236,.5);
+  border:4px solid rgba(246,243,236,.15);
+  transition:all .12s;
+}
+.btn-share:hover{color:var(--cream);border-color:rgba(246,243,236,.3);}
+
+/* hero bottom lime bar */
+.hero-lime-bar{height:6px;background:var(--lime);border-top:4px solid var(--ink);}
+
+/* ── PAGE BODY ────────────────────────────────────────── */
+.page-body{
+  max-width:1200px;margin:0 auto;
+  padding:36px 40px;
+  display:grid;
+  grid-template-columns:1fr 340px;
+  gap:28px;
+  align-items:start;
+}
+@media(max-width:960px){.page-body{grid-template-columns:1fr;padding:24px 20px;}}
+
+/* ── SECTION CARD ─────────────────────────────────────── */
+.card{
+  background:var(--paper);
+  border:4px solid var(--ink);
+  border-radius:20px;
+  box-shadow:var(--brut);
+  overflow:hidden;
+  margin-bottom:24px;
+}
+.card-head{
+  background:var(--ink);
+  padding:14px 20px;
+  display:flex;align-items:center;justify-content:space-between;
+}
+.card-head h2{font-family:var(--fd);font-weight:900;font-size:16px;color:var(--cream);}
+.card-head .eyebrow{font-family:var(--fm);font-size:10px;letter-spacing:.16em;color:var(--lime);}
+.card-body{padding:22px 20px;}
+
+/* ── PRICE CHART ──────────────────────────────────────── */
+.chart-controls{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap;}
+.chart-tab{
+  font-family:var(--fm);font-size:10px;font-weight:700;letter-spacing:.1em;
+  padding:6px 14px;border-radius:999px;
+  border:2.5px solid var(--ink);background:var(--paper);
+  cursor:pointer;transition:all .1s;
+}
+.chart-tab.active{background:var(--ink);color:var(--lime);}
+.chart-wrap{position:relative;width:100%;height:220px;}
+canvas#priceChart{width:100%!important;height:100%!important;}
+.chart-legend{
+  display:flex;gap:20px;margin-top:12px;flex-wrap:wrap;
+}
+.legend-item{display:flex;align-items:center;gap:6px;font-family:var(--fm);font-size:11px;color:var(--g500);}
+.legend-dot{width:10px;height:10px;border-radius:50%;}
+.chart-annotation{
+  margin-top:14px;padding:12px 14px;
+  background:var(--lime-tint);border:2.5px solid var(--lime);border-radius:12px;
+  font-family:var(--fm);font-size:11px;color:var(--ink);line-height:1.5;
+}
+.chart-annotation strong{font-weight:800;}
+
+/* ── FLIGHT DETAILS ───────────────────────────────────── */
+.flight-segment{
+  border:3px solid var(--ink);border-radius:16px;
+  overflow:hidden;margin-bottom:14px;
+}
+.segment-header{
+  background:var(--lime-tint);padding:14px 18px;
+  border-bottom:3px solid var(--ink);
+  display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;
+}
+.segment-header h3{font-family:var(--fd);font-weight:900;font-size:16px;}
+.segment-body{padding:16px 18px;}
+.flight-row{
+  display:flex;align-items:center;gap:0;
+  margin-bottom:16px;
+}
+.flight-node{flex:1;text-align:center;}
+.flight-time{font-family:var(--fd);font-weight:900;font-size:26px;letter-spacing:-.02em;}
+.flight-code{font-family:var(--fm);font-size:11px;color:var(--g500);margin-top:2px;letter-spacing:.1em;}
+.flight-date{font-family:var(--fm);font-size:10px;color:var(--g400);margin-top:1px;}
+.flight-line{
+  flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;padding:0 10px;
+}
+.flight-line-bar{
+  width:100%;height:2px;background:var(--g200);position:relative;
+}
+.flight-line-bar::before,.flight-line-bar::after{
+  content:'';position:absolute;top:-3px;
+  width:8px;height:8px;border-radius:50%;border:2px solid var(--ink);background:var(--paper);
+}
+.flight-line-bar::before{left:-1px;}
+.flight-line-bar::after{right:-1px;}
+.flight-line-duration{font-family:var(--fm);font-size:10px;color:var(--g500);letter-spacing:.1em;}
+.flight-line-stops{font-family:var(--fm);font-size:9px;color:var(--success);font-weight:700;letter-spacing:.1em;}
+.flight-meta-grid{
+  display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:10px;
+  border-top:2px solid var(--g100);padding-top:14px;
+}
+.meta-item{}
+.meta-label{font-family:var(--fm);font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--g400);margin-bottom:3px;}
+.meta-value{font-family:var(--fd);font-weight:700;font-size:14px;}
+.meta-value.green{color:var(--success);}
+.meta-value.violet{color:var(--violet);}
+
+/* layover chip */
+.layover-chip{
+  display:flex;align-items:center;justify-content:center;gap:8px;
+  margin:0 18px 14px;padding:10px;
+  background:var(--sun-tint);border:2px solid var(--sun);border-radius:10px;
+  font-family:var(--fm);font-size:11px;font-weight:700;color:var(--ink);
+}
+
+/* ── DEAL FACTS ───────────────────────────────────────── */
+.facts-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.fact-tile{
+  padding:14px;border-radius:14px;
+  border:3px solid var(--ink);
+}
+.fact-tile.lime{background:var(--lime);}
+.fact-tile.cream{background:var(--cream);}
+.fact-tile.violet{background:var(--violet-tint);}
+.fact-tile.coral{background:var(--coral-tint);}
+.fact-label{font-family:var(--fm);font-size:9px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--g500);margin-bottom:6px;}
+.fact-tile.lime .fact-label,.fact-tile.violet .fact-label{color:rgba(11,11,15,.5);}
+.fact-tile.violet .fact-label{color:var(--violet-deep);}
+.fact-val{font-family:var(--fd);font-weight:900;font-size:22px;letter-spacing:-.02em;}
+.fact-sub{font-size:12px;color:var(--g500);margin-top:2px;}
+.fact-tile.lime .fact-sub{color:rgba(11,11,15,.5);}
+
+/* ── PENNY ADVICE ─────────────────────────────────────── */
+.penny-advice{
+  padding:20px;
+  display:flex;gap:16px;align-items:flex-start;
+}
+.penny-bubble{
+  flex:1;
+  background:var(--lime-tint);border:3px solid var(--ink);border-radius:16px;border-top-left-radius:4px;
+  padding:14px 16px;
+  font-size:14px;line-height:1.6;
+}
+.penny-bubble strong{font-weight:700;}
+.penny-avatar{
+  width:52px;height:52px;flex-shrink:0;
+  background:var(--violet-tint);border:3px solid var(--ink);border-radius:50%;
+  display:flex;align-items:center;justify-content:center;font-size:26px;
+}
+
+/* ── SIDEBAR ──────────────────────────────────────────── */
+.sidebar{}
+
+/* sticky CTA card */
+.cta-card{
+  background:var(--paper);border:4px solid var(--ink);border-radius:20px;
+  box-shadow:var(--brut);overflow:hidden;
+  position:sticky;top:80px;
+  margin-bottom:24px;
+}
+.cta-card-banner{
+  background:var(--ink);padding:16px 18px;
+  border-bottom:4px solid var(--lime);
+}
+.cta-route-mini{font-family:var(--fd);font-weight:900;font-size:22px;color:var(--cream);letter-spacing:-.02em;}
+.cta-route-mini .arr{color:var(--lime);}
+.cta-price-mini{
+  font-family:var(--fd);font-weight:900;font-size:36px;color:var(--cream);
+  letter-spacing:-.03em;margin-top:4px;line-height:1;
+}
+.cta-price-mini .unit{font-size:14px;font-weight:400;color:rgba(246,243,236,.45);}
+.cta-was{font-family:var(--fm);font-size:11px;color:rgba(246,243,236,.35);text-decoration:line-through;margin-top:2px;}
+.cta-body{padding:18px;}
+.cta-meta-row{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:8px 0;border-bottom:2px solid var(--g100);
+  font-size:13px;
+}
+.cta-meta-row:last-of-type{border-bottom:none;margin-bottom:4px;}
+.cta-meta-key{color:var(--g500);}
+.cta-meta-val{font-weight:600;}
+.cta-meta-val.green{color:var(--success);}
+.btn-book-full{
+  display:block;width:100%;
+  font-family:var(--fd);font-weight:900;font-size:16px;
+  padding:15px;border-radius:999px;text-align:center;
+  background:var(--coral);color:#fff;
+  border:4px solid var(--ink);box-shadow:var(--brut);
+  transition:transform .12s var(--ease),box-shadow .12s var(--ease);
+  margin-bottom:10px;
+}
+.btn-book-full:hover{transform:translate(-2px,-2px);box-shadow:var(--brut-lg);}
+.btn-book-full:active{transform:translate(2px,2px);box-shadow:var(--brut-sm);}
+.btn-alert-full{
+  display:block;width:100%;
+  font-family:var(--fd);font-weight:700;font-size:14px;
+  padding:13px;border-radius:999px;text-align:center;
+  background:transparent;color:var(--ink);
+  border:4px solid var(--ink);box-shadow:var(--brut-sm);
+  transition:transform .12s var(--ease),box-shadow .12s var(--ease);
+  margin-bottom:14px;
+}
+.btn-alert-full:hover{transform:translate(-1px,-1px);box-shadow:var(--brut);}
+.disclaimer{font-family:var(--fm);font-size:10px;color:var(--g400);line-height:1.6;letter-spacing:.04em;}
+.disclaimer a{color:var(--violet);}
+
+/* urgency bar */
+.urgency-bar{
+  background:var(--coral-tint);border:3px solid var(--coral);border-radius:14px;
+  padding:12px 14px;margin-bottom:14px;
+  display:flex;gap:10px;align-items:flex-start;
+}
+.urgency-icon{font-size:18px;flex-shrink:0;}
+.urgency-text{font-size:13px;line-height:1.5;}
+.urgency-text strong{color:var(--coral);font-weight:700;}
+
+/* share row */
+.share-row{
+  display:flex;gap:8px;margin-top:14px;
+}
+.share-btn{
+  flex:1;font-family:var(--fm);font-size:11px;font-weight:700;letter-spacing:.08em;
+  padding:9px 8px;border-radius:10px;text-align:center;
+  border:2.5px solid var(--ink);box-shadow:var(--brut-sm);
+  cursor:pointer;transition:all .1s;
+}
+.share-btn:hover{transform:translate(-1px,-1px);box-shadow:var(--brut);}
+.share-btn.tg{background:var(--violet-tint);color:var(--violet);}
+.share-btn.wa{background:#dcfce7;color:#166534;}
+.share-btn.tw{background:#dbeafe;color:#1d4ed8;}
+
+/* ── RELATED DEALS ────────────────────────────────────── */
+.related-card{
+  background:var(--paper);border:3px solid var(--ink);border-radius:16px;
+  overflow:hidden;box-shadow:var(--brut-sm);
+  transition:transform .12s var(--ease),box-shadow .12s var(--ease);
+  cursor:pointer;
+}
+.related-card:hover{transform:translate(-2px,-2px);box-shadow:var(--brut);}
+.related-banner{padding:12px 14px;border-bottom:3px solid var(--ink);}
+.related-banner.rl{background:var(--lime);}
+.related-banner.rc{background:var(--coral-tint);}
+.related-banner.rv{background:var(--violet-tint);}
+.related-route{font-family:var(--fd);font-weight:900;font-size:18px;letter-spacing:-.02em;}
+.related-route .arr{color:var(--violet);}
+.related-body{padding:12px 14px;}
+.related-price{font-family:var(--fd);font-weight:900;font-size:26px;letter-spacing:-.03em;}
+.related-meta{font-family:var(--fm);font-size:10px;color:var(--g500);margin-top:3px;letter-spacing:.08em;}
+.related-pct{
+  display:inline-flex;font-family:var(--fm);font-size:11px;font-weight:800;
+  padding:4px 10px;border-radius:999px;background:var(--coral);color:#fff;
+  float:right;margin-top:4px;
+}
+
+/* ── MISTAKE FARE GUIDE ───────────────────────────────── */
+.guide-step{
+  display:flex;gap:14px;padding:14px 0;
+  border-bottom:2px solid var(--g100);
+}
+.guide-step:last-child{border-bottom:none;}
+.guide-num{
+  width:30px;height:30px;border-radius:50%;
+  background:var(--ink);color:var(--lime);
+  font-family:var(--fm);font-size:12px;font-weight:800;
+  display:flex;align-items:center;justify-content:center;
+  flex-shrink:0;
+}
+.guide-step h4{font-family:var(--fd);font-weight:700;font-size:14px;margin-bottom:2px;}
+.guide-step p{font-size:13px;color:var(--g500);line-height:1.5;}
+
+/* ── ANIMATIONS ───────────────────────────────────────── */
+@keyframes fadein{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+.fadein{animation:fadein .4s var(--ease) both;}
+.d1{animation-delay:.05s}.d2{animation-delay:.1s}.d3{animation-delay:.15s}.d4{animation-delay:.2s}
+
+/* ── MOBILE ───────────────────────────────────────────── */
+@media(max-width:768px){
+  nav{padding:0 20px;}.nav-links{display:none;}
+  .deal-hero{padding:28px 20px 0;}
+  .breadcrumb{padding:10px 20px;}
+  .airport-code{font-size:2.8rem;}
+  .price-main{font-size:3rem;}
+  .facts-grid{grid-template-columns:1fr 1fr;}
+  .cta-card{position:static;}
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">Flock<span>Fare</span></div>
+  <div class="nav-links">
+    <a href="#">Deals</a>
+    <a href="#">How it works</a>
+    <a href="#">Pro</a>
+  </div>
+  <button class="nav-cta">Join free →</button>
+</nav>
+
+<!-- BREADCRUMB -->
+<div class="breadcrumb">
+  <a href="#">Home</a>
+  <span class="sep">›</span>
+  <a href="#">Deals</a>
+  <span class="sep">›</span>
+  <a href="#">Europe</a>
+  <span class="sep">›</span>
+  <span class="current">BOM → LHR · Rare deal</span>
+</div>
+
+<!-- HERO BANNER -->
+<div class="deal-hero">
+  <div class="deal-hero-inner">
+
+    <!-- type + countdown -->
+    <div class="hero-top fadein">
+      <span class="deal-type-badge badge-rare">🔥 RARE DEAL · -61% OFF BASELINE</span>
+      <div class="countdown-wrap">
+        <span class="live-dot"></span>
+        <span style="margin-right:4px">Expires in</span>
+        <div class="countdown-digits">
+          <div class="cd-block" id="cd-h">01</div>
+          <span class="cd-sep">:</span>
+          <div class="cd-block" id="cd-m">22</div>
+          <span class="cd-sep">:</span>
+          <div class="cd-block" id="cd-s">00</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- route -->
+    <div class="route-display fadein d1">
+      <div class="route-airports">
+        <div class="airport-block">
+          <div class="airport-code">BOM</div>
+          <div class="airport-city">Mumbai</div>
+        </div>
+        <div class="route-arrow-wrap">
+          <div class="plane-icon">✈</div>
+          <div class="route-arrow-line"></div>
+          <div style="font-family:var(--fm);font-size:10px;color:rgba(246,243,236,.3);margin-top:5px;letter-spacing:.1em">9H 50M · DIRECT</div>
+        </div>
+        <div class="airport-block">
+          <div class="airport-code" style="color:var(--lime)">LHR</div>
+          <div class="airport-city">London</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- price -->
+    <div class="price-block fadein d2">
+      <div class="price-main">₹21,400<span class="unit">round-trip</span></div>
+      <div class="price-was">
+        <span class="price-struck">₹54,800 baseline</span>
+        <span class="pct-badge">-61% OFF</span>
+      </div>
+      <div class="price-note">ECONOMY · AIR INDIA · PRICE VERIFIED 3 MIN AGO · TAXES INCLUDED</div>
+    </div>
+
+    <!-- CTAs -->
+    <div class="hero-actions fadein d3">
+      <button class="btn-book" onclick="window.open('#','_blank')">
+        ✈ Book on Google Flights
+      </button>
+      <button class="btn-save" id="hero-save" onclick="toggleHeroSave()">
+        ♡ Save deal
+      </button>
+      <button class="btn-share" onclick="shareSheet()">
+        ↗ Share
+      </button>
+    </div>
+
+  </div>
+</div>
+<div class="hero-lime-bar"></div>
+
+<!-- PAGE BODY -->
+<div class="page-body">
+
+  <!-- LEFT COLUMN -->
+  <div class="left-col">
+
+    <!-- PRICE HISTORY CHART -->
+    <div class="card fadein">
+      <div class="card-head">
+        <div>
+          <div class="eyebrow">✦ 90-day price history</div>
+          <h2>This deal vs the baseline</h2>
+        </div>
+        <div class="chart-controls">
+          <button class="chart-tab active" onclick="switchChart('90d',this)">90 days</button>
+          <button class="chart-tab" onclick="switchChart('30d',this)">30 days</button>
+          <button class="chart-tab" onclick="switchChart('6m',this)">6 months</button>
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="chart-wrap">
+          <canvas id="priceChart"></canvas>
+        </div>
+        <div class="chart-legend">
+          <div class="legend-item"><div class="legend-dot" style="background:var(--g300)"></div>Historical fares</div>
+          <div class="legend-item"><div class="legend-dot" style="background:var(--violet)"></div>90-day baseline</div>
+          <div class="legend-item"><div class="legend-dot" style="background:var(--coral)"></div>Today's deal price</div>
+        </div>
+        <div class="chart-annotation">
+          <strong>Penny's read:</strong> BOM → LHR has been hovering around ₹52,000–₹58,000 for the past 90 days. Today's price of ₹21,400 is the lowest this route has ever been in our dataset — by a wide margin. This has mistake fare written all over it.
+        </div>
+      </div>
+    </div>
+
+    <!-- FLIGHT DETAILS -->
+    <div class="card fadein d1">
+      <div class="card-head">
+        <div>
+          <div class="eyebrow">✦ Flight details</div>
+          <h2>Outbound · Return</h2>
+        </div>
+        <span style="font-family:var(--fm);font-size:11px;color:rgba(246,243,236,.5);">Air India · Economy</span>
+      </div>
+      <div class="card-body" style="padding-top:18px;">
+
+        <!-- Outbound segment -->
+        <div class="flight-segment">
+          <div class="segment-header">
+            <h3>Outbound — Mumbai to London</h3>
+            <span style="font-family:var(--fm);font-size:11px;color:var(--g500);">Tue 8 Jul 2026</span>
+          </div>
+          <div class="segment-body">
+            <div class="flight-row">
+              <div class="flight-node">
+                <div class="flight-time">01:15</div>
+                <div class="flight-code">BOM</div>
+                <div class="flight-date">Tue 8 Jul</div>
+              </div>
+              <div class="flight-line">
+                <div class="flight-line-duration">9h 50m</div>
+                <div class="flight-line-bar"></div>
+                <div class="flight-line-stops" style="color:var(--success);">NON-STOP</div>
+              </div>
+              <div class="flight-node">
+                <div class="flight-time">07:05</div>
+                <div class="flight-code">LHR</div>
+                <div class="flight-date">Tue 8 Jul</div>
+              </div>
+            </div>
+            <div class="flight-meta-grid">
+              <div class="meta-item">
+                <div class="meta-label">Flight</div>
+                <div class="meta-value">AI 101</div>
+              </div>
+              <div class="meta-item">
+                <div class="meta-label">Aircraft</div>
+                <div class="meta-value">Boeing 787-8</div>
+              </div>
+              <div class="meta-item">
+                <div class="meta-label">Class</div>
+                <div class="meta-value violet">Economy</div>
+              </div>
+              <div class="meta-item">
+                <div class="meta-label">Baggage</div>
+                <div class="meta-value green">25kg included ✓</div>
+              </div>
+              <div class="meta-item">
+                <div class="meta-label">Meal</div>
+                <div class="meta-value green">Included ✓</div>
+              </div>
+              <div class="meta-item">
+                <div class="meta-label">Seat selection</div>
+                <div class="meta-value">At check-in</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Return segment -->
+        <div class="flight-segment">
+          <div class="segment-header" style="background:var(--violet-tint);">
+            <h3>Return — London to Mumbai</h3>
+            <span style="font-family:var(--fm);font-size:11px;color:var(--g500);">Sat 19 Jul 2026</span>
+          </div>
+          <div class="segment-body">
+            <div class="flight-row">
+              <div class="flight-node">
+                <div class="flight-time">14:30</div>
+                <div class="flight-code">LHR</div>
+                <div class="flight-date">Sat 19 Jul</div>
+              </div>
+              <div class="flight-line">
+                <div class="flight-line-duration">8h 55m</div>
+                <div class="flight-line-bar"></div>
+                <div class="flight-line-stops">1 STOP · DEL</div>
+              </div>
+              <div class="flight-node">
+                <div class="flight-time">08:25<span style="font-size:12px;color:var(--g400)">+1</span></div>
+                <div class="flight-code">BOM</div>
+                <div class="flight-date">Sun 20 Jul</div>
+              </div>
+            </div>
+            <!-- layover -->
+            <div class="layover-chip">
+              ⏱ 2h 10m layover in New Delhi (DEL) — no visa required for Indian passport
+            </div>
+            <div class="flight-meta-grid">
+              <div class="meta-item">
+                <div class="meta-label">Flight</div>
+                <div class="meta-value">AI 112 / 802</div>
+              </div>
+              <div class="meta-item">
+                <div class="meta-label">Aircraft</div>
+                <div class="meta-value">A320 + 787</div>
+              </div>
+              <div class="meta-item">
+                <div class="meta-label">Class</div>
+                <div class="meta-value violet">Economy</div>
+              </div>
+              <div class="meta-item">
+                <div class="meta-label">Baggage</div>
+                <div class="meta-value green">25kg included ✓</div>
+              </div>
+              <div class="meta-item">
+                <div class="meta-label">Self-transfer?</div>
+                <div class="meta-value green">No — one ticket ✓</div>
+              </div>
+              <div class="meta-item">
+                <div class="meta-label">Transit visa</div>
+                <div class="meta-value green">Not required ✓</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- DEAL FACTS -->
+    <div class="card fadein d2">
+      <div class="card-head">
+        <div>
+          <div class="eyebrow">✦ Deal facts</div>
+          <h2>The numbers</h2>
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="facts-grid">
+          <div class="fact-tile lime">
+            <div class="fact-label">You save</div>
+            <div class="fact-val">₹33,400</div>
+            <div class="fact-sub">vs 90-day baseline</div>
+          </div>
+          <div class="fact-tile coral">
+            <div class="fact-label">Discount</div>
+            <div class="fact-val">-61%</div>
+            <div class="fact-sub">off ₹54,800 baseline</div>
+          </div>
+          <div class="fact-tile cream">
+            <div class="fact-label">Deal type</div>
+            <div class="fact-val" style="font-size:17px">🔥 Rare</div>
+            <div class="fact-sub">60–69% off · uncommon</div>
+          </div>
+          <div class="fact-tile violet">
+            <div class="fact-label">Detected</div>
+            <div class="fact-val" style="font-size:17px;color:var(--violet)">3 min ago</div>
+            <div class="fact-sub">by Penny's crawler</div>
+          </div>
+          <div class="fact-tile cream">
+            <div class="fact-label">Historical low</div>
+            <div class="fact-val">₹21,400</div>
+            <div class="fact-sub">All-time lowest on record</div>
+          </div>
+          <div class="fact-tile cream">
+            <div class="fact-label">Data points</div>
+            <div class="fact-val">847</div>
+            <div class="fact-sub">fares checked · 90 days</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PENNY'S TAKE -->
+    <div class="card fadein d2">
+      <div class="card-head">
+        <div class="eyebrow">✦ Penny's take</div>
+        <h2 style="color:var(--cream)">Should you book it?</h2>
+      </div>
+      <div class="penny-advice">
+        <div class="penny-avatar">🐧</div>
+        <div class="penny-bubble">
+          <strong>Short answer: yes, right now.</strong><br><br>
+          This is the lowest BOM → LHR fare we've ever logged — by ₹6,000. Air India is a full-service carrier with one ticket on the return, no self-transfer, no transit visa drama. The return layover in Delhi is 2h10m — totally fine.<br><br>
+          At ₹21,400 round-trip with 25kg bags included, you're paying less than most BOM → DEL domestic fares. I'd call this a mistake fare but I can't confirm it — so <strong>book before the airline notices</strong>. Prices this low disappear in hours, not days.
+        </div>
+      </div>
+    </div>
+
+    <!-- MISTAKE FARE GUIDE -->
+    <div class="card fadein d3">
+      <div class="card-head">
+        <div class="eyebrow">✦ Mistake fare etiquette</div>
+        <h2>How to not blow it</h2>
+      </div>
+      <div class="card-body">
+        <div class="guide-step">
+          <div class="guide-num">1</div>
+          <div>
+            <h4>Book directly with the airline</h4>
+            <p>Go to Google Flights → book via Air India's site directly. Airlines are more likely to honour mistake fares booked through their own channels than through OTAs like MakeMyTrip.</p>
+          </div>
+        </div>
+        <div class="guide-step">
+          <div class="guide-num">2</div>
+          <div>
+            <h4>Don't call to confirm</h4>
+            <p>Seriously. Calling the airline to "confirm" the price tips them off and speeds up cancellation. Book, get your ticket email, then wait 24–48 hours.</p>
+          </div>
+        </div>
+        <div class="guide-step">
+          <div class="guide-num">3</div>
+          <div>
+            <h4>Hold off on hotels and connections</h4>
+            <p>Don't book non-refundable accommodation until your flight ticket is confirmed and 48 hours have passed. Use a credit card with chargeback protection.</p>
+          </div>
+        </div>
+        <div class="guide-step">
+          <div class="guide-num">4</div>
+          <div>
+            <h4>Set expectations</h4>
+            <p>There is no Indian consumer-protection law forcing airlines to honour mistake fares. It might get cancelled. If it does, you'll get a full refund. The upside is worth the risk.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /left-col -->
+
+  <!-- RIGHT SIDEBAR -->
+  <div class="sidebar">
+
+    <!-- Sticky CTA card -->
+    <div class="cta-card fadein">
+      <div class="cta-card-banner">
+        <div class="cta-route-mini">BOM <span class="arr">→</span> LHR</div>
+        <div class="cta-price-mini">₹21,400<span class="unit"> rt</span></div>
+        <div class="cta-was">Was ₹54,800 · save ₹33,400</div>
+      </div>
+      <div class="cta-body">
+        <div class="urgency-bar">
+          <div class="urgency-icon">⏰</div>
+          <div class="urgency-text">
+            <strong>Expires in ~82 min.</strong> Mistake fares are pulled without notice. Book before the airline's pricing team wakes up.
+          </div>
+        </div>
+        <div class="cta-meta-row"><span class="cta-meta-key">Airline</span><span class="cta-meta-val">Air India</span></div>
+        <div class="cta-meta-row"><span class="cta-meta-key">Route type</span><span class="cta-meta-val green">Non-stop outbound ✓</span></div>
+        <div class="cta-meta-row"><span class="cta-meta-key">Baggage</span><span class="cta-meta-val green">25kg included ✓</span></div>
+        <div class="cta-meta-row"><span class="cta-meta-key">Self-transfer</span><span class="cta-meta-val green">None ✓</span></div>
+        <div class="cta-meta-row"><span class="cta-meta-key">Transit visa</span><span class="cta-meta-val green">Not required ✓</span></div>
+        <div class="cta-meta-row"><span class="cta-meta-key">Travel month</span><span class="cta-meta-val">July 2026</span></div>
+        <div class="cta-meta-row"><span class="cta-meta-key">Cabin</span><span class="cta-meta-val">Economy</span></div>
+
+        <button class="btn-book-full" onclick="window.open('#','_blank')">
+          ✈ Book on Google Flights →
+        </button>
+        <button class="btn-alert-full" id="alert-btn" onclick="toggleAlert()">
+          🔔 Alert me if price drops more
+        </button>
+
+        <div class="disclaimer">
+          Price verified by Penny 3 min ago. Fares update constantly — the deal may no longer be available by the time you click. We link to Google Flights; we don't sell tickets. <a href="#">Privacy policy</a>.
+        </div>
+
+        <div class="share-row">
+          <button class="share-btn tg" onclick="share('telegram')">Telegram</button>
+          <button class="share-btn wa" onclick="share('whatsapp')">WhatsApp</button>
+          <button class="share-btn tw" onclick="share('twitter')">X / Twitter</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Related deals -->
+    <div class="card fadein d2" style="margin-bottom:0">
+      <div class="card-head">
+        <div class="eyebrow">✦ From Mumbai</div>
+        <h2>More deals</h2>
+      </div>
+      <div class="card-body" style="display:flex;flex-direction:column;gap:12px;padding:16px;">
+
+        <div class="related-card">
+          <div class="related-banner rl">
+            <div class="related-route">BOM <span class="arr">→</span> SIN <span class="related-pct">-73%</span></div>
+          </div>
+          <div class="related-body">
+            <div class="related-price">₹8,200</div>
+            <div class="related-meta">Singapore Airlines · Direct · Economy · MISTAKE FARE</div>
+          </div>
+        </div>
+
+        <div class="related-card">
+          <div class="related-banner rc">
+            <div class="related-route">BOM <span class="arr">→</span> CDG <span class="related-pct">-62%</span></div>
+          </div>
+          <div class="related-body">
+            <div class="related-price">₹24,800</div>
+            <div class="related-meta">Air France · 1 stop · Economy</div>
+          </div>
+        </div>
+
+        <div class="related-card">
+          <div class="related-banner rv">
+            <div class="related-route">BOM <span class="arr">→</span> KUL <span class="related-pct">-44%</span></div>
+          </div>
+          <div class="related-body">
+            <div class="related-price">₹13,200</div>
+            <div class="related-meta">Malaysia Airlines · Direct · Economy</div>
+          </div>
+        </div>
+
+        <a href="#" style="display:block;text-align:center;font-family:var(--fm);font-size:11px;font-weight:700;letter-spacing:.1em;color:var(--violet);padding:8px;">VIEW ALL 47 DEALS →</a>
+
+      </div>
+    </div>
+
+  </div><!-- /sidebar -->
+
+</div><!-- /page-body -->
+
+<!-- Chart.js -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<script>
+/* ── PRICE CHART ──────────────────────────────────────── */
+const INK    = '#0B0B0F';
+const VIOLET = '#6D28FF';
+const CORAL  = '#FF4E64';
+const LIME   = '#D8FF3C';
+const G200   = '#E2E2DD';
+const G500   = '#6A6A67';
+
+// Generate 90 days of realistic BOM→LHR prices
+function genPriceData(days) {
+  const now = new Date();
+  const labels = [], prices = [], baselines = [];
+  for (let i = days; i >= 0; i--) {
+    const d = new Date(now); d.setDate(d.getDate() - i);
+    labels.push(d.toLocaleDateString('en-IN',{day:'numeric',month:'short'}));
+    // price oscillates 42k–62k with some spikes/dips
+    const base = 54000;
+    const noise = Math.sin(i * 0.3) * 5000 + Math.sin(i * 0.13) * 3000 + (Math.random() - 0.5) * 4000;
+    prices.push(Math.round(Math.max(38000, base + noise)));
+    baselines.push(54200); // rolling median
+  }
+  // last point is today's deal
+  prices[prices.length - 1] = 21400;
+  return { labels, prices, baselines };
+}
+
+let chartInstance;
+let currentRange = '90d';
+
+function buildChart(range) {
+  const days = range === '30d' ? 30 : range === '6m' ? 180 : 90;
+  const { labels, prices, baselines } = genPriceData(days);
+
+  // thin out labels for readability
+  const step = Math.max(1, Math.floor(labels.length / 12));
+  const sparsedLabels = labels.map((l, i) => i % step === 0 || i === labels.length - 1 ? l : '');
+
+  if (chartInstance) chartInstance.destroy();
+
+  const ctx = document.getElementById('priceChart').getContext('2d');
+
+  // gradient for price area
+  const grad = ctx.createLinearGradient(0, 0, 0, 220);
+  grad.addColorStop(0, 'rgba(11,11,15,0.08)');
+  grad.addColorStop(1, 'rgba(11,11,15,0.00)');
+
+  // point colors: red for the last (deal) point
+  const pointColors = prices.map((_, i) => i === prices.length - 1 ? CORAL : 'transparent');
+  const pointBorder = prices.map((_, i) => i === prices.length - 1 ? CORAL : 'transparent');
+  const pointRadius = prices.map((_, i) => i === prices.length - 1 ? 7 : 0);
+  const pointHover  = prices.map((_, i) => i === prices.length - 1 ? 9 : 4);
+
+  chartInstance = new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: sparsedLabels,
+      datasets: [
+        {
+          label: 'Historical fares (₹)',
+          data: prices,
+          borderColor: G200,
+          borderWidth: 2,
+          pointBackgroundColor: pointColors,
+          pointBorderColor: pointBorder,
+          pointRadius: pointRadius,
+          pointHoverRadius: pointHover,
+          fill: true,
+          backgroundColor: grad,
+          tension: 0.35,
+        },
+        {
+          label: '90-day baseline (₹)',
+          data: baselines,
+          borderColor: VIOLET,
+          borderWidth: 2,
+          borderDash: [6, 4],
+          pointRadius: 0,
+          fill: false,
+          tension: 0,
+        },
+      ]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      interaction: { mode: 'index', intersect: false },
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          backgroundColor: INK,
+          titleFont: { family: "'JetBrains Mono', monospace", size: 11 },
+          bodyFont:  { family: "'JetBrains Mono', monospace", size: 12 },
+          titleColor: 'rgba(246,243,236,.5)',
+          bodyColor:  '#fff',
+          padding: 12,
+          cornerRadius: 10,
+          displayColors: false,
+          callbacks: {
+            title: ctx => ctx[0].label,
+            label: ctx => {
+              if (ctx.datasetIndex === 0) {
+                const isLast = ctx.dataIndex === prices.length - 1;
+                return isLast ? `🔥 Deal price: ₹${ctx.parsed.y.toLocaleString('en-IN')}` : `Fare: ₹${ctx.parsed.y.toLocaleString('en-IN')}`;
+              }
+              return `Baseline: ₹${ctx.parsed.y.toLocaleString('en-IN')}`;
+            }
+          }
+        },
+        // vertical annotation for today's deal
+        annotation: undefined,
+      },
+      scales: {
+        x: {
+          grid: { color: 'rgba(11,11,15,.05)', drawBorder: false },
+          ticks: {
+            font: { family: "'JetBrains Mono', monospace", size: 9 },
+            color: G500,
+            maxRotation: 0,
+          },
+        },
+        y: {
+          position: 'right',
+          grid: { color: 'rgba(11,11,15,.06)', drawBorder: false },
+          ticks: {
+            font: { family: "'JetBrains Mono', monospace", size: 10 },
+            color: G500,
+            callback: v => '₹' + Math.round(v/1000) + 'k',
+            maxTicksLimit: 6,
+          },
+        }
+      }
+    }
+  });
+}
+
+function switchChart(range, btn) {
+  currentRange = range;
+  document.querySelectorAll('.chart-tab').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  buildChart(range);
+}
+
+buildChart('90d');
+
+/* ── LIVE COUNTDOWN ───────────────────────────────────── */
+let totalSeconds = 82 * 60; // 1h 22m
+function tickCountdown() {
+  if (totalSeconds <= 0) {
+    document.getElementById('cd-h').textContent = '00';
+    document.getElementById('cd-m').textContent = '00';
+    document.getElementById('cd-s').textContent = '00';
+    return;
+  }
+  totalSeconds--;
+  const h = Math.floor(totalSeconds / 3600);
+  const m = Math.floor((totalSeconds % 3600) / 60);
+  const s = totalSeconds % 60;
+  document.getElementById('cd-h').textContent = String(h).padStart(2,'0');
+  document.getElementById('cd-m').textContent = String(m).padStart(2,'0');
+  document.getElementById('cd-s').textContent = String(s).padStart(2,'0');
+}
+setInterval(tickCountdown, 1000);
+
+/* ── SAVE TOGGLE ──────────────────────────────────────── */
+function toggleHeroSave() {
+  const btn = document.getElementById('hero-save');
+  const saved = btn.textContent.includes('♥');
+  btn.textContent = saved ? '♡ Save deal' : '♥ Saved!';
+  btn.style.color = saved ? '' : 'var(--lime)';
+  btn.style.borderColor = saved ? '' : 'var(--lime)';
+}
+
+/* ── ALERT TOGGLE ─────────────────────────────────────── */
+function toggleAlert() {
+  const btn = document.getElementById('alert-btn');
+  const on = btn.textContent.includes('🔔');
+  btn.textContent = on ? '✓ Alert set — we\'ll ping you' : '🔔 Alert me if price drops more';
+  btn.style.background = on ? 'var(--lime-tint)' : '';
+  btn.style.borderColor = on ? 'var(--lime)' : '';
+  btn.style.color = on ? 'var(--ink)' : '';
+}
+
+/* ── SHARE ────────────────────────────────────────────── */
+function shareSheet() {
+  const txt = 'BOM → LHR just dropped to ₹21,400 round-trip (-61% off) on FlockFare. Might be a mistake fare — grab it fast!';
+  if (navigator.share) {
+    navigator.share({ title: 'FlockFare deal', text: txt, url: window.location.href });
+  } else {
+    navigator.clipboard?.writeText(txt + ' ' + window.location.href);
+    alert('Deal link copied to clipboard!');
+  }
+}
+function share(platform) {
+  const txt = encodeURIComponent('BOM → LHR just dropped to ₹21,400 round-trip (-61% off) on FlockFare! ' + window.location.href);
+  const urls = {
+    telegram: `https://t.me/share/url?url=${txt}`,
+    whatsapp: `https://wa.me/?text=${txt}`,
+    twitter:  `https://twitter.com/intent/tweet?text=${txt}`
+  };
+  window.open(urls[platform], '_blank');
+}
+
+/* ── SCROLL REVEAL ────────────────────────────────────── */
+const obs = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      e.target.style.opacity = '1';
+      e.target.style.transform = 'translateY(0)';
+      obs.unobserve(e.target);
+    }
+  });
+}, { threshold: 0.07 });
+document.querySelectorAll('.card, .cta-card').forEach(el => {
+  el.style.opacity = '0';
+  el.style.transform = 'translateY(18px)';
+  el.style.transition = 'opacity .4s var(--ease), transform .4s var(--ease)';
+  obs.observe(el);
+});
+</script>
+</body>
+</html>

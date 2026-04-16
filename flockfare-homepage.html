@@ -1,0 +1,1005 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>FlockFare — Deals. Drops. Departures.</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,700;12..96,900&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,700&family=JetBrains+Mono:wght@400;700;800&display=swap" rel="stylesheet"/>
+<style>
+/* ── TOKENS ──────────────────────────────────────────────── */
+:root {
+  --ink:        #0B0B0F;
+  --ink-soft:   #1A1A22;
+  --cream:      #F6F3EC;
+  --paper:      #FFFFFF;
+  --violet:     #6D28FF;
+  --violet-deep:#2A1470;
+  --violet-tint:#EFE6FF;
+  --lime:       #D8FF3C;
+  --lime-tint:  #F3FFC7;
+  --coral:      #FF4E64;
+  --coral-tint: #FFE5ED;
+  --sun:        #FFD166;
+  --gray-400:   #9C9C98;
+  --gray-500:   #6A6A67;
+  --gray-600:   #4A4A48;
+  --shadow-brut:    6px 6px 0 var(--ink);
+  --shadow-brut-sm: 3px 3px 0 var(--ink);
+  --shadow-brut-lg: 10px 10px 0 var(--ink);
+  --ease-out: cubic-bezier(0.2, 0.8, 0.2, 1);
+  --font-display: 'Bricolage Grotesque', sans-serif;
+  --font-body:    'DM Sans', sans-serif;
+  --font-mono:    'JetBrains Mono', monospace;
+}
+
+/* ── RESET ───────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: var(--font-body);
+  background: var(--cream);
+  color: var(--ink);
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+img { display: block; max-width: 100%; }
+button { cursor: pointer; font-family: inherit; border: none; outline: none; }
+a { text-decoration: none; color: inherit; }
+
+/* ── TYPOGRAPHY ──────────────────────────────────────────── */
+.ff-eyebrow {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+  color: var(--violet);
+}
+.ff-display { font-family: var(--font-display); font-weight: 900; letter-spacing: -0.03em; line-height: 1.02; }
+.ff-mono { font-family: var(--font-mono); }
+
+/* ── BUTTONS ─────────────────────────────────────────────── */
+.btn {
+  display: inline-flex; align-items: center; gap: 8px;
+  font-family: var(--font-display); font-weight: 700; font-size: 15px;
+  padding: 14px 26px; border-radius: 999px;
+  border: 4px solid var(--ink);
+  box-shadow: var(--shadow-brut);
+  transition: transform 120ms var(--ease-out), box-shadow 120ms var(--ease-out);
+}
+.btn:hover  { transform: translate(-2px,-2px); box-shadow: var(--shadow-brut-lg); }
+.btn:active { transform: translate(3px,3px);  box-shadow: var(--shadow-brut-sm); }
+.btn-lime   { background: var(--lime); color: var(--ink); }
+.btn-ghost  { background: transparent; color: var(--cream); border-color: var(--cream); box-shadow: none; }
+.btn-ghost:hover { background: rgba(246,243,236,.1); box-shadow: none; transform: none; }
+.btn-coral  { background: var(--coral); color: #fff; }
+.btn-violet { background: var(--violet); color: #fff; }
+
+/* ── PILL BADGE ──────────────────────────────────────────── */
+.pill {
+  display: inline-flex; align-items: center; gap: 4px;
+  font-family: var(--font-mono); font-weight: 800; font-size: 11px; letter-spacing: .14em;
+  padding: 5px 12px; border-radius: 999px;
+}
+.pill-coral  { background: var(--coral); color: #fff; }
+.pill-lime   { background: var(--lime); color: var(--ink); }
+.pill-sun    { background: var(--sun); color: var(--ink); }
+.pill-violet { background: var(--violet); color: #fff; }
+
+/* ── NAV ─────────────────────────────────────────────────── */
+nav {
+  position: sticky; top: 0; z-index: 100;
+  background: var(--ink);
+  border-bottom: 4px solid var(--ink);
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 40px; height: 64px;
+}
+.nav-logo {
+  font-family: var(--font-display); font-weight: 900; font-size: 22px;
+  color: var(--cream); letter-spacing: -0.03em;
+}
+.nav-logo span { color: var(--lime); }
+.nav-links { display: flex; gap: 28px; align-items: center; }
+.nav-links a {
+  font-family: var(--font-display); font-weight: 700; font-size: 14px;
+  color: rgba(246,243,236,.65);
+  transition: color .12s;
+}
+.nav-links a:hover { color: var(--lime); }
+.nav-cta {
+  font-family: var(--font-display); font-weight: 700; font-size: 13px;
+  padding: 9px 20px; border-radius: 999px;
+  background: var(--lime); color: var(--ink); border: 3px solid var(--cream);
+  box-shadow: 3px 3px 0 var(--cream);
+  transition: transform .12s, box-shadow .12s;
+}
+.nav-cta:hover  { transform: translate(-1px,-1px); box-shadow: 5px 5px 0 var(--cream); }
+.nav-cta:active { transform: translate(2px,2px); box-shadow: 1px 1px 0 var(--cream); }
+
+/* ── HERO ────────────────────────────────────────────────── */
+.hero {
+  background: var(--ink);
+  position: relative; overflow: hidden;
+  padding: 80px 40px 0;
+  min-height: 620px;
+  display: flex; align-items: flex-end;
+}
+.hero-noise {
+  position: absolute; inset: 0; pointer-events: none; opacity: .03;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 200px;
+}
+/* diagonal stripe accent */
+.hero::before {
+  content: '';
+  position: absolute;
+  top: -80px; right: -120px;
+  width: 520px; height: 520px;
+  background: var(--violet);
+  clip-path: polygon(30% 0%, 100% 0%, 70% 100%, 0% 100%);
+  opacity: .12;
+}
+.hero-inner {
+  max-width: 1200px; width: 100%; margin: 0 auto;
+  display: flex; align-items: flex-end; justify-content: space-between; gap: 40px;
+  position: relative; z-index: 2;
+}
+.hero-copy { max-width: 620px; padding-bottom: 80px; }
+.hero-eyebrow { margin-bottom: 20px; }
+.hero-headline {
+  font-family: var(--font-display); font-weight: 900;
+  font-size: clamp(3rem, 6.5vw, 5.2rem);
+  line-height: 1.0; letter-spacing: -0.035em;
+  color: var(--cream);
+}
+.hero-headline .hl-lime  { color: var(--lime); }
+.hero-headline .hl-coral { color: var(--coral); }
+.hero-sub {
+  margin-top: 24px;
+  font-size: clamp(16px, 1.8vw, 19px);
+  color: rgba(246,243,236,.6);
+  line-height: 1.6; max-width: 480px;
+}
+.hero-sub strong { color: var(--cream); font-weight: 500; }
+.hero-actions { margin-top: 36px; display: flex; gap: 14px; flex-wrap: wrap; align-items: center; }
+.hero-proof {
+  margin-top: 36px;
+  display: flex; gap: 20px; align-items: center; flex-wrap: wrap;
+}
+.hero-proof-avatar {
+  display: flex;
+}
+.avatar-ring {
+  width: 32px; height: 32px; border-radius: 50%;
+  border: 2px solid var(--ink); margin-left: -8px;
+  background: var(--violet); display: flex; align-items: center; justify-content: center;
+  font-family: var(--font-mono); font-size: 9px; font-weight: 700; color: #fff;
+}
+.avatar-ring:first-child { margin-left: 0; }
+.avatar-ring:nth-child(2){ background: var(--coral); }
+.avatar-ring:nth-child(3){ background: var(--sun); color: var(--ink); }
+.avatar-ring:nth-child(4){ background: var(--lime); color: var(--ink); }
+.hero-proof-text { font-size: 13px; color: rgba(246,243,236,.55); line-height: 1.4; }
+.hero-proof-text strong { color: var(--lime); font-weight: 600; }
+
+/* Penny mascot */
+.hero-penny {
+  flex-shrink: 0;
+  position: relative;
+  width: 320px; display: flex; flex-direction: column; align-items: center;
+}
+.penny-img-wrap {
+  position: relative; z-index: 2;
+}
+.penny-img-wrap img {
+  width: 300px;
+  filter: drop-shadow(0 24px 48px rgba(109,40,255,.35));
+  animation: penny-float 3.5s ease-in-out infinite;
+}
+@keyframes penny-float {
+  0%,100% { transform: translateY(0); }
+  50%      { transform: translateY(-10px); }
+}
+/* deal ping bubble */
+.penny-ping {
+  position: absolute; top: 20px; right: -20px;
+  background: var(--lime); border: 3px solid var(--ink);
+  border-radius: 20px 20px 20px 4px;
+  padding: 10px 14px;
+  box-shadow: var(--shadow-brut);
+  white-space: nowrap;
+  animation: ping-pop .6s var(--ease-out) 1.5s both;
+}
+@keyframes ping-pop { from { opacity:0; transform: scale(.7) translateY(8px); } to { opacity:1; transform: scale(1) translateY(0); } }
+.ping-label { font-family: var(--font-mono); font-size: 10px; letter-spacing: .12em; color: var(--gray-600); }
+.ping-route { font-family: var(--font-display); font-weight: 900; font-size: 18px; letter-spacing: -0.02em; color: var(--ink); }
+.ping-price { font-family: var(--font-display); font-weight: 700; font-size: 13px; color: var(--ink); }
+.ping-drop  { font-family: var(--font-mono); font-size: 10px; font-weight: 800; color: var(--coral); }
+.hero-shadow-bar {
+  width: 100%; height: 4px;
+  background: var(--lime);
+  border-top: 4px solid var(--ink);
+}
+
+/* ── STATS BAR ───────────────────────────────────────────── */
+.stats-bar {
+  background: var(--lime);
+  border-bottom: 4px solid var(--ink);
+  padding: 20px 40px;
+}
+.stats-inner {
+  max-width: 1200px; margin: 0 auto;
+  display: flex; flex-wrap: wrap; gap: 16px 48px; justify-content: center; align-items: center;
+}
+.stat { text-align: center; }
+.stat-val { font-family: var(--font-display); font-weight: 900; font-size: 26px; letter-spacing: -0.03em; color: var(--ink); }
+.stat-lbl { font-family: var(--font-mono); font-size: 10px; letter-spacing: .16em; text-transform: uppercase; color: rgba(11,11,15,.6); margin-top: 2px; }
+.stats-sep { width: 4px; height: 4px; background: var(--ink); border-radius: 50%; opacity: .3; }
+
+/* ── SECTION WRAPPER ─────────────────────────────────────── */
+.section { padding: 88px 40px; }
+.section-inner { max-width: 1200px; margin: 0 auto; }
+.section-header { margin-bottom: 48px; }
+.section-header h2 {
+  font-family: var(--font-display); font-weight: 900;
+  font-size: clamp(2rem, 3.5vw, 2.75rem);
+  letter-spacing: -0.03em; line-height: 1.06;
+  margin-top: 10px;
+}
+.section-header p { margin-top: 12px; font-size: 16px; color: var(--gray-500); max-width: 480px; line-height: 1.6; }
+
+/* ── DEAL CARDS ──────────────────────────────────────────── */
+.deals-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 20px;
+}
+.deal-card {
+  background: var(--paper);
+  border: 4px solid var(--ink);
+  border-radius: 20px;
+  box-shadow: var(--shadow-brut);
+  overflow: hidden;
+  display: flex; flex-direction: column;
+  transition: transform 120ms var(--ease-out), box-shadow 120ms var(--ease-out);
+}
+.deal-card:hover { transform: translate(-2px,-2px); box-shadow: var(--shadow-brut-lg); }
+.deal-banner {
+  padding: 16px 18px 14px;
+  border-bottom: 4px solid var(--ink);
+  display: flex; justify-content: space-between; align-items: flex-start;
+}
+.deal-banner.lime   { background: var(--lime); }
+.deal-banner.coral  { background: var(--coral-tint); }
+.deal-banner.violet { background: var(--violet-tint); }
+.deal-banner.sun    { background: #FFF6D6; }
+.deal-route {
+  font-family: var(--font-display); font-weight: 900; font-size: 26px;
+  letter-spacing: -0.02em; line-height: 1; color: var(--ink);
+}
+.deal-route .arr { margin: 0 6px; color: var(--violet); }
+.deal-body { padding: 18px; flex: 1; display: flex; flex-direction: column; gap: 6px; }
+.deal-price {
+  font-family: var(--font-display); font-weight: 900;
+  font-size: 42px; line-height: 1; letter-spacing: -0.03em; color: var(--ink);
+}
+.deal-price .unit { font-size: 14px; font-weight: 400; color: var(--gray-500); margin-left: 4px; }
+.deal-strike { font-family: var(--font-mono); font-size: 12px; color: var(--gray-400, #9C9C98); text-decoration: line-through; }
+.deal-meta { font-family: var(--font-mono); font-size: 11px; letter-spacing: .14em; text-transform: uppercase; color: var(--gray-500); margin-top: 4px; }
+.deal-timer { 
+  display: flex; align-items: center; gap: 6px;
+  font-family: var(--font-mono); font-size: 11px; color: var(--coral); font-weight: 700;
+}
+.deal-timer::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: var(--coral); animation: blink 1s ease-in-out infinite; }
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:.3} }
+.deal-cta { display: flex; gap: 10px; margin-top: 14px; }
+.deal-grab {
+  flex: 1;
+  font-family: var(--font-display); font-weight: 700; font-size: 14px;
+  padding: 12px 18px; border-radius: 999px;
+  background: var(--coral); color: #fff; border: 3px solid var(--ink);
+  box-shadow: var(--shadow-brut-sm);
+  transition: transform .12s, box-shadow .12s;
+}
+.deal-grab:hover  { transform: translate(-1px,-1px); box-shadow: var(--shadow-brut); }
+.deal-grab:active { transform: translate(2px,2px); box-shadow: none; }
+.deal-save {
+  font-family: var(--font-display); font-weight: 700; font-size: 14px;
+  padding: 12px 14px; border-radius: 999px;
+  background: transparent; color: var(--ink); border: 3px solid var(--ink);
+  box-shadow: var(--shadow-brut-sm);
+  transition: transform .12s, box-shadow .12s;
+}
+.deal-save:hover  { transform: translate(-1px,-1px); box-shadow: var(--shadow-brut); }
+
+/* ── HOW IT WORKS ────────────────────────────────────────── */
+.how-section { background: var(--ink); }
+.how-section .section-header h2 { color: var(--cream); }
+.how-section .section-header p  { color: rgba(246,243,236,.55); }
+.how-section .ff-eyebrow { color: var(--lime); }
+.steps-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 20px;
+}
+.step-card {
+  background: var(--ink-soft);
+  border: 3px solid rgba(246,243,236,.12);
+  border-radius: 20px; padding: 28px 24px;
+  position: relative; overflow: hidden;
+  transition: border-color .2s;
+}
+.step-card:hover { border-color: var(--lime); }
+.step-num {
+  font-family: var(--font-display); font-weight: 900;
+  font-size: 80px; line-height: 1; letter-spacing: -0.04em;
+  color: rgba(246,243,236,.06);
+  position: absolute; top: 0; right: 16px;
+  user-select: none;
+}
+.step-icon {
+  width: 44px; height: 44px; border-radius: 12px;
+  border: 3px solid var(--ink);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 20px; margin-bottom: 16px;
+}
+.step-card h3 {
+  font-family: var(--font-display); font-weight: 900; font-size: 19px;
+  letter-spacing: -0.02em; color: var(--cream); margin-bottom: 8px;
+}
+.step-card p { font-size: 14px; color: rgba(246,243,236,.55); line-height: 1.6; }
+.step-connector {
+  display: flex; align-items: center; justify-content: center;
+  color: rgba(246,243,236,.2);
+  font-size: 20px; padding-top: 20px;
+}
+
+/* ── SOCIAL PROOF ────────────────────────────────────────── */
+.proof-section { background: var(--cream); }
+.tweets-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 16px;
+}
+.tweet {
+  background: var(--paper);
+  border: 3px solid var(--ink);
+  border-radius: 16px; padding: 20px;
+  box-shadow: var(--shadow-brut-sm);
+}
+.tweet-header { display: flex; gap: 10px; align-items: center; margin-bottom: 12px; }
+.tweet-avatar {
+  width: 38px; height: 38px; border-radius: 50%;
+  border: 2px solid var(--ink); display: flex; align-items: center; justify-content: center;
+  font-family: var(--font-mono); font-weight: 700; font-size: 11px;
+}
+.tweet-name { font-family: var(--font-display); font-weight: 700; font-size: 14px; color: var(--ink); }
+.tweet-handle { font-family: var(--font-mono); font-size: 11px; color: var(--gray-500); margin-top: 1px; }
+.tweet-body { font-size: 14px; color: var(--ink); line-height: 1.55; }
+.tweet-body .highlight { color: var(--violet); font-weight: 600; }
+.tweet-body .highlight-coral { color: var(--coral); font-weight: 600; }
+.tweet-body .highlight-lime { color: #3a7c00; font-weight: 600; }
+.tweet-savings {
+  margin-top: 12px; padding: 10px 12px;
+  background: var(--lime-tint); border-radius: 10px; border: 2px solid var(--lime);
+  font-family: var(--font-mono); font-size: 12px; color: var(--ink); font-weight: 700;
+}
+
+/* ── EMAIL CAPTURE ───────────────────────────────────────── */
+.email-section {
+  background: var(--violet);
+  border-top: 4px solid var(--ink);
+  border-bottom: 4px solid var(--ink);
+  padding: 72px 40px;
+  position: relative; overflow: hidden;
+}
+.email-section::before {
+  content: '';
+  position: absolute; bottom: -60px; right: -60px;
+  width: 300px; height: 300px;
+  background: var(--lime); opacity: .15;
+  border-radius: 50%;
+}
+.email-inner {
+  max-width: 700px; margin: 0 auto;
+  position: relative; z-index: 2;
+  text-align: center;
+}
+.email-inner h2 {
+  font-family: var(--font-display); font-weight: 900;
+  font-size: clamp(2.2rem,4vw,3rem);
+  letter-spacing: -0.03em; color: #fff; margin-bottom: 12px; line-height: 1.05;
+}
+.email-inner p { font-size: 16px; color: rgba(255,255,255,.7); margin-bottom: 32px; line-height: 1.6; }
+.email-form {
+  display: flex; gap: 12px; flex-wrap: wrap; justify-content: center;
+}
+.email-input {
+  flex: 1; min-width: 240px; max-width: 360px;
+  font-family: var(--font-body); font-size: 15px;
+  padding: 14px 20px; border-radius: 999px;
+  border: 4px solid var(--ink); background: var(--cream);
+  color: var(--ink); outline: none;
+  box-shadow: var(--shadow-brut);
+}
+.email-input::placeholder { color: var(--gray-500); }
+.email-input:focus { border-color: var(--lime); box-shadow: 6px 6px 0 var(--lime); }
+.email-legal {
+  margin-top: 16px; font-size: 12px; color: rgba(255,255,255,.45);
+  font-family: var(--font-mono);
+}
+
+/* ── FOOTER ──────────────────────────────────────────────── */
+footer {
+  background: var(--ink); color: var(--cream);
+  padding: 48px 40px 32px; border-top: 4px solid var(--cream);
+}
+.footer-inner { max-width: 1200px; margin: 0 auto; }
+.footer-top {
+  display: flex; justify-content: space-between; align-items: flex-start;
+  gap: 40px; flex-wrap: wrap; margin-bottom: 40px;
+}
+.footer-logo { font-family: var(--font-display); font-weight: 900; font-size: 24px; letter-spacing: -0.03em; }
+.footer-logo span { color: var(--lime); }
+.footer-tagline { font-family: var(--font-mono); font-size: 11px; letter-spacing: .14em; color: var(--gray-500); margin-top: 6px; text-transform: uppercase; }
+.footer-links { display: flex; gap: 40px; flex-wrap: wrap; }
+.footer-col h4 { font-family: var(--font-mono); font-size: 11px; letter-spacing: .14em; text-transform: uppercase; color: var(--gray-500); margin-bottom: 14px; }
+.footer-col a { display: block; font-size: 14px; color: rgba(246,243,236,.6); margin-bottom: 8px; transition: color .12s; }
+.footer-col a:hover { color: var(--lime); }
+.footer-bottom {
+  border-top: 2px solid rgba(246,243,236,.1); padding-top: 24px;
+  display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;
+}
+.footer-copy { font-family: var(--font-mono); font-size: 11px; color: var(--gray-500); letter-spacing: .06em; }
+.footer-airports { font-family: var(--font-mono); font-size: 11px; color: var(--gray-500); letter-spacing: .1em; }
+
+/* ── FILTER BAR ──────────────────────────────────────────── */
+.filter-bar { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 32px; }
+.filter-btn {
+  font-family: var(--font-mono); font-size: 11px; font-weight: 700; letter-spacing: .1em;
+  padding: 8px 16px; border-radius: 999px; text-transform: uppercase;
+  border: 3px solid var(--ink); background: transparent; color: var(--ink);
+  box-shadow: var(--shadow-brut-sm);
+  transition: all .12s;
+}
+.filter-btn:hover { background: var(--ink); color: var(--lime); }
+.filter-btn.active { background: var(--ink); color: var(--lime); }
+
+/* ── ANIMATIONS ──────────────────────────────────────────── */
+.fade-up {
+  opacity: 0; transform: translateY(24px);
+  animation: fadeup .5s var(--ease-out) forwards;
+}
+@keyframes fadeup { to { opacity:1; transform: translateY(0); } }
+.delay-1 { animation-delay: .1s; }
+.delay-2 { animation-delay: .2s; }
+.delay-3 { animation-delay: .3s; }
+.delay-4 { animation-delay: .4s; }
+.delay-5 { animation-delay: .55s; }
+
+/* ── RESPONSIVE ──────────────────────────────────────────── */
+@media (max-width: 768px) {
+  nav { padding: 0 20px; }
+  .nav-links { display: none; }
+  .hero { padding: 60px 20px 0; }
+  .hero-penny { display: none; }
+  .hero-copy { padding-bottom: 60px; }
+  .section { padding: 60px 20px; }
+  .stats-bar { padding: 16px 20px; }
+  .email-section { padding: 56px 20px; }
+  footer { padding: 40px 20px 24px; }
+  .footer-links { flex-direction: column; gap: 24px; }
+}
+</style>
+</head>
+<body>
+
+<!-- ── NAV ────────────────────────────────────────────────── -->
+<nav>
+  <div class="nav-logo">Flock<span>Fare</span></div>
+  <div class="nav-links">
+    <a href="#">Deals</a>
+    <a href="#">How it works</a>
+    <a href="#">Pro</a>
+    <a href="#">About</a>
+  </div>
+  <button class="nav-cta">Join the flock →</button>
+</nav>
+
+<!-- ── HERO ───────────────────────────────────────────────── -->
+<section class="hero">
+  <div class="hero-noise"></div>
+  <div class="hero-inner">
+    <div class="hero-copy">
+      <div class="hero-eyebrow ff-eyebrow fade-up">✦ Cheap flight alerts · For the flock</div>
+      <h1 class="hero-headline fade-up delay-1">
+        Cheap flights<br>
+        land in your<br>
+        <span class="hl-lime">pocket.</span><br>
+        <span class="hl-coral">Not theirs.</span>
+      </h1>
+      <p class="hero-sub fade-up delay-2">
+        Penny watches <strong>hundreds of fare databases</strong> every minute. Mistake fares, flash sales, price drops — you get a push in under 5 minutes. Before anyone else.
+      </p>
+      <div class="hero-actions fade-up delay-3">
+        <button class="btn btn-lime">Join free — no card →</button>
+        <button class="btn btn-ghost">See live deals</button>
+      </div>
+      <div class="hero-proof fade-up delay-4">
+        <div class="hero-proof-avatar">
+          <div class="avatar-ring">AK</div>
+          <div class="avatar-ring">RS</div>
+          <div class="avatar-ring">PM</div>
+          <div class="avatar-ring">DN</div>
+        </div>
+        <p class="hero-proof-text">
+          <strong>12,400+ flyers</strong> already<br>saving 40–90% on every trip
+        </p>
+      </div>
+    </div>
+
+    <!-- Penny -->
+    <div class="hero-penny fade-up delay-3">
+      <div class="penny-img-wrap">
+        <!-- Penny ping bubble -->
+        <div class="penny-ping">
+          <div class="ping-label">PENNY FOUND ·&nbsp;<span class="ping-drop">-61% OFF</span></div>
+          <div class="ping-route">BOM → BKK</div>
+          <div class="ping-price">₹ 11,200 &nbsp;·&nbsp; round-trip</div>
+        </div>
+        <!-- SVG Penny stand-in (renders without external asset) -->
+        <svg viewBox="0 0 300 340" width="300" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Penny the Puffin mascot">
+          <defs>
+            <radialGradient id="body-g" cx="50%" cy="40%" r="55%">
+              <stop offset="0%" stop-color="#26253A"/>
+              <stop offset="100%" stop-color="#0E0E18"/>
+            </radialGradient>
+            <radialGradient id="belly-g" cx="50%" cy="50%" r="50%">
+              <stop offset="0%" stop-color="#FFFFFF"/>
+              <stop offset="100%" stop-color="#EFE9D8"/>
+            </radialGradient>
+            <radialGradient id="beak-g" cx="50%" cy="30%" r="60%">
+              <stop offset="0%" stop-color="#FFD166"/>
+              <stop offset="50%" stop-color="#FF8A3D"/>
+              <stop offset="100%" stop-color="#FF4E64"/>
+            </radialGradient>
+            <radialGradient id="cheek-g" cx="50%" cy="50%" r="50%">
+              <stop offset="0%" stop-color="#FF9AB0"/>
+              <stop offset="100%" stop-color="#FF6B8A" stop-opacity="0"/>
+            </radialGradient>
+          </defs>
+          <!-- shadow -->
+          <ellipse cx="150" cy="328" rx="80" ry="10" fill="rgba(0,0,0,.25)"/>
+          <!-- body -->
+          <ellipse cx="150" cy="210" rx="95" ry="105" fill="url(#body-g)" stroke="#0B0B0F" stroke-width="3"/>
+          <!-- belly -->
+          <ellipse cx="150" cy="218" rx="54" ry="72" fill="url(#belly-g)" stroke="#0B0B0F" stroke-width="2"/>
+          <!-- left wing -->
+          <path d="M60 200 Q40 235 58 280 Q90 296 108 260 Q108 228 86 210Z" fill="#1A1A2A" stroke="#0B0B0F" stroke-width="3"/>
+          <!-- right wing -->
+          <path d="M240 200 Q260 235 242 280 Q210 296 192 260 Q192 228 214 210Z" fill="#1A1A2A" stroke="#0B0B0F" stroke-width="3"/>
+          <!-- feet -->
+          <rect x="116" y="305" width="36" height="18" rx="9" fill="#FFD166" stroke="#0B0B0F" stroke-width="2.5"/>
+          <rect x="152" y="310" width="36" height="18" rx="9" fill="#FFD166" stroke="#0B0B0F" stroke-width="2.5"/>
+          <!-- head -->
+          <ellipse cx="150" cy="130" rx="86" ry="80" fill="url(#body-g)" stroke="#0B0B0F" stroke-width="3.5"/>
+          <!-- face mask -->
+          <ellipse cx="150" cy="145" rx="60" ry="54" fill="url(#belly-g)" stroke="#0B0B0F" stroke-width="2.5"/>
+          <!-- cheeks -->
+          <circle cx="106" cy="158" r="16" fill="url(#cheek-g)"/>
+          <circle cx="194" cy="158" r="16" fill="url(#cheek-g)"/>
+          <!-- left eye -->
+          <ellipse cx="126" cy="132" rx="13" ry="16" fill="#0B0B0F"/>
+          <ellipse cx="128" cy="128" rx="5" ry="6" fill="#fff"/>
+          <circle cx="122" cy="138" r="2.5" fill="#fff"/>
+          <!-- right eye -->
+          <ellipse cx="174" cy="132" rx="13" ry="16" fill="#0B0B0F"/>
+          <ellipse cx="176" cy="128" rx="5" ry="6" fill="#fff"/>
+          <circle cx="170" cy="138" r="2.5" fill="#fff"/>
+          <!-- beak -->
+          <path d="M124 164 Q150 152 176 164 Q164 200 150 206 Q136 200 124 164Z" fill="url(#beak-g)" stroke="#0B0B0F" stroke-width="3"/>
+          <line x1="124" y1="170" x2="176" y2="170" stroke="#FFD166" stroke-width="1.5" opacity=".6"/>
+          <line x1="128" y1="180" x2="172" y2="180" stroke="#FF8A3D" stroke-width="1.5" opacity=".6"/>
+          <line x1="135" y1="190" x2="165" y2="190" stroke="#FF4E64" stroke-width="1.5" opacity=".6"/>
+          <!-- headphones band -->
+          <path d="M72 118 Q150 40 228 118" stroke="#6D28FF" stroke-width="8" fill="none" stroke-linecap="round"/>
+          <path d="M72 118 Q150 44 228 118" stroke="#D8FF3C" stroke-width="3" fill="none" stroke-linecap="round"/>
+          <!-- headphone ears -->
+          <circle cx="68" cy="128" r="20" fill="#6D28FF" stroke="#0B0B0F" stroke-width="3"/>
+          <circle cx="68" cy="128" r="10" fill="#D8FF3C"/>
+          <circle cx="232" cy="128" r="20" fill="#6D28FF" stroke="#0B0B0F" stroke-width="3"/>
+          <circle cx="232" cy="128" r="10" fill="#D8FF3C"/>
+          <!-- boarding pass -->
+          <g transform="translate(44,250) rotate(-12)">
+            <rect width="82" height="42" rx="5" fill="#FFD166" stroke="#0B0B0F" stroke-width="2.5"/>
+            <line x1="56" y1="2" x2="56" y2="40" stroke="#0B0B0F" stroke-width="1.5" stroke-dasharray="3 3"/>
+            <text x="8" y="14" font-family="'JetBrains Mono',monospace" font-size="7" font-weight="800" fill="#0B0B0F">BOARDING</text>
+            <text x="8" y="26" font-family="'JetBrains Mono',monospace" font-size="7" font-weight="700" fill="#0B0B0F">BOM → LHR</text>
+            <text x="60" y="22" font-family="'JetBrains Mono',monospace" font-size="11" font-weight="800" fill="#FF4E64">7A</text>
+            <text x="8" y="36" font-family="'JetBrains Mono',monospace" font-size="6" font-weight="600" fill="#6D28FF">FLOCKFARE</text>
+          </g>
+          <!-- sparkles -->
+          <path d="M258 68 l3 9 l9 3 l-9 3 l-3 9 l-3-9 l-9-3 l9-3z" fill="#D8FF3C" stroke="#0B0B0F" stroke-width="1.5"/>
+          <path d="M42 54 l2 6 l6 2 l-6 2 l-2 6 l-2-6 l-6-2 l6-2z" fill="#FF4EB4" stroke="#0B0B0F" stroke-width="1.2"/>
+          <!-- PENNY label -->
+          <g transform="translate(150,328)">
+            <rect x="-38" y="-12" width="76" height="20" rx="10" fill="#FF4E64"/>
+            <text x="0" y="2" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="9" font-weight="700" fill="#fff" letter-spacing="3">PENNY</text>
+          </g>
+        </svg>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── STATS BAR ──────────────────────────────────────────── -->
+<div class="stats-bar">
+  <div class="stats-inner">
+    <div class="stat"><div class="stat-val">40–90%</div><div class="stat-lbl">Off published fares</div></div>
+    <div class="stats-sep"></div>
+    <div class="stat"><div class="stat-val">&lt;5 min</div><div class="stat-lbl">Alert latency</div></div>
+    <div class="stats-sep"></div>
+    <div class="stat"><div class="stat-val">28</div><div class="stat-lbl">Home airports watched</div></div>
+    <div class="stats-sep"></div>
+    <div class="stat"><div class="stat-val">₹0</div><div class="stat-lbl">To join the flock</div></div>
+    <div class="stats-sep"></div>
+    <div class="stat"><div class="stat-val">12.4k</div><div class="stat-lbl">Members saving money</div></div>
+  </div>
+</div>
+
+<!-- ── LIVE DEALS ─────────────────────────────────────────── -->
+<section class="section">
+  <div class="section-inner">
+    <div class="section-header">
+      <div class="ff-eyebrow">✦ Live deals</div>
+      <h2>What Penny found this week.</h2>
+      <p>Real deals from real price drops. Every card links straight to Google Flights. Prices move fast — act in the next 90 minutes.</p>
+    </div>
+
+    <!-- Filter bar -->
+    <div class="filter-bar">
+      <button class="filter-btn active" onclick="filterDeals('all',this)">All routes</button>
+      <button class="filter-btn" onclick="filterDeals('domestic',this)">Domestic</button>
+      <button class="filter-btn" onclick="filterDeals('asia',this)">Southeast Asia</button>
+      <button class="filter-btn" onclick="filterDeals('europe',this)">Europe</button>
+      <button class="filter-btn" onclick="filterDeals('mistake',this)">Mistake fares</button>
+    </div>
+
+    <div class="deals-grid" id="deals-grid">
+
+      <!-- Deal 1 -->
+      <div class="deal-card" data-tag="europe mistake">
+        <div class="deal-banner lime">
+          <div class="deal-route">BOM <span class="arr">→</span> LHR</div>
+          <span class="pill pill-coral">-61% OFF</span>
+        </div>
+        <div class="deal-body">
+          <div class="deal-price">₹21,400<span class="unit">/ rt</span></div>
+          <div class="deal-strike">Was ₹54,800</div>
+          <div class="deal-meta">Air India · Direct · 9h 50m</div>
+          <div class="deal-timer">Expires in 1h 22m</div>
+          <div class="deal-cta">
+            <button class="deal-grab" onclick="window.open('#','_blank')">Grab deal →</button>
+            <button class="deal-save" title="Save">♡</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Deal 2 -->
+      <div class="deal-card" data-tag="asia">
+        <div class="deal-banner coral">
+          <div class="deal-route">DEL <span class="arr">→</span> BKK</div>
+          <span class="pill pill-lime">-54%</span>
+        </div>
+        <div class="deal-body">
+          <div class="deal-price">₹9,800<span class="unit">/ rt</span></div>
+          <div class="deal-strike">Was ₹21,200</div>
+          <div class="deal-meta">IndiGo · 1 stop · 5h 40m</div>
+          <div class="deal-timer">Expires in 3h 05m</div>
+          <div class="deal-cta">
+            <button class="deal-grab">Grab deal →</button>
+            <button class="deal-save">♡</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Deal 3 -->
+      <div class="deal-card" data-tag="domestic">
+        <div class="deal-banner violet">
+          <div class="deal-route">BLR <span class="arr">→</span> DEL</div>
+          <span class="pill pill-sun">-47%</span>
+        </div>
+        <div class="deal-body">
+          <div class="deal-price">₹2,199<span class="unit">/ ow</span></div>
+          <div class="deal-strike">Was ₹4,150</div>
+          <div class="deal-meta">Vistara · Direct · 2h 50m</div>
+          <div class="deal-timer">Expires in 5h 40m</div>
+          <div class="deal-cta">
+            <button class="deal-grab">Grab deal →</button>
+            <button class="deal-save">♡</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Deal 4 -->
+      <div class="deal-card" data-tag="europe">
+        <div class="deal-banner sun">
+          <div class="deal-route">MAA <span class="arr">→</span> CDG</div>
+          <span class="pill pill-violet">-49%</span>
+        </div>
+        <div class="deal-body">
+          <div class="deal-price">₹28,600<span class="unit">/ rt</span></div>
+          <div class="deal-strike">Was ₹56,100</div>
+          <div class="deal-meta">Air France · 1 stop · 12h 20m</div>
+          <div class="deal-timer">Expires in 6h 15m</div>
+          <div class="deal-cta">
+            <button class="deal-grab">Grab deal →</button>
+            <button class="deal-save">♡</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Deal 5 -->
+      <div class="deal-card" data-tag="asia mistake">
+        <div class="deal-banner lime">
+          <div class="deal-route">BOM <span class="arr">→</span> SIN</div>
+          <span class="pill pill-coral">-73%</span>
+        </div>
+        <div class="deal-body">
+          <div class="deal-price">₹8,200<span class="unit">/ rt</span></div>
+          <div class="deal-strike">Was ₹30,400</div>
+          <div class="deal-meta">Singapore Air · Direct · 5h 30m</div>
+          <div class="deal-timer">Expires in 42m</div>
+          <div class="deal-cta">
+            <button class="deal-grab">Grab deal →</button>
+            <button class="deal-save">♡</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Deal 6 -->
+      <div class="deal-card" data-tag="domestic">
+        <div class="deal-banner coral">
+          <div class="deal-route">HYD <span class="arr">→</span> GOI</div>
+          <span class="pill pill-lime">-52%</span>
+        </div>
+        <div class="deal-body">
+          <div class="deal-price">₹1,899<span class="unit">/ ow</span></div>
+          <div class="deal-strike">Was ₹3,950</div>
+          <div class="deal-meta">SpiceJet · Direct · 1h 25m</div>
+          <div class="deal-timer">Expires in 8h 00m</div>
+          <div class="deal-cta">
+            <button class="deal-grab">Grab deal →</button>
+            <button class="deal-save">♡</button>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /deals-grid -->
+
+    <div style="text-align:center;margin-top:36px">
+      <button class="btn btn-lime" style="font-size:14px">See all 47 live deals →</button>
+    </div>
+  </div>
+</section>
+
+<!-- ── HOW IT WORKS ───────────────────────────────────────── -->
+<section class="section how-section">
+  <div class="section-inner">
+    <div class="section-header">
+      <div class="ff-eyebrow">✦ How it works</div>
+      <h2 style="color:var(--cream)">Three steps.<br>Zero effort.</h2>
+      <p>Penny does the price-watching. You do the packing.</p>
+    </div>
+    <div class="steps-grid">
+
+      <div class="step-card">
+        <div class="step-num">1</div>
+        <div class="step-icon" style="background:var(--lime)">✈️</div>
+        <h3>Tell us where you fly from</h3>
+        <p>Pick your home airports and any dream destinations. BOM, DEL, BLR — Penny covers all of them.</p>
+      </div>
+
+      <div class="step-card">
+        <div class="step-num">2</div>
+        <div class="step-icon" style="background:var(--violet)">🔔</div>
+        <h3>Penny watches 24/7</h3>
+        <p>We check hundreds of fares every minute. The moment a route drops 40%+ below its 30-day average, you're the first to know.</p>
+      </div>
+
+      <div class="step-card">
+        <div class="step-num">3</div>
+        <div class="step-icon" style="background:var(--coral)">⚡</div>
+        <h3>Book it. Brag about it.</h3>
+        <p>One tap → Google Flights. 90 minutes to decide. Then tell your friends how you flew Singapore Air for ₹8k.</p>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ── SOCIAL PROOF ───────────────────────────────────────── -->
+<section class="section proof-section">
+  <div class="section-inner">
+    <div class="section-header">
+      <div class="ff-eyebrow">✦ The flock speaks</div>
+      <h2>Real saves. Real people.</h2>
+      <p>We don't buy reviews. These are from members who actually used the alerts.</p>
+    </div>
+    <div class="tweets-grid">
+
+      <div class="tweet">
+        <div class="tweet-header">
+          <div class="tweet-avatar" style="background:var(--lime-tint);color:var(--violet)">AK</div>
+          <div>
+            <div class="tweet-name">Aryan Khanna</div>
+            <div class="tweet-handle">@aryanfliesalot</div>
+          </div>
+        </div>
+        <p class="tweet-body">bro FlockFare just sent me an alert at 7am and I booked <span class="highlight">BOM → LHR for ₹21k</span> round trip. my colleague paid ₹54k for the same flight last month 💀</p>
+        <div class="tweet-savings">💰 Saved approx ₹33,000</div>
+      </div>
+
+      <div class="tweet">
+        <div class="tweet-header">
+          <div class="tweet-avatar" style="background:var(--coral-tint);color:var(--coral)">RS</div>
+          <div>
+            <div class="tweet-name">Riya Shah</div>
+            <div class="tweet-handle">@riyatravels</div>
+          </div>
+        </div>
+        <p class="tweet-body">I was literally sleeping when the <span class="highlight-coral">Singapore Airlines deal dropped</span>. Woke up to the push, booked in 10 minutes. This app is the only reason I take international trips.</p>
+        <div class="tweet-savings">💰 Saved approx ₹22,200</div>
+      </div>
+
+      <div class="tweet">
+        <div class="tweet-header">
+          <div class="tweet-avatar" style="background:var(--violet-tint);color:var(--violet)">PM</div>
+          <div>
+            <div class="tweet-name">Priya Menon</div>
+            <div class="tweet-handle">@wanderpriya</div>
+          </div>
+        </div>
+        <p class="tweet-body">3 trips booked through FlockFare this year. Paris, Bali, Goa. Total saved? <span class="highlight-lime">₹71,000.</span> Pro subscription costs ₹799/yr. The ROI is actually insane.</p>
+        <div class="tweet-savings">💰 Saved approx ₹71,000 this year</div>
+      </div>
+
+      <div class="tweet">
+        <div class="tweet-header">
+          <div class="tweet-avatar" style="background:#FFF6D6;color:#996A00">DN</div>
+          <div>
+            <div class="tweet-name">Dev Narayan</div>
+            <div class="tweet-handle">@devnfly</div>
+          </div>
+        </div>
+        <p class="tweet-body">Used to spend hours on Skyscanner every weekend. Now I just wait for Penny. <span class="highlight">Got BLR → CDG for ₹28k</span> — Skyscanner showed ₹52k for the same dates.</p>
+        <div class="tweet-savings">💰 Saved approx ₹24,000</div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ── EMAIL CAPTURE ──────────────────────────────────────── -->
+<section class="email-section">
+  <div class="email-inner">
+    <div class="ff-eyebrow" style="color:rgba(255,255,255,.6);margin-bottom:16px">✦ Join 12,400+ smart travellers</div>
+    <h2>Penny's waiting.<br>Are you?</h2>
+    <p>Free forever. No credit card. Unsubscribe in one click. Penny will be devastated but she'll understand.</p>
+    <div class="email-form">
+      <input class="email-input" type="email" placeholder="you@wherever.com"/>
+      <button class="btn btn-lime">Join the flock →</button>
+    </div>
+    <p class="email-legal">≤ 5 alerts / week · No spam · Unsubscribe anytime</p>
+  </div>
+</section>
+
+<!-- ── FOOTER ─────────────────────────────────────────────── -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-top">
+      <div>
+        <div class="footer-logo">Flock<span>Fare</span></div>
+        <div class="footer-tagline">Deals · Drops · Departures</div>
+      </div>
+      <div class="footer-links">
+        <div class="footer-col">
+          <h4>Product</h4>
+          <a href="#">Live deals</a>
+          <a href="#">How it works</a>
+          <a href="#">Pro plan</a>
+          <a href="#">Price history</a>
+        </div>
+        <div class="footer-col">
+          <h4>Company</h4>
+          <a href="#">About</a>
+          <a href="#">Blog</a>
+          <a href="#">Careers</a>
+          <a href="#">Contact</a>
+        </div>
+        <div class="footer-col">
+          <h4>Legal</h4>
+          <a href="#">Privacy</a>
+          <a href="#">Terms</a>
+          <a href="#">Cookie policy</a>
+        </div>
+        <div class="footer-col">
+          <h4>Follow</h4>
+          <a href="#">Twitter / X</a>
+          <a href="#">Instagram</a>
+          <a href="#">Telegram</a>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div class="footer-copy">© 2026 FlockFare · Built for the flock</div>
+      <div class="footer-airports ff-mono">BOM · DEL · BLR · MAA · CCU · HYD · PNQ · AMD · COK · GOI</div>
+    </div>
+  </div>
+</footer>
+
+<script>
+// ── DEAL FILTER ────────────────────────────────────────────
+function filterDeals(tag, btn) {
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  document.querySelectorAll('.deal-card').forEach(card => {
+    if (tag === 'all') {
+      card.style.display = '';
+    } else {
+      const tags = card.dataset.tag || '';
+      card.style.display = tags.includes(tag) ? '' : 'none';
+    }
+  });
+}
+
+// ── LIVE COUNTDOWN ─────────────────────────────────────────
+function tickTimers() {
+  document.querySelectorAll('.deal-timer').forEach(el => {
+    const text = el.textContent;
+    const match = text.match(/(\d+)h\s*(\d+)m/);
+    if (!match) {
+      const minMatch = text.match(/(\d+)m/);
+      if (minMatch) {
+        let min = parseInt(minMatch[1]);
+        if (min <= 1) { el.textContent = 'Expiring soon!'; return; }
+        el.textContent = `Expires in ${min - 1}m`;
+      }
+      return;
+    }
+    let h = parseInt(match[1]), m = parseInt(match[2]);
+    if (m === 0) { if (h === 0) { el.textContent = 'Expiring soon!'; return; } h--; m = 59; } else { m--; }
+    el.textContent = `Expires in ${h}h ${String(m).padStart(2,'0')}m`;
+  });
+}
+setInterval(tickTimers, 60000);
+
+// ── SAVE BUTTON TOGGLE ─────────────────────────────────────
+document.querySelectorAll('.deal-save').forEach(btn => {
+  btn.addEventListener('click', () => {
+    btn.textContent = btn.textContent === '♡' ? '♥' : '♡';
+    btn.style.background = btn.textContent === '♥' ? 'var(--coral-tint)' : '';
+  });
+});
+
+// ── SCROLL-IN ANIMATIONS ───────────────────────────────────
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      e.target.style.opacity = '1';
+      e.target.style.transform = 'translateY(0)';
+    }
+  });
+}, { threshold: 0.1 });
+
+document.querySelectorAll('.deal-card, .step-card, .tweet').forEach((el, i) => {
+  el.style.opacity = '0';
+  el.style.transform = 'translateY(20px)';
+  el.style.transition = `opacity .4s ease ${i * 0.06}s, transform .4s ease ${i * 0.06}s`;
+  observer.observe(el);
+});
+</script>
+</body>
+</html>

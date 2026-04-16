@@ -1,14 +1,36 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
 
-// Untyped client — subscribe route needs flexible writes
-const supabase = createClient(
+const supabaseAdmin = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+  process.env.SUPABASE_SERVICE_ROLE_KEY!
 );
+
+const RATE_LIMIT_WINDOW_MS = 60_000;
+const RATE_LIMIT_MAX = 5;
+const ipHits = new Map<string, { count: number; resetAt: number }>();
+
+function isRateLimited(ip: string): boolean {
+  const now = Date.now();
+  const entry = ipHits.get(ip);
+  if (!entry || now > entry.resetAt) {
+    ipHits.set(ip, { count: 1, resetAt: now + RATE_LIMIT_WINDOW_MS });
+    return false;
+  }
+  entry.count++;
+  return entry.count > RATE_LIMIT_MAX;
+}
 
 export async function POST(req: NextRequest) {
   try {
+    const ip = req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || "unknown";
+    if (isRateLimited(ip)) {
+      return NextResponse.json(
+        { error: "Too many requests. Try again in a minute." },
+        { status: 429 }
+      );
+    }
+
     const body = await req.json();
     const { email, name, home_airport } = body;
 
@@ -21,8 +43,10 @@ export async function POST(req: NextRequest) {
 
     const airport = (home_airport || "BOM").toUpperCase().trim();
 
+    const subscriberName = (name || email.split("@")[0]).slice(0, 100);
+
     // Check if already subscribed
-    const { data: existing } = await supabase
+    const { data: existing } = await supabaseAdmin
       .from("subscribers")
       .select("id, is_active")
       .eq("email", email.toLowerCase().trim())
@@ -31,7 +55,7 @@ export async function POST(req: NextRequest) {
     if (existing) {
       if (!existing.is_active) {
         // Reactivate
-        await supabase
+        await supabaseAdmin
           .from("subscribers")
           .update({ is_active: true, home_airport: airport })
           .eq("id", existing.id);
@@ -48,9 +72,9 @@ export async function POST(req: NextRequest) {
     }
 
     // New subscriber
-    const { error } = await supabase.from("subscribers").insert({
+    const { error } = await supabaseAdmin.from("subscribers").insert({
       email: email.toLowerCase().trim(),
-      name: name || email.split("@")[0],
+      name: subscriberName,
       home_airport: airport,
     });
 

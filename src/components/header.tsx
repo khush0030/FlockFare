@@ -1,47 +1,26 @@
-import Image from "next/image";
 import Link from "next/link";
 
-export function Header({ variant = "dark" }: { variant?: "dark" | "light" }) {
-  const isDark = variant === "dark";
-
+export function Header({
+  activePage,
+}: {
+  activePage?: "deals" | "home";
+}) {
   return (
-    <header
-      className={`sticky top-0 z-50 border-b-4 ${
-        isDark
-          ? "bg-ink text-cream border-cream/20"
-          : "bg-cream text-ink border-ink"
-      }`}
-    >
-      <div className="max-w-[1200px] mx-auto px-4 sm:px-6 py-3 sm:py-4 flex items-center justify-between">
-        <Link href="/" className="min-h-[44px] flex items-center">
-          <Image
-            src={
-              isDark
-                ? "/logos/lockup-horizontal-reversed.svg"
-                : "/logos/lockup-horizontal.svg"
-            }
-            alt="FlockFare"
-            width={130}
-            height={30}
-          />
+    <nav className="ff-nav">
+      <Link href="/" className="nav-logo">
+        Flock<span>Fare</span>
+      </Link>
+      <div className="nav-links">
+        <Link href="/deals" className={activePage === "deals" ? "active" : ""}>
+          Deals
         </Link>
-        <nav className="flex gap-3 sm:gap-5 items-center">
-          <Link
-            href="/deals"
-            className={`font-display font-bold text-sm min-h-[44px] flex items-center no-underline ${
-              isDark ? "text-cream hover:text-lime" : "text-ink hover:text-violet"
-            }`}
-          >
-            Deals
-          </Link>
-          <Link
-            href="#join"
-            className="inline-flex items-center gap-2 font-display font-bold text-sm min-h-[44px] px-4 py-2 rounded-full border-4 border-ink bg-lime text-ink shadow-brut-sm no-underline transition-transform duration-[120ms] ease-[var(--ease-ff-out)] hover:translate-x-[-1px] hover:translate-y-[-1px] hover:shadow-brut"
-          >
-            Join the flock
-          </Link>
-        </nav>
+        <Link href="/#how">How it works</Link>
+        <Link href="/#join">Pro</Link>
+        <Link href="/#proof">About</Link>
       </div>
-    </header>
+      <Link href="/#join" className="nav-cta">
+        Join the flock →
+      </Link>
+    </nav>
   );
 }

@@ -5,7 +5,6 @@ import "./globals.css";
 const bricolage = Bricolage_Grotesque({
   variable: "--font-display",
   subsets: ["latin"],
-  weight: ["400", "700", "800"],
 });
 
 const dmSans = DM_Sans({

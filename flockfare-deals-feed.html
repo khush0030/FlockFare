@@ -1,0 +1,1059 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>FlockFare — Live Deals Feed</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,700;12..96,900&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,700&family=JetBrains+Mono:wght@400;700;800&display=swap" rel="stylesheet"/>
+<style>
+/* ─── TOKENS ─────────────────────────────────────────────── */
+:root{
+  --ink:#0B0B0F; --ink-soft:#1A1A22; --cream:#F6F3EC; --paper:#FFFFFF;
+  --violet:#6D28FF; --violet-deep:#2A1470; --violet-tint:#EFE6FF;
+  --lime:#D8FF3C; --lime-tint:#F3FFC7;
+  --coral:#FF4E64; --coral-tint:#FFE5ED;
+  --sun:#FFD166; --sun-tint:#FFF6D6;
+  --g400:#9C9C98; --g500:#6A6A67; --g600:#4A4A48; --g200:#E2E2DD;
+  --brut:6px 6px 0 var(--ink);
+  --brut-sm:3px 3px 0 var(--ink);
+  --brut-lg:10px 10px 0 var(--ink);
+  --ease:cubic-bezier(.2,.8,.2,1);
+  --fd:'Bricolage Grotesque',sans-serif;
+  --fb:'DM Sans',sans-serif;
+  --fm:'JetBrains Mono',monospace;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{font-family:var(--fb);background:var(--cream);color:var(--ink);overflow-x:hidden;-webkit-font-smoothing:antialiased;}
+button{cursor:pointer;font-family:inherit;border:none;background:none;}
+a{text-decoration:none;color:inherit;}
+
+/* ─── NAV ────────────────────────────────────────────────── */
+nav{
+  position:sticky;top:0;z-index:200;
+  background:var(--ink);border-bottom:4px solid var(--ink);
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 40px;height:64px;
+}
+.nav-logo{font-family:var(--fd);font-weight:900;font-size:22px;color:var(--cream);letter-spacing:-.03em;}
+.nav-logo span{color:var(--lime);}
+.nav-links{display:flex;gap:28px;align-items:center;}
+.nav-links a{font-family:var(--fd);font-weight:700;font-size:14px;color:rgba(246,243,236,.6);transition:color .12s;}
+.nav-links a:hover,.nav-links a.active{color:var(--lime);}
+.nav-cta{font-family:var(--fd);font-weight:700;font-size:13px;padding:9px 20px;border-radius:999px;background:var(--lime);color:var(--ink);border:3px solid var(--cream);box-shadow:3px 3px 0 var(--cream);transition:transform .12s,box-shadow .12s;}
+.nav-cta:hover{transform:translate(-1px,-1px);box-shadow:5px 5px 0 var(--cream);}
+
+/* ─── DEALS HEADER BAR ───────────────────────────────────── */
+.feed-header{
+  background:var(--ink);
+  border-bottom:4px solid var(--lime);
+  padding:32px 40px 0;
+}
+.feed-header-inner{max-width:1400px;margin:0 auto;}
+.feed-title-row{display:flex;align-items:flex-end;justify-content:space-between;gap:20px;flex-wrap:wrap;padding-bottom:28px;}
+.feed-eyebrow{font-family:var(--fm);font-size:11px;font-weight:700;letter-spacing:.18em;color:var(--lime);margin-bottom:8px;}
+.feed-h1{font-family:var(--fd);font-weight:900;font-size:clamp(2rem,4vw,3rem);letter-spacing:-.035em;line-height:1;color:var(--cream);}
+.feed-sub{margin-top:8px;font-size:14px;color:rgba(246,243,236,.5);max-width:480px;line-height:1.5;}
+.feed-live-badge{
+  display:inline-flex;align-items:center;gap:7px;
+  font-family:var(--fm);font-size:11px;font-weight:800;letter-spacing:.14em;
+  padding:8px 14px;border-radius:999px;
+  background:var(--coral);color:#fff;
+  flex-shrink:0;
+}
+.live-dot{width:7px;height:7px;border-radius:50%;background:#fff;animation:blink 1s ease-in-out infinite;}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.25}}
+
+/* ─── STATS STRIP ────────────────────────────────────────── */
+.stats-strip{
+  background:var(--lime);border-bottom:4px solid var(--ink);
+  padding:14px 40px;
+}
+.stats-strip-inner{
+  max-width:1400px;margin:0 auto;
+  display:flex;flex-wrap:wrap;gap:12px 40px;align-items:center;justify-content:space-between;
+}
+.stat-chip{display:flex;align-items:center;gap:8px;}
+.stat-chip .val{font-family:var(--fd);font-weight:900;font-size:20px;letter-spacing:-.03em;color:var(--ink);}
+.stat-chip .lbl{font-family:var(--fm);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:rgba(11,11,15,.55);}
+.stat-sep{width:3px;height:3px;background:var(--ink);border-radius:50%;opacity:.3;}
+.last-updated{font-family:var(--fm);font-size:10px;letter-spacing:.1em;color:rgba(11,11,15,.5);}
+
+/* ─── LAYOUT: SIDEBAR + FEED ─────────────────────────────── */
+.page-body{max-width:1400px;margin:0 auto;padding:32px 40px;display:grid;grid-template-columns:260px 1fr;gap:28px;align-items:start;}
+@media(max-width:900px){.page-body{grid-template-columns:1fr;padding:24px 20px;}}
+
+/* ─── SIDEBAR ────────────────────────────────────────────── */
+.sidebar{position:sticky;top:80px;display:flex;flex-direction:column;gap:16px;}
+.filter-panel{background:var(--paper);border:4px solid var(--ink);border-radius:20px;box-shadow:var(--brut);overflow:hidden;}
+.filter-panel-head{
+  background:var(--ink);padding:14px 18px;
+  display:flex;align-items:center;justify-content:space-between;
+}
+.filter-panel-head h3{font-family:var(--fd);font-weight:900;font-size:15px;color:var(--cream);}
+.filter-reset{font-family:var(--fm);font-size:10px;font-weight:700;letter-spacing:.1em;color:var(--lime);cursor:pointer;border:none;background:none;text-transform:uppercase;}
+.filter-reset:hover{color:#fff;}
+.filter-section{padding:16px 18px;border-bottom:3px solid var(--ink);}
+.filter-section:last-child{border-bottom:none;}
+.filter-section-label{font-family:var(--fm);font-size:10px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--g500);margin-bottom:12px;}
+/* origin chips */
+.chip-grid{display:flex;flex-wrap:wrap;gap:7px;}
+.chip{
+  font-family:var(--fm);font-size:11px;font-weight:700;letter-spacing:.08em;
+  padding:6px 12px;border-radius:999px;
+  border:2.5px solid var(--ink);background:var(--cream);color:var(--ink);
+  cursor:pointer;transition:all .1s;box-shadow:var(--brut-sm);
+}
+.chip:hover{transform:translate(-1px,-1px);box-shadow:var(--brut);}
+.chip.active{background:var(--ink);color:var(--lime);}
+/* region list */
+.region-list{display:flex;flex-direction:column;gap:6px;}
+.region-btn{
+  display:flex;align-items:center;justify-content:space-between;
+  font-family:var(--fb);font-size:13px;font-weight:500;
+  padding:8px 10px;border-radius:10px;
+  cursor:pointer;transition:background .1s;color:var(--ink);
+  border:2px solid transparent;
+}
+.region-btn:hover{background:var(--lime-tint);}
+.region-btn.active{background:var(--lime);border-color:var(--ink);box-shadow:2px 2px 0 var(--ink);}
+.region-count{font-family:var(--fm);font-size:10px;font-weight:700;color:var(--g500);}
+.region-btn.active .region-count{color:var(--ink);}
+/* deal type pills */
+.type-grid{display:flex;flex-direction:column;gap:8px;}
+.type-toggle{
+  display:flex;align-items:center;gap:10px;
+  padding:10px 12px;border-radius:12px;
+  border:2.5px solid var(--ink);background:var(--paper);
+  cursor:pointer;transition:all .1s;box-shadow:var(--brut-sm);
+}
+.type-toggle:hover{transform:translate(-1px,-1px);box-shadow:var(--brut);}
+.type-toggle.active-unique{background:var(--violet);border-color:var(--violet-deep);}
+.type-toggle.active-rare{background:var(--coral-tint);border-color:var(--coral);}
+.type-toggle.active-common{background:var(--lime-tint);border-color:#3a7c00;}
+.type-dot{width:10px;height:10px;border-radius:50%;border:2px solid var(--ink);flex-shrink:0;}
+.type-dot.unique{background:var(--violet);}
+.type-dot.rare{background:var(--coral);}
+.type-dot.common{background:var(--lime);}
+.type-label{font-family:var(--fd);font-weight:700;font-size:13px;flex:1;}
+.type-sublabel{font-family:var(--fm);font-size:10px;color:var(--g500);}
+.type-toggle.active-unique .type-label,.type-toggle.active-unique .type-sublabel{color:#fff;}
+/* cabin filter */
+.cabin-grid{display:flex;flex-direction:column;gap:6px;}
+.cabin-row{display:flex;align-items:center;gap:8px;cursor:pointer;padding:4px 2px;}
+.cabin-row input[type=checkbox]{width:16px;height:16px;accent-color:var(--violet);cursor:pointer;}
+.cabin-row label{font-size:13px;font-weight:500;cursor:pointer;}
+/* range slider */
+.range-wrap{padding:4px 0;}
+.range-label{display:flex;justify-content:space-between;font-family:var(--fm);font-size:11px;color:var(--g500);margin-bottom:8px;}
+.range-label span:last-child{font-weight:700;color:var(--ink);}
+input[type=range]{width:100%;accent-color:var(--violet);}
+/* promo panel */
+.promo-panel{
+  background:var(--violet);border:4px solid var(--ink);border-radius:20px;
+  box-shadow:var(--brut);padding:20px 18px;
+}
+.promo-panel h3{font-family:var(--fd);font-weight:900;font-size:16px;color:#fff;margin-bottom:6px;}
+.promo-panel p{font-size:13px;color:rgba(255,255,255,.7);line-height:1.5;margin-bottom:14px;}
+.promo-btn{
+  display:block;width:100%;
+  font-family:var(--fd);font-weight:700;font-size:13px;
+  padding:12px;border-radius:999px;text-align:center;
+  background:var(--lime);color:var(--ink);border:3px solid var(--ink);
+  box-shadow:var(--brut-sm);transition:all .12s;
+}
+.promo-btn:hover{transform:translate(-1px,-1px);box-shadow:var(--brut);}
+
+/* ─── FEED AREA ──────────────────────────────────────────── */
+.feed-area{}
+/* top controls */
+.feed-controls{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:20px;flex-wrap:wrap;}
+.feed-count{font-family:var(--fm);font-size:12px;color:var(--g500);letter-spacing:.06em;}
+.feed-count strong{color:var(--ink);}
+.sort-row{display:flex;align-items:center;gap:8px;}
+.sort-label{font-family:var(--fm);font-size:11px;color:var(--g500);letter-spacing:.1em;text-transform:uppercase;}
+.sort-btn{
+  font-family:var(--fm);font-size:11px;font-weight:700;letter-spacing:.08em;
+  padding:7px 14px;border-radius:999px;
+  border:2.5px solid var(--ink);background:var(--paper);
+  cursor:pointer;transition:all .1s;box-shadow:var(--brut-sm);
+}
+.sort-btn:hover{background:var(--cream);}
+.sort-btn.active{background:var(--ink);color:var(--lime);}
+/* grid toggle */
+.view-toggle{display:flex;gap:4px;}
+.view-btn{padding:7px 9px;border-radius:8px;border:2px solid var(--ink);background:var(--paper);cursor:pointer;transition:all .1s;font-size:14px;}
+.view-btn.active{background:var(--ink);color:var(--lime);}
+
+/* ─── DEAL CARDS ─────────────────────────────────────────── */
+.deals-grid{display:grid;gap:18px;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));}
+.deals-grid.list-view{grid-template-columns:1fr;}
+
+.deal-card{
+  background:var(--paper);border:4px solid var(--ink);border-radius:20px;
+  box-shadow:var(--brut);overflow:hidden;display:flex;flex-direction:column;
+  transition:transform .12s var(--ease),box-shadow .12s var(--ease);
+  cursor:pointer;
+}
+.deal-card:hover{transform:translate(-2px,-2px);box-shadow:var(--brut-lg);}
+.deals-grid.list-view .deal-card{flex-direction:row;}
+
+/* banner */
+.deal-banner{padding:15px 18px 12px;border-bottom:4px solid var(--ink);display:flex;justify-content:space-between;align-items:flex-start;gap:8px;flex-shrink:0;}
+.deal-banner.b-lime{background:var(--lime);}
+.deal-banner.b-coral{background:var(--coral-tint);}
+.deal-banner.b-violet{background:var(--violet-tint);}
+.deal-banner.b-sun{background:var(--sun-tint);}
+.deal-banner.b-ink{background:var(--ink);}
+
+.deal-route{font-family:var(--fd);font-weight:900;font-size:24px;letter-spacing:-.02em;line-height:1;color:var(--ink);}
+.deal-banner.b-ink .deal-route{color:var(--cream);}
+.deal-route .arr{margin:0 5px;color:var(--violet);}
+.deal-banner.b-ink .arr{color:var(--lime);}
+.deal-city{font-family:var(--fm);font-size:10px;letter-spacing:.1em;color:rgba(11,11,15,.5);margin-top:4px;text-transform:uppercase;}
+.deal-banner.b-ink .deal-city{color:rgba(246,243,236,.4);}
+
+.badge-wrap{display:flex;flex-direction:column;gap:5px;align-items:flex-end;flex-shrink:0;}
+.badge{display:inline-flex;align-items:center;font-family:var(--fm);font-size:11px;font-weight:800;letter-spacing:.1em;padding:5px 11px;border-radius:999px;}
+.badge-pct-coral{background:var(--coral);color:#fff;}
+.badge-pct-lime{background:var(--lime);color:var(--ink);}
+.badge-pct-violet{background:var(--violet);color:#fff;}
+.badge-type{font-size:9px;letter-spacing:.12em;text-transform:uppercase;}
+.badge-unique{background:var(--violet);color:#fff;}
+.badge-rare{background:var(--coral);color:#fff;}
+.badge-common{background:var(--lime);color:var(--ink);}
+
+/* body */
+.deal-body{padding:16px 18px;display:flex;flex-direction:column;gap:5px;flex:1;}
+.deals-grid.list-view .deal-body{flex-direction:row;align-items:center;gap:20px;flex-wrap:wrap;}
+
+.deal-price{font-family:var(--fd);font-weight:900;font-size:38px;line-height:1;letter-spacing:-.035em;color:var(--ink);}
+.deal-price .unit{font-size:13px;font-weight:400;color:var(--g500);margin-left:2px;}
+.deal-strike{font-family:var(--fm);font-size:11px;color:var(--g400,#9C9C98);text-decoration:line-through;}
+.deal-meta-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:2px;}
+.meta-chip{font-family:var(--fm);font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:3px 8px;border-radius:999px;border:2px solid var(--g200,#E2E2DD);color:var(--g500);}
+.meta-chip.nonstop{border-color:var(--lime);color:#3a7c00;background:var(--lime-tint);}
+.meta-chip.business{border-color:var(--violet-tint);color:var(--violet);background:var(--violet-tint);}
+.meta-chip.mistake{border-color:var(--coral-tint);color:var(--coral);background:var(--coral-tint);}
+
+.deal-airline{font-size:13px;color:var(--g500);margin-top:2px;}
+.deal-timer{
+  display:flex;align-items:center;gap:6px;margin-top:4px;
+  font-family:var(--fm);font-size:11px;font-weight:700;color:var(--coral);
+}
+.deal-timer::before{content:'';width:6px;height:6px;border-radius:50%;background:var(--coral);animation:blink 1s ease-in-out infinite;flex-shrink:0;}
+.deal-timer.slow{color:var(--g500);}
+.deal-timer.slow::before{background:var(--g500);animation:none;}
+
+.deal-cta{display:flex;gap:8px;margin-top:12px;}
+.deals-grid.list-view .deal-cta{margin-top:0;margin-left:auto;flex-shrink:0;}
+
+.btn-grab{
+  flex:1;font-family:var(--fd);font-weight:700;font-size:14px;
+  padding:11px 16px;border-radius:999px;
+  background:var(--coral);color:#fff;border:3px solid var(--ink);
+  box-shadow:var(--brut-sm);transition:all .12s;
+}
+.btn-grab:hover{transform:translate(-1px,-1px);box-shadow:var(--brut);}
+.btn-save{
+  font-family:var(--fd);font-weight:700;font-size:14px;
+  padding:11px 14px;border-radius:999px;
+  background:transparent;color:var(--ink);border:3px solid var(--ink);
+  box-shadow:var(--brut-sm);transition:all .12s;
+}
+.btn-save:hover{transform:translate(-1px,-1px);box-shadow:var(--brut);}
+.btn-save.saved{background:var(--coral-tint);color:var(--coral);}
+
+/* ─── SECTION DIVIDERS ───────────────────────────────────── */
+.section-divider{
+  display:flex;align-items:center;gap:12px;
+  margin:24px 0 16px;
+}
+.section-divider .sdl{font-family:var(--fm);font-size:11px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--ink);white-space:nowrap;}
+.section-divider .sdline{flex:1;height:2px;background:var(--ink);}
+.section-divider .sdcount{font-family:var(--fm);font-size:10px;color:var(--g500);white-space:nowrap;}
+
+/* ─── LOCKED CARD ────────────────────────────────────────── */
+.deal-card.locked{position:relative;}
+.deal-card.locked::after{
+  content:'';position:absolute;inset:0;
+  background:repeating-linear-gradient(
+    45deg,
+    rgba(246,243,236,.06) 0px,
+    rgba(246,243,236,.06) 10px,
+    transparent 10px,
+    transparent 20px
+  );
+  pointer-events:none;
+}
+.lock-overlay{
+  position:absolute;inset:0;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  background:rgba(11,11,15,.72);
+  backdrop-filter:blur(2px);
+  border-radius:16px;
+  z-index:10;
+  gap:8px;
+  padding:20px;
+  text-align:center;
+}
+.lock-icon{font-size:28px;}
+.lock-text{font-family:var(--fd);font-weight:900;font-size:15px;color:var(--cream);}
+.lock-sub{font-size:12px;color:rgba(246,243,236,.6);line-height:1.4;}
+.lock-cta{
+  font-family:var(--fd);font-weight:700;font-size:13px;
+  margin-top:6px;padding:9px 20px;border-radius:999px;
+  background:var(--lime);color:var(--ink);border:3px solid var(--cream);
+  box-shadow:3px 3px 0 var(--cream);cursor:pointer;transition:all .12s;
+}
+.lock-cta:hover{transform:translate(-1px,-1px);}
+
+/* ─── EMPTY / LOADING STATES ─────────────────────────────── */
+.empty-state{
+  background:var(--paper);border:4px dashed var(--g200);border-radius:20px;
+  padding:60px 40px;text-align:center;
+}
+.empty-icon{font-size:48px;margin-bottom:16px;}
+.empty-title{font-family:var(--fd);font-weight:900;font-size:22px;color:var(--ink);margin-bottom:8px;}
+.empty-sub{font-size:14px;color:var(--g500);}
+
+/* ─── PAGINATION ─────────────────────────────────────────── */
+.pagination{display:flex;gap:8px;align-items:center;justify-content:center;margin-top:36px;}
+.page-btn{
+  font-family:var(--fm);font-size:12px;font-weight:700;
+  padding:9px 14px;border-radius:12px;
+  border:2.5px solid var(--ink);background:var(--paper);
+  cursor:pointer;transition:all .1s;box-shadow:var(--brut-sm);
+}
+.page-btn:hover{background:var(--lime);}
+.page-btn.active{background:var(--ink);color:var(--lime);}
+.page-btn:disabled{opacity:.35;cursor:default;box-shadow:none;}
+.page-btn:disabled:hover{background:var(--paper);}
+
+/* ─── ANIMATIONS ─────────────────────────────────────────── */
+@keyframes fadeup{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+.fadein{animation:fadeup .35s var(--ease) forwards;}
+
+/* ─── MOBILE ─────────────────────────────────────────────── */
+@media(max-width:900px){
+  nav{padding:0 20px;} .nav-links{display:none;}
+  .feed-header{padding:24px 20px 0;}
+  .stats-strip{padding:12px 20px;}
+  .sidebar{display:none;}
+  .page-body{padding:20px;}
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">Flock<span>Fare</span></div>
+  <div class="nav-links">
+    <a href="#" class="active">Deals</a>
+    <a href="#">How it works</a>
+    <a href="#">Pro</a>
+    <a href="#">About</a>
+  </div>
+  <button class="nav-cta">Join free →</button>
+</nav>
+
+<!-- DEALS HEADER -->
+<div class="feed-header">
+  <div class="feed-header-inner">
+    <div class="feed-title-row">
+      <div>
+        <div class="feed-eyebrow">✦ Live deals</div>
+        <h1 class="feed-h1">What Penny found.</h1>
+        <p class="feed-sub">Every card is a real price drop, verified against 90 days of history. Links go straight to Google Flights.</p>
+      </div>
+      <div class="feed-live-badge">
+        <span class="live-dot"></span>
+        LIVE · Updated 3 min ago
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- STATS STRIP -->
+<div class="stats-strip">
+  <div class="stats-strip-inner">
+    <div class="stat-chip"><span class="val">47</span><span class="lbl">Active deals</span></div>
+    <div class="stat-sep"></div>
+    <div class="stat-chip"><span class="val">6</span><span class="lbl">Mistake fares</span></div>
+    <div class="stat-sep"></div>
+    <div class="stat-chip"><span class="val">₹8,200</span><span class="lbl">Lowest fare today</span></div>
+    <div class="stat-sep"></div>
+    <div class="stat-chip"><span class="val">73%</span><span class="lbl">Biggest drop today</span></div>
+    <div class="stat-sep"></div>
+    <div class="stat-chip"><span class="val">4</span><span class="lbl">Origins watched</span></div>
+    <div class="last-updated">LAST CRAWL: 3 MIN AGO · NEXT: 2 MIN</div>
+  </div>
+</div>
+
+<!-- PAGE BODY -->
+<div class="page-body">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+
+    <!-- Filter Panel -->
+    <div class="filter-panel">
+      <div class="filter-panel-head">
+        <h3>Filters</h3>
+        <button class="filter-reset" onclick="resetFilters()">Reset all</button>
+      </div>
+
+      <!-- Origin -->
+      <div class="filter-section">
+        <div class="filter-section-label">Your home airport</div>
+        <div class="chip-grid">
+          <button class="chip active" data-origin="BOM" onclick="toggleOrigin(this)">BOM</button>
+          <button class="chip active" data-origin="DEL" onclick="toggleOrigin(this)">DEL</button>
+          <button class="chip active" data-origin="BLR" onclick="toggleOrigin(this)">BLR</button>
+          <button class="chip active" data-origin="IDR" onclick="toggleOrigin(this)">IDR</button>
+        </div>
+      </div>
+
+      <!-- Region -->
+      <div class="filter-section">
+        <div class="filter-section-label">Destination region</div>
+        <div class="region-list">
+          <button class="region-btn active" data-region="all" onclick="setRegion(this)">
+            <span>All destinations</span><span class="region-count">47</span>
+          </button>
+          <button class="region-btn" data-region="Southeast Asia" onclick="setRegion(this)">
+            <span>Southeast Asia</span><span class="region-count">14</span>
+          </button>
+          <button class="region-btn" data-region="Europe" onclick="setRegion(this)">
+            <span>Europe</span><span class="region-count">11</span>
+          </button>
+          <button class="region-btn" data-region="East Asia" onclick="setRegion(this)">
+            <span>East Asia</span><span class="region-count">8</span>
+          </button>
+          <button class="region-btn" data-region="North America" onclick="setRegion(this)">
+            <span>North America</span><span class="region-count">7</span>
+          </button>
+          <button class="region-btn" data-region="Middle East" onclick="setRegion(this)">
+            <span>Middle East</span><span class="region-count">4</span>
+          </button>
+          <button class="region-btn" data-region="Oceania" onclick="setRegion(this)">
+            <span>Oceania</span><span class="region-count">3</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Deal Type -->
+      <div class="filter-section">
+        <div class="filter-section-label">Deal type</div>
+        <div class="type-grid">
+          <button class="type-toggle active-unique" data-type="unique" onclick="toggleType(this)">
+            <span class="type-dot unique"></span>
+            <div>
+              <div class="type-label">Unique</div>
+              <div class="type-sublabel">70%+ off · Mistake fares</div>
+            </div>
+          </button>
+          <button class="type-toggle active-rare" data-type="rare" onclick="toggleType(this)">
+            <span class="type-dot rare"></span>
+            <div>
+              <div class="type-label">Rare</div>
+              <div class="type-sublabel">60–69% off</div>
+            </div>
+          </button>
+          <button class="type-toggle active-common" data-type="common" onclick="toggleType(this)">
+            <span class="type-dot common"></span>
+            <div>
+              <div class="type-label">Common</div>
+              <div class="type-sublabel">40–59% off</div>
+            </div>
+          </button>
+        </div>
+      </div>
+
+      <!-- Cabin -->
+      <div class="filter-section">
+        <div class="filter-section-label">Cabin class</div>
+        <div class="cabin-grid">
+          <div class="cabin-row"><input type="checkbox" id="ec" checked onchange="applyFilters()"><label for="ec">Economy</label></div>
+          <div class="cabin-row"><input type="checkbox" id="pe" checked onchange="applyFilters()"><label for="pe">Premium Economy</label></div>
+          <div class="cabin-row"><input type="checkbox" id="biz" checked onchange="applyFilters()"><label for="biz">Business</label></div>
+          <div class="cabin-row"><input type="checkbox" id="fst" onchange="applyFilters()"><label for="fst">First Class</label></div>
+        </div>
+      </div>
+
+      <!-- Min % off -->
+      <div class="filter-section">
+        <div class="filter-section-label">Minimum discount</div>
+        <div class="range-wrap">
+          <div class="range-label"><span>40%</span><span id="range-val">40%+ off</span></div>
+          <input type="range" min="40" max="70" value="40" step="5" id="min-pct" oninput="updateRange(this.value)" onchange="applyFilters()"/>
+        </div>
+      </div>
+    </div>
+
+    <!-- Pro upsell -->
+    <div class="promo-panel">
+      <h3>🔐 6 deals are locked</h3>
+      <p>Unique mistake fares and business-class drops are Pro-only. Instant alerts before the flock.</p>
+      <button class="promo-btn">Unlock with Pro →</button>
+    </div>
+
+  </aside>
+
+  <!-- FEED -->
+  <div class="feed-area">
+
+    <!-- Controls -->
+    <div class="feed-controls">
+      <div class="feed-count" id="result-count"><strong>47 deals</strong> found · 6 expiring soon</div>
+      <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
+        <div class="sort-row">
+          <span class="sort-label">Sort:</span>
+          <button class="sort-btn active" data-sort="discount" onclick="setSort(this)">Biggest drop</button>
+          <button class="sort-btn" data-sort="price" onclick="setSort(this)">Lowest price</button>
+          <button class="sort-btn" data-sort="expiry" onclick="setSort(this)">Expiring soon</button>
+        </div>
+        <div class="view-toggle">
+          <button class="view-btn active" title="Grid" onclick="setView('grid',this)">⊞</button>
+          <button class="view-btn" title="List" onclick="setView('list',this)">☰</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- UNIQUE DEALS SECTION -->
+    <div class="section-divider">
+      <div class="sdl">⚡ Unique · Mistake fares</div>
+      <div class="sdline"></div>
+      <div class="sdcount">6 deals · act fast</div>
+    </div>
+
+    <div class="deals-grid" id="deals-grid">
+
+      <!-- Unique 1 — BOM → SIN -->
+      <div class="deal-card fadein" data-type="unique" data-region="Southeast Asia" data-origin="BOM" data-pct="73" data-price="8200" data-expiry="42">
+        <div class="deal-banner b-ink">
+          <div>
+            <div class="deal-route">BOM <span class="arr">→</span> SIN</div>
+            <div class="deal-city">Mumbai → Singapore</div>
+          </div>
+          <div class="badge-wrap">
+            <span class="badge badge-pct-lime">-73%</span>
+            <span class="badge badge-type badge-unique">MISTAKE</span>
+          </div>
+        </div>
+        <div class="deal-body">
+          <div class="deal-price">₹8,200<span class="unit">/ rt</span></div>
+          <div class="deal-strike">Was ₹30,400</div>
+          <div class="deal-meta-row">
+            <span class="meta-chip nonstop">Direct</span>
+            <span class="meta-chip mistake">Mistake fare</span>
+          </div>
+          <div class="deal-airline">Singapore Airlines · 5h 30m · Economy</div>
+          <div class="deal-timer">Expires in 42m — book now</div>
+          <div class="deal-cta">
+            <button class="btn-grab" onclick="window.open('#')">Grab deal →</button>
+            <button class="btn-save" onclick="toggleSave(this)">♡</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Unique 2 — BLR → NRT -->
+      <div class="deal-card fadein" data-type="unique" data-region="East Asia" data-origin="BLR" data-pct="71" data-price="18700" data-expiry="95">
+        <div class="deal-banner b-violet">
+          <div>
+            <div class="deal-route">BLR <span class="arr">→</span> NRT</div>
+            <div class="deal-city">Bangalore → Tokyo</div>
+          </div>
+          <div class="badge-wrap">
+            <span class="badge badge-pct-violet">-71%</span>
+            <span class="badge badge-type badge-unique">UNIQUE</span>
+          </div>
+        </div>
+        <div class="deal-body">
+          <div class="deal-price">₹18,700<span class="unit">/ rt</span></div>
+          <div class="deal-strike">Was ₹64,500</div>
+          <div class="deal-meta-row">
+            <span class="meta-chip business">Business</span>
+            <span class="meta-chip nonstop">Direct</span>
+          </div>
+          <div class="deal-airline">ANA · 8h 55m · Business class</div>
+          <div class="deal-timer">Expires in 1h 35m</div>
+          <div class="deal-cta">
+            <button class="btn-grab">Grab deal →</button>
+            <button class="btn-save" onclick="toggleSave(this)">♡</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Unique 3 — LOCKED -->
+      <div class="deal-card locked fadein" data-type="unique">
+        <div class="deal-banner b-ink">
+          <div>
+            <div class="deal-route">DEL <span class="arr">→</span> ???</div>
+            <div class="deal-city">Delhi → Europe</div>
+          </div>
+          <div class="badge-wrap">
+            <span class="badge badge-pct-lime">-78%</span>
+            <span class="badge badge-type badge-unique">PRO</span>
+          </div>
+        </div>
+        <div class="deal-body" style="filter:blur(3px);pointer-events:none;">
+          <div class="deal-price">₹?,???<span class="unit">/ rt</span></div>
+          <div class="deal-strike">Was ₹72,000</div>
+          <div class="deal-meta-row"><span class="meta-chip nonstop">Direct</span></div>
+          <div class="deal-airline">Redacted · Economy</div>
+          <div class="deal-timer">Expires in 1h 10m</div>
+        </div>
+        <div class="lock-overlay">
+          <div class="lock-icon">🔐</div>
+          <div class="lock-text">Pro deal · -78% off</div>
+          <div class="lock-sub">Mistake fare to Europe. 4 seats left. Instant alert sent to Pro members 4 hours ago.</div>
+          <button class="lock-cta">Unlock with Pro →</button>
+        </div>
+      </div>
+
+      <!-- RARE SECTION DIVIDER -->
+      <div class="section-divider" style="grid-column:1/-1;margin-top:8px;">
+        <div class="sdl">🔥 Rare · 60–69% off</div>
+        <div class="sdline"></div>
+        <div class="sdcount">11 deals</div>
+      </div>
+
+      <!-- Rare 1 — BOM → LHR -->
+      <div class="deal-card fadein" data-type="rare" data-region="Europe" data-origin="BOM" data-pct="61" data-price="21400" data-expiry="82">
+        <div class="deal-banner b-lime">
+          <div>
+            <div class="deal-route">BOM <span class="arr">→</span> LHR</div>
+            <div class="deal-city">Mumbai → London</div>
+          </div>
+          <div class="badge-wrap">
+            <span class="badge badge-pct-coral">-61%</span>
+            <span class="badge badge-type badge-rare">RARE</span>
+          </div>
+        </div>
+        <div class="deal-body">
+          <div class="deal-price">₹21,400<span class="unit">/ rt</span></div>
+          <div class="deal-strike">Was ₹54,800</div>
+          <div class="deal-meta-row">
+            <span class="meta-chip nonstop">Direct</span>
+          </div>
+          <div class="deal-airline">Air India · 9h 50m · Economy</div>
+          <div class="deal-timer">Expires in 1h 22m</div>
+          <div class="deal-cta">
+            <button class="btn-grab">Grab deal →</button>
+            <button class="btn-save" onclick="toggleSave(this)">♡</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Rare 2 — DEL → ICN -->
+      <div class="deal-card fadein" data-type="rare" data-region="East Asia" data-origin="DEL" data-pct="64" data-price="14900" data-expiry="240">
+        <div class="deal-banner b-coral">
+          <div>
+            <div class="deal-route">DEL <span class="arr">→</span> ICN</div>
+            <div class="deal-city">Delhi → Seoul</div>
+          </div>
+          <div class="badge-wrap">
+            <span class="badge badge-pct-coral">-64%</span>
+            <span class="badge badge-type badge-rare">RARE</span>
+          </div>
+        </div>
+        <div class="deal-body">
+          <div class="deal-price">₹14,900<span class="unit">/ rt</span></div>
+          <div class="deal-strike">Was ₹41,400</div>
+          <div class="deal-meta-row">
+            <span class="meta-chip">1 stop</span>
+          </div>
+          <div class="deal-airline">Korean Air · 8h 20m · Economy</div>
+          <div class="deal-timer">Expires in 4h 00m</div>
+          <div class="deal-cta">
+            <button class="btn-grab">Grab deal →</button>
+            <button class="btn-save" onclick="toggleSave(this)">♡</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Rare 3 — BOM → CDG -->
+      <div class="deal-card fadein" data-type="rare" data-region="Europe" data-origin="BOM" data-pct="62" data-price="24800" data-expiry="360">
+        <div class="deal-banner b-sun">
+          <div>
+            <div class="deal-route">BOM <span class="arr">→</span> CDG</div>
+            <div class="deal-city">Mumbai → Paris</div>
+          </div>
+          <div class="badge-wrap">
+            <span class="badge badge-pct-violet">-62%</span>
+            <span class="badge badge-type badge-rare">RARE</span>
+          </div>
+        </div>
+        <div class="deal-body">
+          <div class="deal-price">₹24,800<span class="unit">/ rt</span></div>
+          <div class="deal-strike">Was ₹65,300</div>
+          <div class="deal-meta-row">
+            <span class="meta-chip">1 stop</span>
+          </div>
+          <div class="deal-airline">Air France · 12h 10m · Economy</div>
+          <div class="deal-timer slow">Expires in 6h 00m</div>
+          <div class="deal-cta">
+            <button class="btn-grab">Grab deal →</button>
+            <button class="btn-save" onclick="toggleSave(this)">♡</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- COMMON SECTION DIVIDER -->
+      <div class="section-divider" style="grid-column:1/-1;margin-top:8px;">
+        <div class="sdl">✓ Common · 40–59% off</div>
+        <div class="sdline"></div>
+        <div class="sdcount">30 deals</div>
+      </div>
+
+      <!-- Common 1 -->
+      <div class="deal-card fadein" data-type="common" data-region="Southeast Asia" data-origin="DEL" data-pct="54" data-price="9800" data-expiry="300">
+        <div class="deal-banner b-lime">
+          <div>
+            <div class="deal-route">DEL <span class="arr">→</span> BKK</div>
+            <div class="deal-city">Delhi → Bangkok</div>
+          </div>
+          <div class="badge-wrap">
+            <span class="badge badge-pct-coral">-54%</span>
+            <span class="badge badge-type badge-common">COMMON</span>
+          </div>
+        </div>
+        <div class="deal-body">
+          <div class="deal-price">₹9,800<span class="unit">/ rt</span></div>
+          <div class="deal-strike">Was ₹21,200</div>
+          <div class="deal-meta-row">
+            <span class="meta-chip">1 stop</span>
+          </div>
+          <div class="deal-airline">IndiGo · 5h 40m · Economy</div>
+          <div class="deal-timer slow">Expires in 5h 00m</div>
+          <div class="deal-cta">
+            <button class="btn-grab">Grab deal →</button>
+            <button class="btn-save" onclick="toggleSave(this)">♡</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Common 2 -->
+      <div class="deal-card fadein" data-type="common" data-region="Southeast Asia" data-origin="BOM" data-pct="49" data-price="11600" data-expiry="480">
+        <div class="deal-banner b-coral">
+          <div>
+            <div class="deal-route">BOM <span class="arr">→</span> DPS</div>
+            <div class="deal-city">Mumbai → Bali</div>
+          </div>
+          <div class="badge-wrap">
+            <span class="badge badge-pct-lime">-49%</span>
+            <span class="badge badge-type badge-common">COMMON</span>
+          </div>
+        </div>
+        <div class="deal-body">
+          <div class="deal-price">₹11,600<span class="unit">/ rt</span></div>
+          <div class="deal-strike">Was ₹22,700</div>
+          <div class="deal-meta-row">
+            <span class="meta-chip">1 stop</span>
+          </div>
+          <div class="deal-airline">Air Asia · 7h 30m · Economy</div>
+          <div class="deal-timer slow">Expires in 8h 00m</div>
+          <div class="deal-cta">
+            <button class="btn-grab">Grab deal →</button>
+            <button class="btn-save" onclick="toggleSave(this)">♡</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Common 3 -->
+      <div class="deal-card fadein" data-type="common" data-region="Middle East" data-origin="BLR" data-pct="47" data-price="8400" data-expiry="720">
+        <div class="deal-banner b-violet">
+          <div>
+            <div class="deal-route">BLR <span class="arr">→</span> DXB</div>
+            <div class="deal-city">Bangalore → Dubai</div>
+          </div>
+          <div class="badge-wrap">
+            <span class="badge badge-pct-violet">-47%</span>
+            <span class="badge badge-type badge-common">COMMON</span>
+          </div>
+        </div>
+        <div class="deal-body">
+          <div class="deal-price">₹8,400<span class="unit">/ rt</span></div>
+          <div class="deal-strike">Was ₹15,800</div>
+          <div class="deal-meta-row">
+            <span class="meta-chip nonstop">Direct</span>
+          </div>
+          <div class="deal-airline">Emirates · 3h 10m · Economy</div>
+          <div class="deal-timer slow">Expires in 12h 00m</div>
+          <div class="deal-cta">
+            <button class="btn-grab">Grab deal →</button>
+            <button class="btn-save" onclick="toggleSave(this)">♡</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Common 4 -->
+      <div class="deal-card fadein" data-type="common" data-region="Europe" data-origin="DEL" data-pct="52" data-price="19200" data-expiry="600">
+        <div class="deal-banner b-lime">
+          <div>
+            <div class="deal-route">DEL <span class="arr">→</span> FCO</div>
+            <div class="deal-city">Delhi → Rome</div>
+          </div>
+          <div class="badge-wrap">
+            <span class="badge badge-pct-coral">-52%</span>
+            <span class="badge badge-type badge-common">COMMON</span>
+          </div>
+        </div>
+        <div class="deal-body">
+          <div class="deal-price">₹19,200<span class="unit">/ rt</span></div>
+          <div class="deal-strike">Was ₹39,900</div>
+          <div class="deal-meta-row">
+            <span class="meta-chip">1 stop</span>
+          </div>
+          <div class="deal-airline">Lufthansa · 11h 40m · Economy</div>
+          <div class="deal-timer slow">Expires in 10h 00m</div>
+          <div class="deal-cta">
+            <button class="btn-grab">Grab deal →</button>
+            <button class="btn-save" onclick="toggleSave(this)">♡</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Common 5 -->
+      <div class="deal-card fadein" data-type="common" data-region="Southeast Asia" data-origin="BOM" data-pct="44" data-price="13200" data-expiry="900">
+        <div class="deal-banner b-sun">
+          <div>
+            <div class="deal-route">BOM <span class="arr">→</span> KUL</div>
+            <div class="deal-city">Mumbai → Kuala Lumpur</div>
+          </div>
+          <div class="badge-wrap">
+            <span class="badge badge-pct-lime">-44%</span>
+            <span class="badge badge-type badge-common">COMMON</span>
+          </div>
+        </div>
+        <div class="deal-body">
+          <div class="deal-price">₹13,200<span class="unit">/ rt</span></div>
+          <div class="deal-strike">Was ₹23,500</div>
+          <div class="deal-meta-row">
+            <span class="meta-chip nonstop">Direct</span>
+          </div>
+          <div class="deal-airline">Malaysia Airlines · 6h 20m · Economy</div>
+          <div class="deal-timer slow">Expires in 15h 00m</div>
+          <div class="deal-cta">
+            <button class="btn-grab">Grab deal →</button>
+            <button class="btn-save" onclick="toggleSave(this)">♡</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Common 6 -->
+      <div class="deal-card fadein" data-type="common" data-region="North America" data-origin="DEL" data-pct="48" data-price="52800" data-expiry="1200">
+        <div class="deal-banner b-violet">
+          <div>
+            <div class="deal-route">DEL <span class="arr">→</span> JFK</div>
+            <div class="deal-city">Delhi → New York</div>
+          </div>
+          <div class="badge-wrap">
+            <span class="badge badge-pct-violet">-48%</span>
+            <span class="badge badge-type badge-common">COMMON</span>
+          </div>
+        </div>
+        <div class="deal-body">
+          <div class="deal-price">₹52,800<span class="unit">/ rt</span></div>
+          <div class="deal-strike">Was ₹1,01,500</div>
+          <div class="deal-meta-row">
+            <span class="meta-chip">1 stop</span>
+          </div>
+          <div class="deal-airline">Air India · 16h 45m · Economy</div>
+          <div class="deal-timer slow">Expires in 20h 00m</div>
+          <div class="deal-cta">
+            <button class="btn-grab">Grab deal →</button>
+            <button class="btn-save" onclick="toggleSave(this)">♡</button>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /deals-grid -->
+
+    <!-- Pagination -->
+    <div class="pagination">
+      <button class="page-btn" disabled>← Prev</button>
+      <button class="page-btn active">1</button>
+      <button class="page-btn">2</button>
+      <button class="page-btn">3</button>
+      <span style="font-family:var(--fm);font-size:12px;color:var(--g400);">…</span>
+      <button class="page-btn">6</button>
+      <button class="page-btn">Next →</button>
+    </div>
+
+  </div><!-- /feed-area -->
+</div><!-- /page-body -->
+
+<script>
+/* ── STATE ────────────────────────────────────────────── */
+let activeOrigins = new Set(['BOM','DEL','BLR','IDR']);
+let activeRegion  = 'all';
+let activeTypes   = new Set(['unique','rare','common']);
+let minPct        = 40;
+let currentSort   = 'discount';
+let currentView   = 'grid';
+
+/* ── FILTER ACTIONS ───────────────────────────────────── */
+function toggleOrigin(btn) {
+  const o = btn.dataset.origin;
+  if (activeOrigins.has(o)) {
+    if (activeOrigins.size === 1) return; // keep at least 1
+    activeOrigins.delete(o); btn.classList.remove('active');
+  } else {
+    activeOrigins.add(o); btn.classList.add('active');
+  }
+  applyFilters();
+}
+
+function setRegion(btn) {
+  activeRegion = btn.dataset.region;
+  document.querySelectorAll('.region-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  applyFilters();
+}
+
+function toggleType(btn) {
+  const t = btn.dataset.type;
+  if (activeTypes.has(t)) {
+    if (activeTypes.size === 1) return;
+    activeTypes.delete(t);
+    btn.classList.remove(`active-${t}`);
+  } else {
+    activeTypes.add(t);
+    btn.classList.add(`active-${t}`);
+  }
+  applyFilters();
+}
+
+function updateRange(v) {
+  minPct = parseInt(v);
+  document.getElementById('range-val').textContent = `${v}%+ off`;
+}
+
+function resetFilters() {
+  activeOrigins = new Set(['BOM','DEL','BLR','IDR']);
+  activeRegion  = 'all';
+  activeTypes   = new Set(['unique','rare','common']);
+  minPct        = 40;
+  document.querySelectorAll('[data-origin]').forEach(b => b.classList.add('active'));
+  document.querySelector('[data-region="all"]').click();
+  document.querySelectorAll('[data-type]').forEach(b => {
+    const t = b.dataset.type;
+    if (!b.classList.contains(`active-${t}`)) b.classList.add(`active-${t}`);
+  });
+  document.getElementById('min-pct').value = 40;
+  document.getElementById('range-val').textContent = '40%+ off';
+  applyFilters();
+}
+
+function applyFilters() {
+  let visible = 0;
+  document.querySelectorAll('.deal-card').forEach(card => {
+    if (card.classList.contains('locked')) { card.style.display = ''; return; }
+    const t  = card.dataset.type;
+    const r  = card.dataset.region;
+    const o  = card.dataset.origin;
+    const p  = parseInt(card.dataset.pct || 0);
+    const ok = activeTypes.has(t)
+            && (activeRegion === 'all' || r === activeRegion)
+            && activeOrigins.has(o)
+            && p >= minPct;
+    card.style.display = ok ? '' : 'none';
+    if (ok) visible++;
+  });
+  document.getElementById('result-count').innerHTML = `<strong>${visible} deals</strong> found · 6 expiring soon`;
+
+  // hide/show section dividers
+  document.querySelectorAll('.section-divider').forEach(div => {
+    const next = div.nextElementSibling;
+    if (!next) return;
+    const cards = [];
+    let el = div.nextElementSibling;
+    while (el && !el.classList.contains('section-divider')) {
+      if (el.classList.contains('deal-card')) cards.push(el);
+      el = el.nextElementSibling;
+    }
+    const anyVisible = cards.some(c => c.style.display !== 'none');
+    div.style.display = anyVisible ? '' : 'none';
+  });
+}
+
+/* ── SORT ─────────────────────────────────────────────── */
+function setSort(btn) {
+  currentSort = btn.dataset.sort;
+  document.querySelectorAll('.sort-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  const grid = document.getElementById('deals-grid');
+  const cards = [...grid.querySelectorAll('.deal-card:not(.locked):not([class*="section-divider"])')];
+  const dividers = [...grid.querySelectorAll('.section-divider')];
+
+  cards.sort((a, b) => {
+    if (currentSort === 'discount') return parseInt(b.dataset.pct||0) - parseInt(a.dataset.pct||0);
+    if (currentSort === 'price')    return parseInt(a.dataset.price||0) - parseInt(b.dataset.price||0);
+    if (currentSort === 'expiry')   return parseInt(a.dataset.expiry||0) - parseInt(b.dataset.expiry||0);
+    return 0;
+  });
+
+  // rebuild: dividers + sorted cards
+  dividers.forEach(d => grid.appendChild(d));
+  cards.forEach(c => grid.appendChild(c));
+}
+
+/* ── VIEW TOGGLE ──────────────────────────────────────── */
+function setView(v, btn) {
+  currentView = v;
+  document.querySelectorAll('.view-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  const grid = document.getElementById('deals-grid');
+  if (v === 'list') grid.classList.add('list-view');
+  else grid.classList.remove('list-view');
+}
+
+/* ── SAVE TOGGLE ──────────────────────────────────────── */
+function toggleSave(btn) {
+  const saved = btn.classList.toggle('saved');
+  btn.textContent = saved ? '♥' : '♡';
+}
+
+/* ── SCROLL REVEAL ────────────────────────────────────── */
+const obs = new IntersectionObserver(entries => {
+  entries.forEach((e, i) => {
+    if (e.isIntersecting) {
+      e.target.style.animationDelay = (i * 0.05) + 's';
+      e.target.style.opacity = '1';
+      e.target.style.transform = 'none';
+      obs.unobserve(e.target);
+    }
+  });
+}, { threshold: 0.08 });
+
+document.querySelectorAll('.deal-card').forEach(c => {
+  c.style.opacity = '0';
+  c.style.transform = 'translateY(16px)';
+  c.style.transition = 'opacity .35s var(--ease), transform .35s var(--ease)';
+  obs.observe(c);
+});
+
+/* ── LIVE COUNTDOWN ───────────────────────────────────── */
+setInterval(() => {
+  document.querySelectorAll('.deal-timer:not(.slow)').forEach(el => {
+    const m = el.textContent.match(/(\d+)h\s*(\d+)m/);
+    const s = el.textContent.match(/^Expires in (\d+)m/);
+    if (m) {
+      let h = parseInt(m[1]), mn = parseInt(m[2]);
+      if (mn === 0) { h = Math.max(0, h-1); mn = 59; } else mn--;
+      el.textContent = h > 0 ? `Expires in ${h}h ${String(mn).padStart(2,'0')}m` : `Expires in ${mn}m — book now`;
+    } else if (s) {
+      let mn = parseInt(s[1]);
+      if (mn > 1) el.textContent = `Expires in ${mn-1}m — book now`;
+      else el.textContent = 'Expiring now!';
+    }
+  });
+}, 60000);
+</script>
+</body>
+</html>
