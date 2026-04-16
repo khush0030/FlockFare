@@ -3,6 +3,7 @@ import { ORIGINS, DESTINATIONS } from "@/config/watchlist";
 import { getActiveDeals, type Deal } from "@/lib/supabase/deals";
 import { DealCard } from "@/components/deal-card";
 import { SubscribeForm } from "@/components/subscribe-form";
+import { Header } from "@/components/header";
 
 // Sample deals shown when no live deals exist yet (baseline building)
 const SAMPLE_DEALS: Deal[] = [
@@ -65,6 +66,8 @@ export default async function Home() {
   const isLive = liveDeals.length > 0;
   return (
     <main className="flex-1">
+      <Header variant="dark" />
+
       {/* HERO */}
       <section className="relative overflow-hidden bg-ink text-cream">
         <div className="max-w-[1200px] mx-auto px-6 py-20 md:py-28">

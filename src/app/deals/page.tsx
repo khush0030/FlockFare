@@ -2,7 +2,7 @@ import Image from "next/image";
 import { getActiveDeals } from "@/lib/supabase/deals";
 import { DealCard } from "@/components/deal-card";
 import { ORIGINS } from "@/config/watchlist";
-import Link from "next/link";
+import { Header } from "@/components/header";
 
 export const revalidate = 300; // ISR: refresh every 5 minutes
 
@@ -11,27 +11,7 @@ export default async function DealsPage() {
 
   return (
     <main className="flex-1">
-      {/* Header */}
-      <header className="bg-ink text-cream border-b-4 border-cream/20">
-        <div className="max-w-[1200px] mx-auto px-6 py-4 flex items-center justify-between">
-          <Link href="/">
-            <Image
-              src="/logos/lockup-horizontal-reversed.svg"
-              alt="FlockFare"
-              width={130}
-              height={30}
-            />
-          </Link>
-          <nav className="flex gap-5 items-center">
-            <Link
-              href="/deals"
-              className="font-display font-bold text-sm text-lime no-underline"
-            >
-              Deals
-            </Link>
-          </nav>
-        </div>
-      </header>
+      <Header variant="dark" />
 
       <section className="max-w-[1200px] mx-auto px-6 py-12">
         <p className="ff-eyebrow mb-3">ALL ACTIVE DEALS</p>
