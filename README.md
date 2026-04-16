@@ -2,8 +2,6 @@
 
 **Cheap flights, for your flock.**
 
-A Zomunk-grade flight & hotel deal alerter for friends and family — at near-zero cost.
-
 ## How It Works
 
 ```
