@@ -175,15 +175,9 @@ export function ProfileClient({ data }: { data: ProfileData }) {
     .toUpperCase()
     .slice(0, 2);
 
-  const authUser = {
-    displayName: user.displayName,
-    email: user.email,
-    avatarUrl: user.avatarUrl,
-  };
-
   return (
     <div style={{ background: g50, minHeight: "100vh", color: ink, fontFamily: "var(--font-body)" }}>
-      <Header activePage="profile" user={authUser} />
+      <Header activePage="profile" />
 
       {/* Hero */}
       <div style={{ background: ink, borderBottom: `4px solid ${lime}`, padding: "0 40px", position: "relative", overflow: "hidden" }}>

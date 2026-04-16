@@ -1,20 +1,18 @@
-import Link from "next/link";
+"use client";
 
-export type AuthUser = {
-  displayName: string | null;
-  email: string | null;
-  avatarUrl: string | null;
-} | null;
+import Link from "next/link";
+import { useSession } from "next-auth/react";
 
 export function Header({
   activePage,
-  user,
 }: {
   activePage?: "deals" | "home" | "profile" | "preferences";
-  user?: AuthUser;
 }) {
-  const initials = user?.displayName
-    ? user.displayName
+  const { data: session } = useSession();
+  const user = session?.user;
+
+  const initials = user?.name
+    ? user.name
         .split(" ")
         .map((w) => w[0])
         .join("")
@@ -31,20 +29,27 @@ export function Header({
         <Link href="/deals" className={activePage === "deals" ? "active" : ""}>
           Deals
         </Link>
-        <Link href="/preferences" className={activePage === "preferences" ? "active" : ""}>
-          Preferences
-        </Link>
-        {user && (
-          <Link href="/profile" className={activePage === "profile" ? "active" : ""}>
-            Profile
-          </Link>
+        {user ? (
+          <>
+            <Link href="/preferences" className={activePage === "preferences" ? "active" : ""}>
+              Preferences
+            </Link>
+            <Link href="/profile" className={activePage === "profile" ? "active" : ""}>
+              Profile
+            </Link>
+          </>
+        ) : (
+          <>
+            <Link href="/#join">Pricing</Link>
+            <Link href="/#proof">About</Link>
+          </>
         )}
       </div>
       {user ? (
         <Link href="/profile" className="nav-avatar-link">
-          {user.avatarUrl ? (
+          {user.image ? (
             <img
-              src={user.avatarUrl}
+              src={user.image}
               alt=""
               width={34}
               height={34}
