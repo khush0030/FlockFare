@@ -178,6 +178,7 @@ def send_email_deal(deal: dict, to_emails: list[str]) -> bool:
         headers={
             "Content-Type": "application/json",
             "Authorization": f"Bearer {api_key}",
+            "User-Agent": "FlockFare/1.0",
         },
     )
 
