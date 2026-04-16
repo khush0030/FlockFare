@@ -1,3 +1,4 @@
+import Link from "next/link";
 import type { Deal } from "@/lib/supabase/deals";
 import { DESTINATIONS } from "@/config/watchlist";
 import { DealActions } from "./deal-actions";
@@ -87,6 +88,12 @@ export function DealCard({ deal }: { deal: Deal }) {
           googleFlightsUrl={deal.google_flights_url}
           dealType={deal.deal_type}
         />
+        <Link
+          href={`/price-history/${deal.origin_code}-${deal.destination_code}`}
+          className="mt-3 inline-flex items-center gap-1 font-mono text-[11px] tracking-[0.12em] uppercase text-violet hover:underline no-underline"
+        >
+          📈 See price history →
+        </Link>
       </div>
     </div>
   );

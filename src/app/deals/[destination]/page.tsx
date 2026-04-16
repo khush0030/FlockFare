@@ -82,15 +82,21 @@ export default async function DestinationPage({
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
               {historiesWithData.map(({ origin, data }) => (
-                <div
+                <Link
                   key={origin.code}
-                  className="bg-paper border-4 border-ink rounded-[20px] shadow-brut-sm p-5"
+                  href={`/price-history/${origin.code}-${dest.code}`}
+                  className="bg-paper border-4 border-ink rounded-[20px] shadow-brut-sm p-5 block no-underline text-ink hover:-translate-y-0.5 hover:-translate-x-0.5 hover:shadow-brut transition-transform"
                 >
-                  <div className="font-mono text-[11px] tracking-[0.15em] uppercase text-ffgray-500 mb-3">
-                    {origin.code} &rarr; {dest.code} &middot; {origin.city}
+                  <div className="flex items-center justify-between mb-3">
+                    <div className="font-mono text-[11px] tracking-[0.15em] uppercase text-ffgray-500">
+                      {origin.code} &rarr; {dest.code} &middot; {origin.city}
+                    </div>
+                    <span className="font-mono text-[10px] tracking-[0.1em] uppercase text-violet">
+                      Open chart →
+                    </span>
                   </div>
                   <PriceChart data={data} />
-                </div>
+                </Link>
               ))}
             </div>
           </div>
