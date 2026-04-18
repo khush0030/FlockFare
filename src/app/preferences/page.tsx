@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { CSSProperties } from "react";
+import { useSession } from "next-auth/react";
 import { DESTINATIONS, ORIGINS } from "@/config/watchlist";
 
 // ── Types ─────────────────────────────────────────────────
@@ -107,6 +108,15 @@ function SectionHead({ n, title, right }: { n: number; title: string; right?: Re
 }
 
 export default function PreferencesPage() {
+  const { data: session } = useSession();
+  const userEmail = session?.user?.email ?? "";
+  const userName = session?.user?.name ?? "";
+  const initials = (userName || userEmail)
+    .split(/[\s@._-]+/)
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((s) => s[0]?.toUpperCase() ?? "")
+    .join("") || "?";
   // ── State ───────────────────────────────────────────────
   const [dirty, setDirty] = useState(false);
   const [saved, setSaved] = useState(false);
@@ -283,8 +293,8 @@ export default function PreferencesPage() {
           <Link href="/#join">Pro</Link>
         </div>
         <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-          <div style={{ width: 34, height: 34, borderRadius: "50%", background: violet, color: "#fff", fontFamily: mono, fontSize: 12, fontWeight: 700, display: "flex", alignItems: "center", justifyContent: "center", border: "2px solid var(--color-cream)" }}>AK</div>
-          <span style={{ fontFamily: mono, fontSize: 11, color: "rgba(246,243,236,.55)", letterSpacing: ".06em" }}>admin@oltaflock.ai</span>
+          <div style={{ width: 34, height: 34, borderRadius: "50%", background: violet, color: "#fff", fontFamily: mono, fontSize: 12, fontWeight: 700, display: "flex", alignItems: "center", justifyContent: "center", border: "2px solid var(--color-cream)" }}>{initials}</div>
+          <span style={{ fontFamily: mono, fontSize: 11, color: "rgba(246,243,236,.55)", letterSpacing: ".06em" }}>{userEmail}</span>
         </div>
       </nav>
 
@@ -430,7 +440,7 @@ export default function PreferencesPage() {
                   <h3 style={S.h3}>Email</h3>
                   <p style={{ ...S.pMeta, lineHeight: 1.5 }}>Deal digest every time Penny finds something. Instant for Unique deals, up to 4h delay on free plan.</p>
                   <div className="channel-detail">
-                    <span>admin@oltaflock.ai</span>
+                    <span>{userEmail}</span>
                     <span className="ch-verified">✓ Verified</span>
                   </div>
                 </div>
