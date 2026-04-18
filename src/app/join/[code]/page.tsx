@@ -44,18 +44,17 @@ export default async function JoinPage({ params }: Props) {
     redirect("/profile");
   }
 
-  // Set cookie so the auth callback can match it after Google sign-in.
-  const jar = await cookies();
-  jar.set(COOKIE_NAME, cleaned, {
-    maxAge: COOKIE_MAX_AGE_SECONDS,
-    httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
-    sameSite: "lax",
-    path: "/",
-  });
-
   async function startSignIn() {
     "use server";
+    // Cookie set in the server action — Next disallows it from page-render.
+    const jar = await cookies();
+    jar.set(COOKIE_NAME, cleaned, {
+      maxAge: COOKIE_MAX_AGE_SECONDS,
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "lax",
+      path: "/",
+    });
     await signIn("google", { redirectTo: "/onboarding" });
   }
 
