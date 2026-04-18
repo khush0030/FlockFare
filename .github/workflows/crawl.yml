@@ -2,14 +2,12 @@ name: FlockFare Fare Crawler
 
 on:
   schedule:
-    # Run every 4 hours (6x/day) — well within free tier limits
-    - cron: '0 */4 * * *'
+    # Daily at 06:00 UTC (~11:30 AM IST). 1 run/day × 8 SerpApi calls/trip = 240/mo
+    # for the seeded Phuket+Bangkok trip — fits the free 250-call quota with margin
+    # for user-added trips. Increase to twice daily only if quota allows.
+    - cron: '0 6 * * *'
   workflow_dispatch:
-    # Manual trigger from GitHub Actions UI
     inputs:
-      origins:
-        description: 'Comma-separated origin codes (leave empty for all)'
-        required: false
       dry_run:
         description: 'Dry run (fetch only, no storage)'
         required: false
@@ -19,11 +17,15 @@ on:
 env:
   SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
   SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+  SERPAPI_KEY: ${{ secrets.SERPAPI_KEY }}
+  RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
+  TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+  TELEGRAM_CHANNEL_ID: ${{ secrets.TELEGRAM_CHANNEL_ID }}
 
 jobs:
   crawl:
     runs-on: ubuntu-latest
-    timeout-minutes: 45
+    timeout-minutes: 10
 
     steps:
       - uses: actions/checkout@v4
@@ -41,14 +43,10 @@ jobs:
       - name: Run crawler
         working-directory: crawler
         env:
-          INPUT_ORIGINS: ${{ github.event.inputs.origins }}
           INPUT_DRY_RUN: ${{ github.event.inputs.dry_run }}
         run: |
           ARGS=""
-          if [ -n "$INPUT_ORIGINS" ]; then
-            ARGS="--origins $(echo "$INPUT_ORIGINS" | tr ',' ' ')"
-          fi
           if [ "$INPUT_DRY_RUN" = "true" ]; then
-            ARGS="$ARGS --dry-run"
+            ARGS="--dry-run"
           fi
           python run.py $ARGS
