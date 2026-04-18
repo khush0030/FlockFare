@@ -1,7 +1,9 @@
 import type { Metadata } from "next";
 import { getActiveDeals } from "@/lib/supabase/deals";
+import { getTripFeed } from "@/lib/supabase/trip-feed";
 import { Header } from "@/components/header";
 import { DealsFeed } from "@/components/deals-feed";
+import { TripFeed } from "@/components/trip-feed";
 import { ORIGINS } from "@/config/watchlist";
 
 export const metadata: Metadata = {
@@ -26,8 +28,9 @@ function timeAgo(iso: string): string {
 }
 
 export default async function DealsPage() {
-  const deals = await getActiveDeals(50);
+  const [deals, trips] = await Promise.all([getActiveDeals(50), getTripFeed()]);
   const totalDeals = deals.length;
+  const hasTrips = trips.some((t) => t.quotes.length > 0);
 
   const uniqueCount = deals.filter((d) => d.deal_type === "unique").length;
   const lowestPrice = deals.length > 0 ? Math.min(...deals.map((d) => d.current_price_inr)) : 0;
@@ -91,10 +94,10 @@ export default async function DealsPage() {
         </div>
       </div>
 
-      {/* ── FEED or EMPTY STATE ──────────────────── */}
-      {totalDeals > 0 ? (
-        <DealsFeed deals={deals} />
-      ) : (
+      {/* ── FEED or TRIP FEED or EMPTY STATE ─────── */}
+      {totalDeals > 0 && <DealsFeed deals={deals} />}
+      {hasTrips && <TripFeed trips={trips} />}
+      {totalDeals === 0 && !hasTrips && (
         <div style={{ maxWidth: 720, margin: "60px auto", padding: "40px 24px", textAlign: "center" }}>
           <div style={{ fontSize: 48, marginBottom: 16 }}>🐦</div>
           <h2 style={{ fontFamily: "var(--font-display)", fontSize: 28, fontWeight: 900, marginBottom: 10 }}>
