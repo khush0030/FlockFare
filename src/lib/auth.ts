@@ -7,6 +7,9 @@ const db = createClient(
   process.env.SUPABASE_SERVICE_ROLE_KEY!
 );
 
+// Permanent Pro — bypasses billing, survives DB wipes
+const ADMIN_EMAILS = new Set(["khushmutha20@gmail.com"]);
+
 export const { handlers, signIn, signOut, auth } = NextAuth({
   providers: [Google],
   callbacks: {
@@ -29,13 +32,16 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         .eq("email", user.email)
         .maybeSingle();
 
+      const isAdmin = ADMIN_EMAILS.has(user.email);
+
       if (!existing) {
         await db.from("user_profiles").insert({
           email: user.email,
           display_name: user.name ?? "User",
           avatar_url: user.image ?? null,
           referral_code: crypto.randomUUID().slice(0, 12),
-          plan_tier: "free",
+          plan_tier: isAdmin ? "pro" : "free",
+          onboarded: isAdmin ? true : false,
         });
         await db.from("notification_prefs").insert({
           email: user.email,
@@ -46,6 +52,14 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           .eq("email", user.email);
 
         return true;
+      }
+
+      // Ensure admin stays Pro even if DB drifted
+      if (isAdmin) {
+        await db
+          .from("user_profiles")
+          .update({ plan_tier: "pro", onboarded: true })
+          .eq("email", user.email);
       }
 
       return true;
@@ -60,6 +74,10 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           .maybeSingle();
 
         if (profile) {
+          if (ADMIN_EMAILS.has(session.user.email)) {
+            profile.plan_tier = "pro";
+            profile.onboarded = true;
+          }
           (session as unknown as Record<string, unknown>).profile = profile;
         }
       }

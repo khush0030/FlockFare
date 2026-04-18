@@ -7,6 +7,34 @@ const db = createClient(
   process.env.SUPABASE_SERVICE_ROLE_KEY!
 );
 
+export async function GET() {
+  const session = await auth();
+  if (!session?.user?.email) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  const { data, error } = await db
+    .from("notification_prefs")
+    .select("*")
+    .eq("email", session.user.email)
+    .maybeSingle();
+
+  if (error) {
+    return NextResponse.json({ error: error.message }, { status: 500 });
+  }
+
+  // Return prefs with defaults for fields not yet persisted (origins, telegram_handle).
+  return NextResponse.json({
+    origins: [],
+    telegram_handle: null,
+    deals_email: data?.deals_email ?? true,
+    weekly_digest: data?.weekly_digest ?? true,
+    push: data?.push ?? false,
+    updates: data?.updates ?? true,
+    analytics: data?.analytics ?? true,
+  });
+}
+
 export async function POST(request: NextRequest) {
   const session = await auth();
   if (!session?.user?.email) {

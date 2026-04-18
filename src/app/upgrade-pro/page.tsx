@@ -3,17 +3,6 @@
 import { useEffect, useState } from "react";
 import { Header } from "@/components/header";
 
-const MISSED = [
-  { route: "BLR → NRT", pct: 71, price: "₹18,700", type: "Business" },
-  { route: "BOM → LHR", pct: 61, price: "₹21,400", type: "Mistake fare" },
-  { route: "DEL → SFO", pct: 58, price: "₹36,000", type: "Economy" },
-  { route: "BOM → SIN", pct: 73, price: "₹8,200", type: "Mistake fare" },
-  { route: "DEL → AMS", pct: 55, price: "₹24,800", type: "Economy" },
-  { route: "BLR → CDG", pct: 62, price: "₹19,200", type: "Economy" },
-  { route: "BOM → YYZ", pct: 48, price: "₹52,800", type: "Economy" },
-  { route: "DEL → ICN", pct: 64, price: "₹14,900", type: "Business" },
-];
-
 const FAQS = [
   { q: "Does Pro really get alerts 4 hours earlier?", a: "Yes. When Penny detects a deal, we push it to Pro members immediately. Free members receive the same alert 4 hours later. On mistake fares that expire in 2–3 hours, free users never see them before they're gone." },
   { q: "What if I don't save anything in my first 7 days?", a: "Full refund, no questions asked. Email Penny at penny@flockfare.com within 7 days of upgrading. We'll process the refund within 24 hours. No forms, no hoops." },
@@ -35,12 +24,6 @@ const FEATURES = [
   { icon: "📊", bg: "var(--color-ffgray-100)", title: "90-day price charts", desc: "Every deal comes with a full 90-day fare chart so you can see exactly how exceptional the price really is — not just a crossed-out number.", badge: "FULL HISTORY", badgeCls: "fb-lime" },
 ];
 
-const PROOF = [
-  { initials: "AK", bg: "rgba(216,255,60,.15)", color: "var(--color-lime)", name: "Aryan Khanna", handle: "@aryanfliesalot · BOM", body: "Upgraded to Pro after missing a <span class=\"hi\">BOM → LHR mistake fare</span> that free users got 4 hours too late. Next month I caught a BLR → NRT business class at -71%. The subscription paid for itself 49x in one booking.", saved: "💰 ₹39,700 saved on one deal" },
-  { initials: "RS", bg: "rgba(255,78,100,.15)", color: "var(--color-coral)", name: "Riya Shah", handle: "@riyatravels · DEL", body: "I travel 6x a year for work. Pro is genuinely the best ₹799 I spend annually. <span class=\"hi\">Caught a DEL → SFO business class at ₹1.1L</span> (usually ₹3.2L). That's more than 4 years of Pro in one booking.", saved: "💰 ₹2,10,000 saved in one booking" },
-  { initials: "PM", bg: "rgba(109,40,255,.15)", color: "var(--color-violet)", name: "Priya Menon", handle: "@wanderpriya · BLR", body: "3 family trips this year — Paris, Bali, Tokyo. Total saved across all bookings? <span class=\"hi\">₹1,84,000.</span> Pro costs ₹799. The math is almost embarrassing. Penny is the best employee my family has.", saved: "💰 ₹1,84,000 saved across 3 family trips" },
-  { initials: "DN", bg: "rgba(255,209,102,.15)", color: "var(--color-sun)", name: "Dev Narayan", handle: "@devnfly · IDR", body: "Was skeptical of paying for flight alerts. Tried Pro for a month (₹99). <span class=\"hi\">Caught a IDR → DXB deal at -68%</span> in week 1. Never looked back. The instant alerts are the real difference — everything good is gone by the time free users see it.", saved: "💰 ₹18,400 saved in first week of Pro" },
-];
 
 export default function UpgradeProPage() {
   const [billing, setBilling] = useState<"monthly" | "yearly">("yearly");
@@ -49,24 +32,12 @@ export default function UpgradeProPage() {
   const [disc, setDisc] = useState(55);
   const [price, setPrice] = useState(45000);
   const [sticky, setSticky] = useState(false);
-  const [totalSecs, setTotalSecs] = useState(4 * 86400 + 11 * 3600 + 22 * 60);
-
-  useEffect(() => {
-    const id = setInterval(() => setTotalSecs(s => (s > 0 ? s - 1 : 0)), 1000);
-    return () => clearInterval(id);
-  }, []);
 
   useEffect(() => {
     const onScroll = () => setSticky(window.scrollY > 500);
     window.addEventListener("scroll", onScroll);
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
-
-  const d = Math.floor(totalSecs / 86400);
-  const h = Math.floor((totalSecs % 86400) / 3600);
-  const m = Math.floor((totalSecs % 3600) / 60);
-  const s = totalSecs % 60;
-  const pad = (n: number) => String(n).padStart(2, "0");
 
   const saving = Math.round(trips * (disc / 100) * price);
   const roi = Math.round(saving / 799);
@@ -75,9 +46,12 @@ export default function UpgradeProPage() {
     document.getElementById("final-cta")?.scrollIntoView({ behavior: "smooth" });
   };
 
-  const checkout = () => {
-    alert("Razorpay checkout would open here in production.");
-  };
+  // Billing is not wired yet; CTAs are disabled with "Coming soon" copy.
+  const checkout = () => {};
+  const checkoutEnabled = false;
+  const ctaLabel = checkoutEnabled ? "⚡ Upgrade to Pro · ₹799/year" : "Coming soon";
+  const ctaFinalLabel = checkoutEnabled ? "⚡ Upgrade to Pro now →" : "Coming soon";
+  const ctaCardLabel = checkoutEnabled ? "Upgrade now →" : "Coming soon";
 
   const priceMain = billing === "yearly" ? "₹799" : "₹99";
   const priceUnit = billing === "yearly" ? "/year" : "/month";
@@ -103,17 +77,10 @@ export default function UpgradeProPage() {
             </h1>
             <p className="upro-hero-sub">Free members get alerts 4 hours after Pro. On mistake fares that expire in 2 hours, that&apos;s not a delay — that&apos;s a miss. Upgrade once. Save ₹40,000+ every year.</p>
             <div className="upro-hero-actions">
-              <button className="upro-btn-hero" onClick={scrollToCTA}>⚡ Upgrade to Pro · ₹799/year</button>
+              <button className="upro-btn-hero" onClick={scrollToCTA} disabled={!checkoutEnabled} aria-disabled={!checkoutEnabled}>{ctaLabel}</button>
               <button className="upro-btn-ghost-hero" onClick={() => document.getElementById("compare")?.scrollIntoView({ behavior: "smooth" })}>Compare plans →</button>
             </div>
             <div className="upro-hero-guarantee">✓ 7-day money-back · ✓ Cancel anytime · ✓ No hidden fees · ✓ GST included</div>
-            <div className="upro-timer-label">EARLY PRICING ENDS IN</div>
-            <div className="upro-timer-row">
-              <div className="upro-timer-block">{pad(d)}</div><span className="upro-timer-sep">:</span>
-              <div className="upro-timer-block">{pad(h)}</div><span className="upro-timer-sep">:</span>
-              <div className="upro-timer-block">{pad(m)}</div><span className="upro-timer-sep">:</span>
-              <div className="upro-timer-block">{pad(s)}</div>
-            </div>
           </div>
 
           <div className="upro-price-card">
@@ -139,7 +106,7 @@ export default function UpgradeProPage() {
                 <div className="upro-hpc-feat"><span className="ic ic-lime">✓</span>90-day price history charts</div>
                 <div className="upro-hpc-feat"><span className="ic ic-violet">★</span>Priority support from Penny</div>
               </div>
-              <button className="upro-btn-cta-card" onClick={checkout}>Upgrade now →</button>
+              <button className="upro-btn-cta-card" onClick={checkout} disabled={!checkoutEnabled} aria-disabled={!checkoutEnabled}>{ctaCardLabel}</button>
               <div className="upro-hpc-legal">7-day money-back guarantee · GST included · Cancel anytime via your account settings</div>
             </div>
           </div>
@@ -147,22 +114,7 @@ export default function UpgradeProPage() {
       </section>
       <div className="upro-hero-lime-bar" />
 
-      {/* MISSED TICKER */}
-      <div className="upro-missed">
-        <div className="upro-missed-inner">
-          <div className="upro-missed-label">🔐 PRO MEMBERS ONLY THIS WEEK</div>
-          <div className="upro-missed-scroll">
-            <div className="upro-missed-track">
-              {[...MISSED, ...MISSED].map((d, i) => (
-                <div key={i} className="upro-missed-chip">
-                  {d.route} · <span className="upro-missed-pct">-{d.pct}%</span> · {d.price} · {d.type}
-                </div>
-              ))}
-            </div>
-          </div>
-          <button className="upro-missed-cta" onClick={scrollToCTA}>Unlock all →</button>
-        </div>
-      </div>
+      {/* MISSED TICKER — hidden: sample data not wired to real deals */}
 
       {/* ROI */}
       <section className="upro-section upro-roi">
@@ -293,29 +245,7 @@ export default function UpgradeProPage() {
         </div>
       </section>
 
-      {/* SOCIAL PROOF */}
-      <section className="upro-proof">
-        <div className="upro-proof-inner">
-          <div className="upro-proof-eyebrow">✦ The flock speaks</div>
-          <h2 className="upro-section-h2" style={{ color: "var(--color-cream)", marginBottom: 6 }}>Real members. Real saves.</h2>
-          <p style={{ fontSize: 15, color: "rgba(246,243,236,.45)", lineHeight: 1.65 }}>We don&apos;t buy reviews. These are from Pro members who booked real flights.</p>
-          <div className="upro-proof-grid">
-            {PROOF.map((p, i) => (
-              <div key={i} className="upro-proof-card">
-                <div className="upro-proof-header">
-                  <div className="upro-proof-avatar" style={{ background: p.bg, color: p.color }}>{p.initials}</div>
-                  <div>
-                    <div className="upro-proof-name">{p.name}</div>
-                    <div className="upro-proof-handle">{p.handle}</div>
-                  </div>
-                </div>
-                <p className="upro-proof-body" dangerouslySetInnerHTML={{ __html: p.body }} />
-                <div className="upro-proof-savings">{p.saved}</div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
+      {/* SOCIAL PROOF — hidden: testimonials not yet from real users */}
 
       {/* FAQ */}
       <section className="upro-section upro-faq">
@@ -352,7 +282,7 @@ export default function UpgradeProPage() {
               <div className="upro-fp-note">No commitment</div>
             </div>
           </div>
-          <button className="upro-btn-final" onClick={checkout}>⚡ Upgrade to Pro now →</button>
+          <button className="upro-btn-final" onClick={checkout} disabled={!checkoutEnabled} aria-disabled={!checkoutEnabled}>{ctaFinalLabel}</button>
           <div className="upro-final-guarantee">✓ 7-day money-back guarantee · ✓ GST included · ✓ Cancel anytime · ✓ Razorpay secure checkout</div>
         </div>
       </section>

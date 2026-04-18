@@ -22,7 +22,7 @@ const COUNTRY_FLAGS: Record<string, string> = {
   India: "🇮🇳",
 };
 
-const INITIAL_ON = new Set(["BKK","DPS","SIN","KUL","MLE","DXB","IST","NRT","ICN","LHR","CDG","SYD"]);
+const INITIAL_ON = new Set<string>();
 const REGION_ORDER = ["Southeast Asia","South Asia","Middle East","East Asia","Europe","North America","Oceania"];
 
 const SIDEBAR_ITEMS: { id: string; icon: string; label: string; badge?: string }[] = [
@@ -85,6 +85,27 @@ const S = {
   toggleAll: { fontFamily: mono, fontSize: 10, fontWeight: 700, color: violet, cursor: "pointer", background: "none", border: "none", letterSpacing: ".08em" } as CSSProperties,
 };
 
+function Toggle({ checked, onChange, ml }: { checked: boolean; onChange: () => void; ml?: string }) {
+  return (
+    <label className="toggle" style={ml ? { marginLeft: ml } : undefined}>
+      <input type="checkbox" checked={checked} onChange={onChange} />
+      <div className="toggle-track" /><div className="toggle-thumb" />
+    </label>
+  );
+}
+
+function SectionHead({ n, title, right }: { n: number; title: string; right?: React.ReactNode }) {
+  return (
+    <div className="section-head">
+      <div>
+        <div className="section-eyebrow">✦ Section {n}</div>
+        <h2>{title}</h2>
+      </div>
+      {right}
+    </div>
+  );
+}
+
 export default function PreferencesPage() {
   // ── State ───────────────────────────────────────────────
   const [dirty, setDirty] = useState(false);
@@ -106,7 +127,7 @@ export default function PreferencesPage() {
   const [emailOn, setEmailOn] = useState(true);
   const [pushOn, setPushOn] = useState(false);
   const [tgOn, setTgOn] = useState(true);
-  const [tgHandle, setTgHandle] = useState("@aryankhanna");
+  const [tgHandle, setTgHandle] = useState("");
   const [waOn, setWaOn] = useState(false);
   const [waNumber, setWaNumber] = useState("");
   const [freq, setFreq] = useState<FreqType>("5");
@@ -153,6 +174,28 @@ export default function PreferencesPage() {
     );
     SIDEBAR_ITEMS.forEach(({ id }) => { const el = document.getElementById(id); if (el) obs.observe(el); });
     return () => obs.disconnect();
+  }, []);
+
+  // Hydrate prefs from server for signed-in user
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      try {
+        const res = await fetch("/api/profile/prefs", { method: "GET" });
+        if (!res.ok) return;
+        const p = await res.json();
+        if (cancelled) return;
+        const origins: string[] = Array.isArray(p.origins) ? p.origins : [];
+        if (origins.length > 0) {
+          const on = new Set(origins);
+          setDests((ds) => ds.map((d) => ({ ...d, on: on.has(d.code) })));
+        }
+        if (typeof p.telegram_handle === "string") setTgHandle(p.telegram_handle);
+      } catch {
+        // silent: prefs remain at defaults
+      }
+    })();
+    return () => { cancelled = true; };
   }, []);
 
   // ── Actions ─────────────────────────────────────────────
@@ -227,24 +270,6 @@ export default function PreferencesPage() {
   const channelSummary =
     [emailOn && "Email", pushOn && "Push", tgOn && "Telegram", waOn && "WhatsApp"].filter(Boolean).join(" + ") || "No channels";
   const threshLabel = threshold === "common" ? "Any deal (40%+)" : threshold === "rare" ? "Rare (60%+)" : "Mistake fares (70%+)";
-
-  // ── Small reusable pieces ───────────────────────────────
-  const Toggle = ({ checked, onChange, ml }: { checked: boolean; onChange: () => void; ml?: string }) => (
-    <label className="toggle" style={ml ? { marginLeft: ml } : undefined}>
-      <input type="checkbox" checked={checked} onChange={onChange} />
-      <div className="toggle-track" /><div className="toggle-thumb" />
-    </label>
-  );
-
-  const SectionHead = ({ n, title, right }: { n: number; title: string; right?: React.ReactNode }) => (
-    <div className="section-head">
-      <div>
-        <div className="section-eyebrow">✦ Section {n}</div>
-        <h2>{title}</h2>
-      </div>
-      {right}
-    </div>
-  );
 
   // ── Render ──────────────────────────────────────────────
   return (

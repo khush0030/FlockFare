@@ -5,7 +5,7 @@ import type { CSSProperties, ReactNode } from "react";
 import { Header } from "@/components/header";
 
 // ── Types ────────────────────────────────────────────────
-type TabId = "overview" | "saved" | "alerts" | "bookings" | "plan" | "settings";
+type TabId = "overview" | "saved" | "trips" | "alerts" | "bookings" | "plan" | "settings";
 type Billing = "monthly" | "yearly";
 
 export type ProfileData = {
@@ -76,6 +76,43 @@ export type ProfileData = {
     updates: boolean;
     analytics: boolean;
   };
+  trips: {
+    slug: string;
+    label: string;
+    outboundDestCode: string;
+    returnOriginCode: string;
+    outboundDate: string;
+    returnDate: string;
+    isOwn: boolean;
+    legs: {
+      originCode: string;
+      outboundPrice: number | null;
+      returnPrice: number | null;
+      totalPrice: number | null;
+      baselineTotal: number | null;
+      pctOff: number | null;
+      outboundAirline: string | null;
+      returnAirline: string | null;
+      outboundStops: number | null;
+      returnStops: number | null;
+      outboundUrl: string | null;
+      returnUrl: string | null;
+      dealType: "common" | "rare" | "unique" | null;
+      detectedAt: string | null;
+      alert: {
+        maxTotalInr: number | null;
+        minPctOff: number | null;
+      } | null;
+      typical: {
+        outboundMedianInr: number | null;
+        outboundSamples: number;
+        returnMedianInr: number | null;
+        returnSamples: number;
+        outboundInfo: { distanceKm: number; minMin: number; maxMin: number; carriers: string[] } | null;
+        returnInfo: { distanceKm: number; minMin: number; maxMin: number; carriers: string[] } | null;
+      };
+    }[];
+  }[];
 };
 
 // ── Design tokens ────────────────────────────────────────
@@ -106,6 +143,7 @@ const brutLg = "var(--shadow-brut-lg)";
 const TABS: { id: TabId; label: string }[] = [
   { id: "overview", label: "Overview" },
   { id: "saved", label: "Saved deals" },
+  { id: "trips", label: "My trips" },
   { id: "alerts", label: "Alert history" },
   { id: "bookings", label: "Bookings tracked" },
   { id: "plan", label: "Plan & billing" },
@@ -187,7 +225,7 @@ export function ProfileClient({ data }: { data: ProfileData }) {
             <div style={{ display: "flex", alignItems: "center", gap: 20 }}>
               <div style={{ width: 80, height: 80, borderRadius: "50%", background: violet, color: "#fff", fontFamily: fd, fontWeight: 900, fontSize: 28, display: "flex", alignItems: "center", justifyContent: "center", border: `4px solid ${cream}`, boxShadow: brut, flexShrink: 0, overflow: "hidden" }}>
                 {user.avatarUrl ? (
-                  <img src={user.avatarUrl} alt="" width={80} height={80} style={{ borderRadius: "50%", objectFit: "cover" }} />
+                  <img src={user.avatarUrl} alt="" width={80} height={80} referrerPolicy="no-referrer" style={{ borderRadius: "50%", objectFit: "cover" }} />
                 ) : (
                   initials
                 )}
@@ -240,9 +278,10 @@ export function ProfileClient({ data }: { data: ProfileData }) {
       <div style={{ maxWidth: 1200, margin: "0 auto", padding: "28px 40px 80px" }}>
         {tab === "overview" && <OverviewTab data={data} switchTab={switchTab} copyRef={copyRef} />}
         {tab === "saved" && <SavedTab deals={data.savedDeals} />}
+        {tab === "trips" && <TripsTab trips={data.trips} />}
         {tab === "alerts" && <AlertsTab deals={data.recentDeals} showToast={showToast} />}
         {tab === "bookings" && <BookingsTab bookings={data.bookings} stats={stats} />}
-        {tab === "plan" && <PlanTab billing={billing} setBilling={setBilling} showToast={showToast} referralCode={user.referralCode} />}
+        {tab === "plan" && <PlanTab billing={billing} setBilling={setBilling} showToast={showToast} referralCode={user.referralCode} planTier={user.planTier} />}
         {tab === "settings" && (
           <SettingsTab
             form={form}
@@ -500,6 +539,566 @@ function SavedTab({ deals }: { deals: ProfileData["savedDeals"] }) {
   );
 }
 
+function TripsTab({ trips }: { trips: ProfileData["trips"] }) {
+  const [showAdd, setShowAdd] = useState(false);
+
+  return (
+    <>
+      <Card>
+        <CardHead
+          eyebrow="✦ MY TRIPS"
+          title={trips.length === 0 ? "No tracked trips yet" : `${trips.length} trip${trips.length !== 1 ? "s" : ""}`}
+          action={
+            <HeadBtn onClick={() => setShowAdd((v) => !v)}>
+              {showAdd ? "× Cancel" : "+ Add trip"}
+            </HeadBtn>
+          }
+        />
+        {showAdd && (
+          <div style={{ padding: "16px 20px 22px", borderBottom: `2px solid ${g200}` }}>
+            <AddTripForm onAdded={() => { setShowAdd(false); window.location.reload(); }} />
+          </div>
+        )}
+        {trips.length === 0 && !showAdd && (
+          <div style={{ padding: "36px 20px", textAlign: "center", fontFamily: fm, fontSize: 12, color: g400 }}>
+            Click <strong style={{ color: ink }}>+ Add trip</strong> to start tracking flights for a custom destination + dates.
+          </div>
+        )}
+      </Card>
+      {trips.map((t) => (
+        <Card key={t.slug}>
+          <CardHead
+            eyebrow={t.isOwn ? "✦ YOUR TRIP" : "✦ MULTI-CITY"}
+            title={`${t.label} · ${t.outboundDate} → ${t.returnDate}`}
+            action={t.isOwn ? <DeleteTripBtn slug={t.slug} /> : undefined}
+          />
+          <div style={{ padding: "16px 20px 22px" }}>
+            <div style={{ fontFamily: fm, fontSize: 11, color: g500, letterSpacing: ".08em", marginBottom: 14 }}>
+              IND → {t.outboundDestCode} (out) · {t.returnOriginCode} → IND (return)
+            </div>
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: 14 }}>
+              {t.legs.map((leg) => (
+                <TripLegCard key={leg.originCode} leg={leg} trip={t} />
+              ))}
+            </div>
+          </div>
+        </Card>
+      ))}
+    </>
+  );
+}
+
+const ALLOWED_ORIGINS = ["BOM", "DEL", "IDR", "BLR"] as const;
+
+function AddTripForm({ onAdded }: { onAdded: () => void }) {
+  const today = new Date().toISOString().slice(0, 10);
+  const [label, setLabel] = useState("");
+  const [outDest, setOutDest] = useState("");
+  const [retOrig, setRetOrig] = useState("");
+  const [outDate, setOutDate] = useState("");
+  const [retDate, setRetDate] = useState("");
+  const [origins, setOrigins] = useState<Set<string>>(new Set(["BOM"]));
+  const [busy, setBusy] = useState(false);
+  const [err, setErr] = useState("");
+
+  const toggleOrigin = (code: string) => {
+    setOrigins((prev) => {
+      const next = new Set(prev);
+      if (next.has(code)) next.delete(code); else next.add(code);
+      return next;
+    });
+  };
+
+  const submit = async () => {
+    setErr("");
+    if (!label.trim()) return setErr("Add a label (e.g. 'Bali honeymoon').");
+    if (!/^[A-Z]{3}$/.test(outDest)) return setErr("Outbound destination must be 3-letter IATA code (e.g. HKT).");
+    if (!/^[A-Z]{3}$/.test(retOrig)) return setErr("Return origin must be 3-letter IATA code (e.g. BKK).");
+    if (!outDate || !retDate) return setErr("Pick both dates.");
+    if (origins.size === 0) return setErr("Select at least one home airport.");
+
+    setBusy(true);
+    try {
+      const res = await fetch("/api/trips", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          label: label.trim(),
+          outbound_dest_code: outDest,
+          return_origin_code: retOrig,
+          outbound_date: outDate,
+          return_date: retDate,
+          origin_codes: [...origins],
+        }),
+      });
+      const json = await res.json();
+      if (!res.ok) {
+        setErr(json.error ?? "Failed to add trip.");
+      } else {
+        onAdded();
+      }
+    } catch (e) {
+      setErr(String(e));
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const inp: CSSProperties = {
+    width: "100%", padding: "8px 10px", fontFamily: fm, fontSize: 13,
+    border: `2px solid ${ink}`, borderRadius: 8, background: paper,
+  };
+  const lbl: CSSProperties = { fontFamily: fm, fontSize: 10, fontWeight: 700, letterSpacing: ".1em", color: g500, marginBottom: 4, textTransform: "uppercase" };
+
+  return (
+    <div style={{ display: "grid", gap: 12 }}>
+      <label>
+        <div style={lbl}>Trip label</div>
+        <input value={label} onChange={(e) => setLabel(e.target.value)} placeholder="e.g. Bali honeymoon" maxLength={80} style={inp} />
+      </label>
+
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
+        <label>
+          <div style={lbl}>Outbound dest (IATA)</div>
+          <input value={outDest} onChange={(e) => setOutDest(e.target.value.toUpperCase().slice(0, 3))} placeholder="HKT" style={{ ...inp, fontWeight: 800 }} />
+        </label>
+        <label>
+          <div style={lbl}>Return origin (IATA)</div>
+          <input value={retOrig} onChange={(e) => setRetOrig(e.target.value.toUpperCase().slice(0, 3))} placeholder="BKK or same as outbound" style={{ ...inp, fontWeight: 800 }} />
+        </label>
+      </div>
+
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
+        <label>
+          <div style={lbl}>Outbound date</div>
+          <input type="date" min={today} value={outDate} onChange={(e) => setOutDate(e.target.value)} style={inp} />
+        </label>
+        <label>
+          <div style={lbl}>Return date</div>
+          <input type="date" min={outDate || today} value={retDate} onChange={(e) => setRetDate(e.target.value)} style={inp} />
+        </label>
+      </div>
+
+      <div>
+        <div style={lbl}>Track from these home airports</div>
+        <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+          {ALLOWED_ORIGINS.map((c) => {
+            const on = origins.has(c);
+            return (
+              <button
+                key={c}
+                type="button"
+                onClick={() => toggleOrigin(c)}
+                style={{
+                  padding: "6px 12px", fontFamily: fm, fontSize: 11, fontWeight: 800, letterSpacing: ".08em",
+                  border: `2px solid ${ink}`, borderRadius: 999, cursor: "pointer",
+                  background: on ? lime : "transparent", color: ink,
+                }}
+              >
+                {c}
+              </button>
+            );
+          })}
+        </div>
+      </div>
+
+      {err && <div style={{ fontFamily: fm, fontSize: 11, color: coral, fontWeight: 700 }}>{err}</div>}
+
+      <div style={{ display: "flex", gap: 8 }}>
+        <button
+          onClick={submit}
+          disabled={busy}
+          style={{
+            padding: "10px 18px", fontFamily: fd, fontSize: 13, fontWeight: 900,
+            background: lime, color: ink, border: `3px solid ${ink}`, borderRadius: 999,
+            cursor: busy ? "wait" : "pointer", boxShadow: brutSm,
+          }}
+        >
+          {busy ? "Adding…" : "Save trip"}
+        </button>
+        <div style={{ alignSelf: "center", fontFamily: fm, fontSize: 10, color: g500, lineHeight: 1.4 }}>
+          Crawler picks it up on the next scheduled run. Set an alert from the leg cards once snapshots arrive.
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function DeleteTripBtn({ slug }: { slug: string }) {
+  const [busy, setBusy] = useState(false);
+  const onClick = async () => {
+    if (!confirm("Stop tracking this trip? Snapshots stay in the DB but no new fares will be fetched.")) return;
+    setBusy(true);
+    try {
+      const res = await fetch(`/api/trips?slug=${encodeURIComponent(slug)}`, { method: "DELETE" });
+      if (res.ok) window.location.reload();
+      else alert("Delete failed");
+    } finally {
+      setBusy(false);
+    }
+  };
+  return (
+    <button
+      onClick={onClick}
+      disabled={busy}
+      style={{ fontFamily: fm, fontSize: 10, fontWeight: 700, letterSpacing: ".1em", color: coral, cursor: busy ? "wait" : "pointer", background: "none", border: "none" }}
+    >
+      {busy ? "Deleting…" : "Delete →"}
+    </button>
+  );
+}
+
+function TripLegCard({
+  leg,
+  trip,
+}: {
+  leg: ProfileData["trips"][number]["legs"][number];
+  trip: ProfileData["trips"][number];
+}) {
+  const hasPrice = leg.totalPrice !== null;
+  const hasDeal = leg.pctOff !== null && leg.pctOff > 0;
+  const dealColor = leg.dealType === "unique" ? violet : leg.dealType === "rare" ? coral : lime;
+  const dealBg = leg.dealType === "unique" ? violetT : leg.dealType === "rare" ? coralT : limeT;
+
+  return (
+    <div style={{ border: `3px solid ${ink}`, borderRadius: 16, padding: 16, background: paper, boxShadow: brutSm }}>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", marginBottom: 10 }}>
+        <div style={{ fontFamily: fd, fontWeight: 900, fontSize: 22, color: ink, letterSpacing: "-.02em" }}>
+          {leg.originCode}
+        </div>
+        {hasDeal && (
+          <span style={{ fontFamily: fm, fontSize: 10, fontWeight: 800, letterSpacing: ".1em", padding: "4px 10px", borderRadius: 999, background: dealBg, color: dealColor, border: `2px solid ${dealColor}` }}>
+            -{leg.pctOff}% OFF
+          </span>
+        )}
+      </div>
+
+      <TypicalFare leg={leg} trip={trip} />
+
+      <AlertControl tripSlug={trip.slug} originCode={leg.originCode} alert={leg.alert} />
+
+      {hasPrice ? (
+        <>
+          <div style={{ fontFamily: fd, fontWeight: 900, fontSize: 28, color: ink, letterSpacing: "-.03em", lineHeight: 1 }}>
+            {fmtFull(leg.totalPrice ?? 0)}
+          </div>
+          {leg.baselineTotal !== null && hasDeal && (
+            <div style={{ fontFamily: fm, fontSize: 11, color: g500, textDecoration: "line-through", marginTop: 4 }}>
+              Baseline {fmtFull(Math.round(leg.baselineTotal))}
+            </div>
+          )}
+
+          <div style={{ marginTop: 14, paddingTop: 12, borderTop: `2px solid ${g200}`, display: "grid", gap: 8 }}>
+            <LegRow
+              label={`${leg.originCode} → ${trip.outboundDestCode}`}
+              date={trip.outboundDate}
+              price={leg.outboundPrice}
+              airline={leg.outboundAirline}
+              stops={leg.outboundStops}
+              url={leg.outboundUrl}
+            />
+            <LegRow
+              label={`${trip.returnOriginCode} → ${leg.originCode}`}
+              date={trip.returnDate}
+              price={leg.returnPrice}
+              airline={leg.returnAirline}
+              stops={leg.returnStops}
+              url={leg.returnUrl}
+            />
+          </div>
+        </>
+      ) : (
+        <div style={{ fontFamily: fm, fontSize: 12, color: g400, padding: "10px 0" }}>
+          No fare snapshot yet — crawler will populate on next run.
+        </div>
+      )}
+    </div>
+  );
+}
+
+function TypicalFare({
+  leg,
+  trip,
+}: {
+  leg: ProfileData["trips"][number]["legs"][number];
+  trip: ProfileData["trips"][number];
+}) {
+  const t = leg.typical;
+  const fmtDur = (lo: number, hi: number) => {
+    const h = (m: number) => (m / 60).toFixed(m % 60 === 0 ? 0 : 1).replace(/\.0$/, "");
+    return lo === hi ? `${h(lo)}h` : `${h(lo)}–${h(hi)}h`;
+  };
+
+  const totalMedian =
+    t.outboundMedianInr !== null && t.returnMedianInr !== null
+      ? t.outboundMedianInr + t.returnMedianInr
+      : null;
+
+  return (
+    <div style={{ marginBottom: 12, padding: 10, background: sunT, border: `2px solid ${ink}`, borderRadius: 10 }}>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", marginBottom: 8 }}>
+        <div style={{ fontFamily: fm, fontSize: 10, fontWeight: 800, letterSpacing: ".1em", color: ink }}>
+          ✦ TYPICAL FARE · 90D
+        </div>
+        {totalMedian !== null && (
+          <div style={{ fontFamily: fd, fontWeight: 900, fontSize: 18, color: ink, letterSpacing: "-.02em" }}>
+            {fmtFull(Math.round(totalMedian))}
+          </div>
+        )}
+      </div>
+
+      <div style={{ display: "grid", gap: 6 }}>
+        <TypicalLegRow
+          dir="OUT"
+          route={`${leg.originCode} → ${trip.outboundDestCode}`}
+          medianInr={t.outboundMedianInr}
+          samples={t.outboundSamples}
+          info={t.outboundInfo}
+          fmtDur={fmtDur}
+        />
+        <TypicalLegRow
+          dir="RET"
+          route={`${trip.returnOriginCode} → ${leg.originCode}`}
+          medianInr={t.returnMedianInr}
+          samples={t.returnSamples}
+          info={t.returnInfo}
+          fmtDur={fmtDur}
+        />
+      </div>
+
+      {totalMedian === null && (
+        <div style={{ fontFamily: fm, fontSize: 10, color: g600, marginTop: 8, lineHeight: 1.4 }}>
+          Tracking — first snapshots populate after next crawler run. Need ≥3 per leg for a stable median.
+        </div>
+      )}
+    </div>
+  );
+}
+
+function TypicalLegRow({
+  dir,
+  route,
+  medianInr,
+  samples,
+  info,
+  fmtDur,
+}: {
+  dir: "OUT" | "RET";
+  route: string;
+  medianInr: number | null;
+  samples: number;
+  info: { distanceKm: number; minMin: number; maxMin: number; carriers: string[] } | null;
+  fmtDur: (lo: number, hi: number) => string;
+}) {
+  return (
+    <div style={{ background: paper, border: `1.5px solid ${g300}`, borderRadius: 8, padding: "6px 8px" }}>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", gap: 8 }}>
+        <div style={{ fontFamily: fm, fontSize: 10, fontWeight: 700, letterSpacing: ".08em", color: ink }}>
+          <span style={{ color: g500, marginRight: 4 }}>{dir}</span>
+          {route}
+        </div>
+        <div style={{ fontFamily: fd, fontWeight: 800, fontSize: 13, color: ink }}>
+          {medianInr !== null ? `${fmtFull(Math.round(medianInr))}` : <span style={{ color: g500, fontFamily: fm, fontSize: 10 }}>tracking…</span>}
+        </div>
+      </div>
+      <div style={{ fontFamily: fm, fontSize: 9, color: g500, marginTop: 2, lineHeight: 1.4 }}>
+        {info ? (
+          <>
+            ~{info.distanceKm.toLocaleString("en-IN")} km · {fmtDur(info.minMin, info.maxMin)} · {info.carriers.slice(0, 3).join(", ")}
+          </>
+        ) : (
+          "route info unavailable"
+        )}
+        {medianInr !== null && (
+          <span style={{ marginLeft: 6, color: g600 }}>
+            · median over {samples} snapshot{samples === 1 ? "" : "s"}
+          </span>
+        )}
+      </div>
+    </div>
+  );
+}
+
+function AlertControl({
+  tripSlug,
+  originCode,
+  alert,
+}: {
+  tripSlug: string;
+  originCode: string;
+  alert: { maxTotalInr: number | null; minPctOff: number | null } | null;
+}) {
+  const [open, setOpen] = useState(alert !== null);
+  const [maxTotal, setMaxTotal] = useState(alert?.maxTotalInr?.toString() ?? "");
+  const [minPct, setMinPct] = useState(alert?.minPctOff?.toString() ?? "");
+  const [saving, setSaving] = useState(false);
+  const [savedTick, setSavedTick] = useState<"ok" | "off" | "err" | null>(null);
+  const [active, setActive] = useState(alert !== null);
+
+  async function save() {
+    const max = maxTotal.trim() ? Number(maxTotal) : null;
+    const pct = minPct.trim() ? Number(minPct) : null;
+    if (max == null && pct == null) {
+      setSavedTick("err");
+      return;
+    }
+    setSaving(true);
+    try {
+      const res = await fetch("/api/trip-alerts", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          trip_slug: tripSlug,
+          origin_code: originCode,
+          max_total_inr: max,
+          min_pct_off: pct,
+        }),
+      });
+      setSavedTick(res.ok ? "ok" : "err");
+      if (res.ok) setActive(true);
+    } catch {
+      setSavedTick("err");
+    } finally {
+      setSaving(false);
+      setTimeout(() => setSavedTick(null), 2000);
+    }
+  }
+
+  async function remove() {
+    setSaving(true);
+    try {
+      const res = await fetch(
+        `/api/trip-alerts?trip_slug=${encodeURIComponent(tripSlug)}&origin_code=${encodeURIComponent(originCode)}`,
+        { method: "DELETE" },
+      );
+      if (res.ok) {
+        setActive(false);
+        setMaxTotal("");
+        setMinPct("");
+        setSavedTick("off");
+      } else {
+        setSavedTick("err");
+      }
+    } finally {
+      setSaving(false);
+      setTimeout(() => setSavedTick(null), 2000);
+    }
+  }
+
+  if (!open) {
+    return (
+      <button
+        onClick={() => setOpen(true)}
+        style={{
+          width: "100%", marginBottom: 12, padding: "8px 10px",
+          fontFamily: fm, fontSize: 11, fontWeight: 800, letterSpacing: ".08em",
+          background: limeT, color: ink, border: `2px dashed ${ink}`, borderRadius: 10, cursor: "pointer",
+        }}
+      >
+        🔔 SET PRICE ALERT
+      </button>
+    );
+  }
+
+  return (
+    <div style={{ marginBottom: 12, padding: 10, background: g100, border: `2px solid ${ink}`, borderRadius: 10 }}>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
+        <div style={{ fontFamily: fm, fontSize: 10, fontWeight: 800, letterSpacing: ".1em", color: ink }}>
+          🔔 PRICE ALERT {active ? "· ACTIVE" : ""}
+        </div>
+        <button
+          onClick={() => setOpen(false)}
+          style={{ background: "none", border: "none", cursor: "pointer", fontFamily: fm, fontSize: 14, color: g500 }}
+        >
+          ×
+        </button>
+      </div>
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8, marginBottom: 8 }}>
+        <label style={{ display: "block" }}>
+          <div style={{ fontFamily: fm, fontSize: 9, fontWeight: 700, letterSpacing: ".1em", color: g500, marginBottom: 4 }}>MAX TOTAL ₹</div>
+          <input
+            value={maxTotal}
+            onChange={(e) => setMaxTotal(e.target.value.replace(/[^\d]/g, ""))}
+            placeholder="35000"
+            inputMode="numeric"
+            style={{ width: "100%", padding: "6px 8px", fontFamily: fm, fontSize: 12, border: `2px solid ${ink}`, borderRadius: 6, background: paper }}
+          />
+        </label>
+        <label style={{ display: "block" }}>
+          <div style={{ fontFamily: fm, fontSize: 9, fontWeight: 700, letterSpacing: ".1em", color: g500, marginBottom: 4 }}>MIN % OFF</div>
+          <input
+            value={minPct}
+            onChange={(e) => setMinPct(e.target.value.replace(/[^\d]/g, ""))}
+            placeholder="40"
+            inputMode="numeric"
+            style={{ width: "100%", padding: "6px 8px", fontFamily: fm, fontSize: 12, border: `2px solid ${ink}`, borderRadius: 6, background: paper }}
+          />
+        </label>
+      </div>
+      <div style={{ display: "flex", gap: 6, alignItems: "center" }}>
+        <button
+          onClick={save}
+          disabled={saving}
+          style={{ flex: 1, padding: "7px 10px", fontFamily: fm, fontSize: 10, fontWeight: 800, letterSpacing: ".1em", background: lime, color: ink, border: `2px solid ${ink}`, borderRadius: 999, cursor: saving ? "wait" : "pointer" }}
+        >
+          {saving ? "..." : active ? "UPDATE" : "SAVE ALERT"}
+        </button>
+        {active && (
+          <button
+            onClick={remove}
+            disabled={saving}
+            style={{ padding: "7px 10px", fontFamily: fm, fontSize: 10, fontWeight: 800, letterSpacing: ".1em", background: "transparent", color: coral, border: `2px solid ${coral}`, borderRadius: 999, cursor: saving ? "wait" : "pointer" }}
+          >
+            REMOVE
+          </button>
+        )}
+        {savedTick === "ok" && <span style={{ fontFamily: fm, fontSize: 10, color: success, fontWeight: 800 }}>✓</span>}
+        {savedTick === "off" && <span style={{ fontFamily: fm, fontSize: 10, color: g500, fontWeight: 800 }}>removed</span>}
+        {savedTick === "err" && <span style={{ fontFamily: fm, fontSize: 10, color: coral, fontWeight: 800 }}>err</span>}
+      </div>
+      <div style={{ fontFamily: fm, fontSize: 10, color: g500, marginTop: 6, lineHeight: 1.4 }}>
+        Email when total fare ≤ max OR drop ≥ min %.
+      </div>
+    </div>
+  );
+}
+
+function LegRow({
+  label,
+  date,
+  price,
+  airline,
+  stops,
+  url,
+}: {
+  label: string;
+  date: string;
+  price: number | null;
+  airline: string | null;
+  stops: number | null;
+  url: string | null;
+}) {
+  const stopsTxt = stops === null ? "" : stops === 0 ? "Non-stop" : `${stops} stop${stops > 1 ? "s" : ""}`;
+  return (
+    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 10 }}>
+      <div style={{ minWidth: 0 }}>
+        <div style={{ fontFamily: fm, fontSize: 11, fontWeight: 700, letterSpacing: ".06em", color: ink }}>{label}</div>
+        <div style={{ fontFamily: fm, fontSize: 10, color: g500, marginTop: 2 }}>
+          {date} · {airline ?? "—"} · {stopsTxt}
+        </div>
+      </div>
+      <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+        <div style={{ fontFamily: fd, fontWeight: 800, fontSize: 14, color: ink }}>{price !== null ? fmtFull(price) : "—"}</div>
+        {url && (
+          <a href={url} target="_blank" rel="noopener noreferrer" style={{ fontFamily: fm, fontSize: 10, fontWeight: 800, letterSpacing: ".08em", color: violet, textDecoration: "none", padding: "4px 8px", border: `2px solid ${violet}`, borderRadius: 999 }}>
+            BOOK →
+          </a>
+        )}
+      </div>
+    </div>
+  );
+}
+
 function SavedDealRow({ d }: { d: ProfileData["savedDeals"][number] }) {
   const saving = d.baselinePrice - d.currentPrice;
   const barColor = d.status === "booked" ? success : d.status === "expired" ? g300 : coral;
@@ -540,7 +1139,7 @@ function AlertsTab({ deals, showToast }: { deals: ProfileData["recentDeals"]; sh
       <CardHead eyebrow="✦ ALERT HISTORY" title={`${deals.length} recent deals`} />
       <div style={{ padding: "0 20px" }}>
         {deals.length === 0 ? (
-          <div style={{ padding: "36px 0", textAlign: "center", fontFamily: fm, fontSize: 12, color: g400 }}>No deals detected yet. Penny will alert you when prices drop.</div>
+          <div style={{ padding: "36px 0", textAlign: "center", fontFamily: fm, fontSize: 12, color: g400 }}>No alerts yet — we&apos;ll ping you when a deal drops 40%+.</div>
         ) : (
           deals.map((d) => <DealAlertRow key={d.id} d={d} />)
         )}
@@ -611,9 +1210,39 @@ function StatRow({ l, v, valStyle, last }: { l: string; v: string; valStyle?: CS
 }
 
 // ── PLAN & BILLING ───────────────────────────────────────
-function PlanTab({ billing, setBilling, showToast, referralCode }: { billing: Billing; setBilling: (b: Billing) => void; showToast: (m: string) => void; referralCode: string }) {
+function PlanTab({ billing, setBilling, showToast, referralCode, planTier }: { billing: Billing; setBilling: (b: Billing) => void; showToast: (m: string) => void; referralCode: string; planTier: "free" | "pro" }) {
   const proPrice = billing === "yearly" ? "₹799" : "₹99";
   const proPer = billing === "yearly" ? "/year" : "/month";
+
+  if (planTier === "pro") {
+    return (
+      <div style={twoCol}>
+        <Card>
+          <CardHead eyebrow="✦ CURRENT PLAN" title="Pro bird" />
+          <div style={{ padding: 20 }}>
+            <div style={{ border: `4px solid ${ink}`, borderRadius: 16, padding: 24, background: ink, boxShadow: brutLg, position: "relative" }}>
+              <div style={{ position: "absolute", top: -12, left: 20, background: lime, border: `3px solid ${ink}`, borderRadius: 999, fontFamily: fm, fontSize: 9, fontWeight: 800, letterSpacing: ".12em", padding: "4px 12px", color: ink }}>ACTIVE</div>
+              <div style={{ fontFamily: fm, fontSize: 10, fontWeight: 700, letterSpacing: ".16em", color: lime, marginBottom: 5 }}>YOU&apos;RE ON</div>
+              <div style={{ fontFamily: fd, fontWeight: 900, fontSize: 28, marginBottom: 10, color: cream }}>Pro bird · Lifetime</div>
+              <div style={{ fontFamily: fm, fontSize: 12, color: "rgba(246,243,236,.65)", marginBottom: 16, lineHeight: 1.6 }}>All Pro features unlocked. No renewal, no billing.</div>
+              <PfList items={["✓ Instant alerts (no delay)", "✓ Unlimited home airports", "✓ Unlimited custom routes", "✓ Business & first class", "✓ Priority mistake fares", "✓ Hotel drops", "✓ 90-day price charts", "✓ Early access to new routes"]} on />
+            </div>
+          </div>
+        </Card>
+        <div>
+          <Card>
+            <CardHead eyebrow="✦ BILLING" title="Payment history" />
+            <div style={{ padding: "36px 20px", textAlign: "center" }}>
+              <div style={{ fontSize: 36, marginBottom: 10 }}>🎟️</div>
+              <div style={{ fontFamily: fm, fontSize: 12, color: g400, letterSpacing: ".08em" }}>Comped · no payments required</div>
+            </div>
+          </Card>
+          <ReferralCard code={referralCode} onCopy={() => showToast("Copied!")} />
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div style={twoCol}>
       <Card>

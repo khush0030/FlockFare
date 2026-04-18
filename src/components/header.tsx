@@ -54,6 +54,7 @@ export function Header({
               alt=""
               width={34}
               height={34}
+              referrerPolicy="no-referrer"
               style={{ borderRadius: "50%", border: "2px solid var(--color-cream)" }}
             />
           ) : (

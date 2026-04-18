@@ -41,69 +41,8 @@ const COLORS = {
 
 const MARGIN = { top: 20, right: 60, bottom: 36, left: 20 };
 
-function seededRng(seed: number) {
-  let s = seed;
-  return () => {
-    s = (s * 16807) % 2147483647;
-    return (s - 1) / 2147483646;
-  };
-}
-
-/** Synthesize a realistic-looking series when crawler data is sparse. */
-function synthesize(meta: RouteMeta, days: number, baseline: number, current: number, pctOff: number): { pts: Pt[]; deals: Deal[] } {
-  const now = new Date();
-  const rng = seededRng(meta.origin.charCodeAt(0) + meta.destination.charCodeAt(0) * 31 + days);
-  const pts: Pt[] = [];
-  const deals: Deal[] = [];
-
-  for (let i = days; i >= 0; i--) {
-    const d = new Date(now);
-    d.setDate(d.getDate() - i);
-    const t = (days - i) / Math.max(days, 1);
-    const trend = Math.sin(t * Math.PI * 2.4) * baseline * 0.08;
-    const noise = (rng() - 0.5) * baseline * 0.15;
-    const seasonal = Math.sin(t * Math.PI * 4.8) * baseline * 0.05;
-    let price = Math.round(baseline + trend + noise + seasonal);
-    price = Math.max(Math.round(baseline * 0.6), Math.min(Math.round(baseline * 1.4), price));
-
-    if (i === 0) price = current;
-    if (days >= 22 && i === 22) {
-      price = Math.round(baseline * 0.52);
-      deals.push({ idx: pts.length, price, pct: 48, type: "common", date: new Date(d) });
-    }
-    if (days >= 45 && i === 45) {
-      price = Math.round(baseline * 0.38);
-      deals.push({ idx: pts.length, price, pct: 62, type: "rare", date: new Date(d) });
-    }
-    if (days >= 71 && i === 71) {
-      price = Math.round(baseline * 0.29);
-      deals.push({ idx: pts.length, price, pct: 71, type: "unique", date: new Date(d) });
-    }
-    pts.push({ date: new Date(d), price });
-  }
-  deals.push({
-    idx: pts.length - 1,
-    price: current,
-    pct: pctOff,
-    type: pctOff >= 70 ? "unique" : pctOff >= 60 ? "rare" : "common",
-    date: new Date(now),
-    isToday: true,
-  });
-  return { pts, deals };
-}
-
 function resolveSeries(meta: RouteMeta, history: PricePoint[], deal: CurrentDeal | null, days: number): { pts: Pt[]; deals: Deal[]; baseline: number } {
-  const codeSum = (meta.origin + meta.destination).split("").reduce((a, c) => a + c.charCodeAt(0), 0);
-  const baseFromCode = 20000 + (codeSum % 80) * 1000;
-  const fallbackBase = deal?.baseline ?? baseFromCode;
-  const fallbackCurrent = deal?.price ?? Math.round(fallbackBase * 0.45);
-  const fallbackPct = deal?.pctOff ?? Math.round((1 - fallbackCurrent / fallbackBase) * 100);
-
-  if (history.length < 10) {
-    const s = synthesize(meta, days, fallbackBase, fallbackCurrent, fallbackPct);
-    return { ...s, baseline: fallbackBase };
-  }
-
+  void meta;
   const parsed: Pt[] = history
     .map((p) => ({ date: parseHistoryDate(p.date), price: p.price }))
     .filter((p) => !isNaN(p.date.getTime()))
@@ -112,9 +51,9 @@ function resolveSeries(meta: RouteMeta, history: PricePoint[], deal: CurrentDeal
   const cutoff = new Date();
   cutoff.setDate(cutoff.getDate() - days);
   const pts = parsed.filter((p) => p.date >= cutoff);
-  if (pts.length < 10) {
-    const s = synthesize(meta, days, fallbackBase, fallbackCurrent, fallbackPct);
-    return { ...s, baseline: fallbackBase };
+
+  if (pts.length < 2) {
+    return { pts: [], deals: [], baseline: deal?.baseline ?? 0 };
   }
 
   const sorted = [...pts].map((p) => p.price).sort((a, b) => a - b);
@@ -540,6 +479,33 @@ export function PriceHistoryView({
     return [others[0], others[1]];
   }, [peerRoutes, meta]);
 
+  if (series.pts.length < 2) {
+    return (
+      <div className="ph-page">
+        <div className="ph-route-header">
+          <div>
+            <div className="ph-route-eyebrow">✦ Price history</div>
+            <h1 className="ph-route-title">
+              {meta.origin} <span className="arr">→</span> <span className="dest">{meta.destination}</span>
+            </h1>
+            <p className="ph-route-sub">
+              {meta.originCity} to {meta.destinationCity}
+            </p>
+          </div>
+        </div>
+        <div style={{ maxWidth: 720, margin: "48px auto", padding: "40px 24px", textAlign: "center", border: "3px dashed rgba(11,11,15,.15)", borderRadius: 20 }}>
+          <div style={{ fontSize: 40, marginBottom: 12 }}>📊</div>
+          <h2 style={{ fontFamily: "var(--font-display)", fontWeight: 900, fontSize: 22, marginBottom: 8 }}>
+            Penny&apos;s still collecting data for this route.
+          </h2>
+          <p style={{ fontFamily: "var(--font-mono)", fontSize: 13, color: "rgba(11,11,15,.6)", lineHeight: 1.7 }}>
+            The crawler runs every 4 hours. Once we have enough snapshots to draw a reliable price line, this chart will fill in.
+          </p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="ph-page">
       <div className="ph-route-header">
@@ -803,6 +769,8 @@ function CompareCard({ route }: { route: RouteMeta }) {
     ctx.lineWidth = 2;
     ctx.stroke();
   }, [series]);
+
+  if (series.pts.length < 2) return null;
 
   const last = series.pts[series.pts.length - 1];
   const discount = Math.round((1 - last.price / series.baseline) * 100);

@@ -178,7 +178,7 @@ export default function OnboardingPage() {
       delay: Math.random() * 0.6,
       rotate: Math.random() * 360,
     }));
-    setConfetti(bits);
+    queueMicrotask(() => setConfetti(bits));
   }, [step]);
 
   /* ── Rendering helpers ──────────────────────────────── */

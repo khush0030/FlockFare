@@ -30,12 +30,22 @@ class FareResult:
     source: str
 
 
+MIN_PLAUSIBLE_PRICE_INR = 2000  # Below this = parse error (no real intl flight from India)
+MAX_PLAUSIBLE_PRICE_INR = 1_500_000  # Above this = parse error (multi-passenger or junk)
+
+
 def _parse_price(price_str: str) -> int | None:
-    """Extract numeric price from strings like '₹36,500' or 'INR 36500'."""
+    """Extract numeric INR price; reject implausible values from broken HTML scrapes."""
     cleaned = re.sub(r"[^\d]", "", price_str)
-    if cleaned:
-        return int(cleaned)
-    return None
+    if not cleaned:
+        return None
+    try:
+        v = int(cleaned)
+    except ValueError:
+        return None
+    if v < MIN_PLAUSIBLE_PRICE_INR or v > MAX_PLAUSIBLE_PRICE_INR:
+        return None
+    return v
 
 
 def _parse_duration(duration_str: str) -> int | None:
@@ -59,6 +69,7 @@ def fetch_fares(
     travel_month: str,
     cabin: str = "economy",
     max_stops: int = 1,
+    trip: str = "round-trip",
 ) -> list[FareResult]:
     """Fetch fares for a single origin→destination on a given date.
 
@@ -76,7 +87,7 @@ def fetch_fares(
 
         result = get_flights(
             flight_data=[flight_data],
-            trip="round-trip",
+            trip=trip,
             passengers=Passengers(adults=1),
             seat=cabin,
             max_stops=max_stops,
@@ -128,9 +139,30 @@ def fetch_cheapest_fare(
     travel_month: str,
     cabin: str = "economy",
     max_stops: int = 1,
+    trip: str = "round-trip",
 ) -> FareResult | None:
     """Fetch fares and return the cheapest one, or None."""
-    fares = fetch_fares(origin, destination, departure_date, travel_month, cabin, max_stops)
+    fares = fetch_fares(origin, destination, departure_date, travel_month, cabin, max_stops, trip=trip)
     if not fares:
         return None
     return min(fares, key=lambda f: f.price_inr)
+
+
+def fetch_cheapest_oneway(
+    origin: str,
+    destination: str,
+    departure_date: str,
+    cabin: str = "economy",
+    max_stops: int = 1,
+) -> FareResult | None:
+    """One-way fetch — used for multi-city / open-jaw legs."""
+    travel_month = departure_date[:7]
+    return fetch_cheapest_fare(
+        origin=origin,
+        destination=destination,
+        departure_date=departure_date,
+        travel_month=travel_month,
+        cabin=cabin,
+        max_stops=max_stops,
+        trip="one-way",
+    )

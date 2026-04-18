@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { ORIGINS, DESTINATIONS } from "@/config/watchlist";
 import { getActiveDeals, type Deal } from "@/lib/supabase/deals";
 import { Header } from "@/components/header";
@@ -159,9 +160,9 @@ export default async function Home() {
               <a href="#join" className="btn btn-lime">
                 Join free — no card →
               </a>
-              <a href="/deals" className="btn btn-ghost">
+              <Link href="/deals" className="btn btn-ghost">
                 See live deals
-              </a>
+              </Link>
             </div>
             <div className="hero-proof fade-up delay-4">
               <div className="hero-proof-avatar">
@@ -238,9 +239,9 @@ export default async function Home() {
           </div>
           <HomeDeals deals={deals} />
           <div style={{ textAlign: "center", marginTop: 36 }}>
-            <a href="/deals" className="btn btn-lime" style={{ fontSize: 14 }}>
+            <Link href="/deals" className="btn btn-lime" style={{ fontSize: 14 }}>
               See all live deals →
-            </a>
+            </Link>
           </div>
         </div>
       </section>
@@ -447,10 +448,10 @@ export default async function Home() {
             <div className="footer-links">
               <div className="footer-col">
                 <h4>Product</h4>
-                <a href="/deals">Live deals</a>
+                <Link href="/deals">Live deals</Link>
                 <a href="#how">How it works</a>
                 <a href="#join">Pro plan</a>
-                <a href="/deals">Price history</a>
+                <Link href="/deals">Price history</Link>
               </div>
               <div className="footer-col">
                 <h4>Company</h4>
