@@ -1,4 +1,4 @@
-import { supabase } from "./client";
+import { supabaseAdmin } from "./server";
 
 export interface TripOriginQuote {
   trip_slug: string;
@@ -51,7 +51,7 @@ type TripRow = {
 };
 
 export async function getTripFeed(): Promise<TripCard[]> {
-  const { data: trips, error: tErr } = await supabase
+  const { data: trips, error: tErr } = await supabaseAdmin
     .from("multi_city_trips")
     .select(
       "slug,label,outbound_dest_code,return_origin_code,outbound_date,return_date,origin_codes,is_active"
@@ -64,7 +64,7 @@ export async function getTripFeed(): Promise<TripCard[]> {
   }
 
   const slugs = (trips as TripRow[]).map((t) => t.slug);
-  const { data: legs, error: lErr } = await supabase
+  const { data: legs, error: lErr } = await supabaseAdmin
     .from("multi_city_leg_history")
     .select("trip_slug,origin_code,leg,price_inr,airline,stops,fetched_at")
     .in("trip_slug", slugs)
