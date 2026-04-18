@@ -570,7 +570,12 @@ function TripsTab({ trips }: { trips: ProfileData["trips"] }) {
           <CardHead
             eyebrow={t.isOwn ? "✦ YOUR TRIP" : "✦ MULTI-CITY"}
             title={`${t.label} · ${t.outboundDate} → ${t.returnDate}`}
-            action={t.isOwn ? <DeleteTripBtn slug={t.slug} /> : undefined}
+            action={
+              <div style={{ display: "flex", gap: 12, alignItems: "center" }}>
+                <RefreshTripBtn slug={t.slug} />
+                {t.isOwn && <DeleteTripBtn slug={t.slug} />}
+              </div>
+            }
           />
           <div style={{ padding: "16px 20px 22px" }}>
             <div style={{ fontFamily: fm, fontSize: 11, color: g500, letterSpacing: ".08em", marginBottom: 14 }}>
@@ -598,8 +603,11 @@ function AddTripForm({ onAdded }: { onAdded: () => void }) {
   const [outDate, setOutDate] = useState("");
   const [retDate, setRetDate] = useState("");
   const [origins, setOrigins] = useState<Set<string>>(new Set(["BOM"]));
+  const [roundTrip, setRoundTrip] = useState(true);
   const [busy, setBusy] = useState(false);
   const [err, setErr] = useState("");
+
+  const effectiveReturnOrigin = roundTrip ? outDest : retOrig;
 
   const toggleOrigin = (code: string) => {
     setOrigins((prev) => {
@@ -611,9 +619,10 @@ function AddTripForm({ onAdded }: { onAdded: () => void }) {
 
   const submit = async () => {
     setErr("");
+    const finalRetOrig = effectiveReturnOrigin;
     if (!label.trim()) return setErr("Add a label (e.g. 'Bali honeymoon').");
     if (!/^[A-Z]{3}$/.test(outDest)) return setErr("Outbound destination must be 3-letter IATA code (e.g. HKT).");
-    if (!/^[A-Z]{3}$/.test(retOrig)) return setErr("Return origin must be 3-letter IATA code (e.g. BKK).");
+    if (!/^[A-Z]{3}$/.test(finalRetOrig)) return setErr("Return origin must be 3-letter IATA code (e.g. BKK).");
     if (!outDate || !retDate) return setErr("Pick both dates.");
     if (origins.size === 0) return setErr("Select at least one home airport.");
 
@@ -625,7 +634,7 @@ function AddTripForm({ onAdded }: { onAdded: () => void }) {
         body: JSON.stringify({
           label: label.trim(),
           outbound_dest_code: outDest,
-          return_origin_code: retOrig,
+          return_origin_code: finalRetOrig,
           outbound_date: outDate,
           return_date: retDate,
           origin_codes: [...origins],
@@ -657,15 +666,22 @@ function AddTripForm({ onAdded }: { onAdded: () => void }) {
         <input value={label} onChange={(e) => setLabel(e.target.value)} placeholder="e.g. Bali honeymoon" maxLength={80} style={inp} />
       </label>
 
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
+      <label style={{ display: "flex", alignItems: "center", gap: 8, fontFamily: fm, fontSize: 12, fontWeight: 700, color: ink, cursor: "pointer" }}>
+        <input type="checkbox" checked={roundTrip} onChange={(e) => setRoundTrip(e.target.checked)} style={{ width: 16, height: 16, accentColor: "var(--color-violet)" }} />
+        Round trip (return from same airport)
+      </label>
+
+      <div style={{ display: "grid", gridTemplateColumns: roundTrip ? "1fr" : "1fr 1fr", gap: 12 }}>
         <label>
           <div style={lbl}>Outbound dest (IATA)</div>
           <input value={outDest} onChange={(e) => setOutDest(e.target.value.toUpperCase().slice(0, 3))} placeholder="HKT" style={{ ...inp, fontWeight: 800 }} />
         </label>
-        <label>
-          <div style={lbl}>Return origin (IATA)</div>
-          <input value={retOrig} onChange={(e) => setRetOrig(e.target.value.toUpperCase().slice(0, 3))} placeholder="BKK or same as outbound" style={{ ...inp, fontWeight: 800 }} />
-        </label>
+        {!roundTrip && (
+          <label>
+            <div style={lbl}>Return origin (IATA)</div>
+            <input value={retOrig} onChange={(e) => setRetOrig(e.target.value.toUpperCase().slice(0, 3))} placeholder="BKK (open-jaw)" style={{ ...inp, fontWeight: 800 }} />
+          </label>
+        )}
       </div>
 
       <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
@@ -721,6 +737,44 @@ function AddTripForm({ onAdded }: { onAdded: () => void }) {
         </div>
       </div>
     </div>
+  );
+}
+
+function RefreshTripBtn({ slug }: { slug: string }) {
+  const [busy, setBusy] = useState(false);
+  const [msg, setMsg] = useState("");
+  const onClick = async () => {
+    setBusy(true);
+    setMsg("");
+    try {
+      const res = await fetch(`/api/trips/refresh?slug=${encodeURIComponent(slug)}`, { method: "POST" });
+      const json = await res.json();
+      if (res.ok) {
+        setMsg(`✓ ${json.refreshed} updated`);
+        setTimeout(() => window.location.reload(), 800);
+      } else {
+        setMsg(json.error ?? "Refresh failed");
+        setTimeout(() => setMsg(""), 4000);
+      }
+    } catch (e) {
+      setMsg(String(e));
+      setTimeout(() => setMsg(""), 4000);
+    } finally {
+      setBusy(false);
+    }
+  };
+  return (
+    <span style={{ display: "inline-flex", alignItems: "center", gap: 6 }}>
+      <button
+        onClick={onClick}
+        disabled={busy}
+        title="Fetch fresh prices from SerpApi (1 call per leg, throttled to 1×/hour)"
+        style={{ fontFamily: fm, fontSize: 10, fontWeight: 700, letterSpacing: ".1em", color: lime, cursor: busy ? "wait" : "pointer", background: "none", border: "none" }}
+      >
+        {busy ? "↻ Refreshing…" : "↻ Refresh now"}
+      </button>
+      {msg && <span style={{ fontFamily: fm, fontSize: 10, color: msg.startsWith("✓") ? lime : coral }}>{msg}</span>}
+    </span>
   );
 }
 

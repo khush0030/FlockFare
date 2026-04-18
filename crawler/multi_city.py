@@ -26,6 +26,76 @@ from serpapi_source import fetch_cheapest_oneway
 logger = logging.getLogger(__name__)
 
 
+def _send_telegram_mc_deal(
+    trip_label: str,
+    origin: str,
+    out_dest: str,
+    ret_orig: str,
+    out_date: str,
+    ret_date: str,
+    out_price: float,
+    ret_price: float,
+    total: float,
+    baseline: float,
+    pct_off: int,
+    deal_type: str,
+    out_url: str,
+    ret_url: str,
+) -> bool:
+    token = os.environ.get("TELEGRAM_BOT_TOKEN")
+    chat_id = os.environ.get("TELEGRAM_CHANNEL_ID")
+    if not token or not chat_id:
+        return False
+
+    label_emoji = {"unique": "⚡", "rare": "🔥", "common": "🔵"}.get(deal_type, "🔵")
+    label_text = {"unique": "MISTAKE FARE", "rare": "RARE DEAL", "common": "PRICE DROP"}.get(deal_type, "PRICE DROP")
+
+    text = (
+        f"{label_emoji} {label_text} · <b>{html_escape(trip_label)}</b> from <b>{origin}</b>\n\n"
+        f"<b>₹{int(total):,}</b> total · <s>₹{int(baseline):,}</s> baseline · <b>{pct_off}% off</b>\n\n"
+        f"✈ {origin} → {out_dest} on {out_date} · ₹{int(out_price):,}\n"
+        f"✈ {ret_orig} → {origin} on {ret_date} · ₹{int(ret_price):,}\n\n"
+        f"<i>Set your own thresholds at flockfare.com/profile</i>"
+    )
+    payload = {
+        "chat_id": chat_id,
+        "text": text,
+        "parse_mode": "HTML",
+        "disable_web_page_preview": True,
+        "reply_markup": {
+            "inline_keyboard": [
+                [{"text": f"✈ Outbound · {origin}→{out_dest}", "url": out_url}],
+                [{"text": f"✈ Return · {ret_orig}→{origin}", "url": ret_url}],
+            ]
+        },
+    }
+    req = Request(
+        f"https://api.telegram.org/bot{token}/sendMessage",
+        data=json.dumps(payload).encode(),
+        headers={"Content-Type": "application/json"},
+    )
+    try:
+        with urlopen(req, timeout=10) as r:
+            res = json.loads(r.read())
+            ok = bool(res.get("ok"))
+            if ok and deal_type == "unique":
+                msg_id = res.get("result", {}).get("message_id")
+                if msg_id:
+                    pin = Request(
+                        f"https://api.telegram.org/bot{token}/pinChatMessage",
+                        data=json.dumps({"chat_id": chat_id, "message_id": msg_id, "disable_notification": True}).encode(),
+                        headers={"Content-Type": "application/json"},
+                    )
+                    try: urlopen(pin, timeout=10)
+                    except Exception: pass
+            if ok:
+                logger.info(f"  Telegram channel post sent ({deal_type})")
+            return ok
+    except URLError as e:
+        logger.warning(f"  Telegram send failed: {e}")
+        return False
+
+
 def _classify(pct_off: int) -> str:
     if pct_off >= UNIQUE_PCT_OFF:
         return "unique"
@@ -218,6 +288,18 @@ def crawl_trip(trip: dict, dry_run: bool = False) -> list[dict]:
                 f"₹{total:,} vs ₹{baseline:,.0f} = {pct_off}% off [{deal_type}]"
             )
             new_deals.append(deal)
+            # Telegram channel post (one-shot per new deal — not on updates)
+            try:
+                _send_telegram_mc_deal(
+                    trip_label=trip["label"], origin=origin,
+                    out_dest=out_dest, ret_orig=ret_orig,
+                    out_date=out_date, ret_date=ret_date,
+                    out_price=out_fare.price_inr, ret_price=ret_fare.price_inr,
+                    total=total, baseline=baseline, pct_off=pct_off,
+                    deal_type=deal_type, out_url=out_url, ret_url=ret_url,
+                )
+            except Exception as e:
+                logger.warning(f"  Telegram post failed for {origin}: {e}")
 
         # Fan out to user alerts whose threshold this hits (idempotent: 24h cooldown).
         try:

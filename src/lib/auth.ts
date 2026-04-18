@@ -1,5 +1,6 @@
 import NextAuth from "next-auth";
 import Google from "next-auth/providers/google";
+import { cookies } from "next/headers";
 import { createClient } from "@supabase/supabase-js";
 
 const db = createClient(
@@ -9,6 +10,7 @@ const db = createClient(
 
 // Permanent Pro — bypasses billing, survives DB wipes
 const ADMIN_EMAILS = new Set(["khushmutha20@gmail.com"]);
+const INVITE_COOKIE = "ff_invite_code";
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
   providers: [Google],
@@ -17,11 +19,34 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       if (!user.email) return false;
 
       // Enforce invite-only allowlist
-      const { data } = await db
+      let { data } = await db
         .from("allowed_emails")
         .select("email")
         .eq("email", user.email)
         .maybeSingle();
+
+      // Not allowlisted — try the invite cookie before rejecting.
+      let inviterEmail: string | null = null;
+      if (!data) {
+        const jar = await cookies();
+        const inviteCode = jar.get(INVITE_COOKIE)?.value;
+        if (inviteCode) {
+          const { data: inviter } = await db
+            .from("user_profiles")
+            .select("email")
+            .eq("referral_code", inviteCode)
+            .maybeSingle();
+          if (inviter?.email) {
+            inviterEmail = inviter.email;
+            await db.from("allowed_emails").insert({
+              email: user.email,
+              invited_by: inviter.email,
+            });
+            jar.delete(INVITE_COOKIE);
+            data = { email: user.email };
+          }
+        }
+      }
 
       if (!data) return "/login?error=not_invited";
 
@@ -40,6 +65,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           display_name: user.name ?? "User",
           avatar_url: user.image ?? null,
           referral_code: crypto.randomUUID().slice(0, 12),
+          referred_by: inviterEmail,
           plan_tier: isAdmin ? "pro" : "free",
           onboarded: isAdmin ? true : false,
         });
