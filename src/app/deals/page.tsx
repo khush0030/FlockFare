@@ -33,11 +33,24 @@ export default async function DealsPage() {
   const hasTrips = trips.some((t) => t.quotes.length > 0);
 
   const uniqueCount = deals.filter((d) => d.deal_type === "unique").length;
-  const lowestPrice = deals.length > 0 ? Math.min(...deals.map((d) => d.current_price_inr)) : 0;
+  const allTripQuotes = trips.flatMap((t) => t.quotes);
+  const cheapestTripFare = allTripQuotes.length > 0
+    ? Math.min(...allTripQuotes.map((q) => q.total_price_inr))
+    : 0;
+  const latestTripUpdate = allTripQuotes.length > 0
+    ? allTripQuotes.map((q) => q.last_updated).sort().slice(-1)[0]
+    : null;
+
+  const lowestPrice = deals.length > 0
+    ? Math.min(...deals.map((d) => d.current_price_inr))
+    : cheapestTripFare;
   const biggestDrop = deals.length > 0 ? Math.max(...deals.map((d) => d.pct_off)) : 0;
   const lastCrawl = deals.length > 0
     ? timeAgo(deals.map((d) => d.detected_at).sort().slice(-1)[0])
-    : "—";
+    : latestTripUpdate
+      ? timeAgo(latestTripUpdate)
+      : "—";
+  const hasAnyData = totalDeals > 0 || hasTrips;
 
   return (
     <main id="main">
@@ -57,7 +70,7 @@ export default async function DealsPage() {
             </div>
             <div className="feed-live-badge">
               <span className="live-dot" />
-              {totalDeals > 0 ? `LIVE · Updated ${lastCrawl}` : "AWAITING FIRST CRAWL"}
+              {hasAnyData ? `LIVE · Updated ${lastCrawl}` : "AWAITING FIRST CRAWL"}
             </div>
           </div>
         </div>
