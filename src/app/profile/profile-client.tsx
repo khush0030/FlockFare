@@ -3,6 +3,7 @@
 import { useState } from "react";
 import type { CSSProperties, ReactNode } from "react";
 import { Header } from "@/components/header";
+import { DOMESTIC_AIRPORTS } from "@/lib/airports";
 
 // ── Types ────────────────────────────────────────────────
 type TabId = "overview" | "saved" | "trips" | "alerts" | "bookings" | "plan" | "settings";
@@ -17,6 +18,7 @@ export type ProfileData = {
     monthsInFlock: number;
     planTier: "free" | "pro";
     referralCode: string;
+    homeAirport: string;
   };
   stats: {
     totalSavings: number;
@@ -171,6 +173,7 @@ export function ProfileClient({ data }: { data: ProfileData }) {
   const [form, setForm] = useState({
     name: user.displayName,
     email: user.email,
+    homeAirport: user.homeAirport,
   });
   const [notif, setNotif] = useState(data.notifPrefs);
 
@@ -190,7 +193,7 @@ export function ProfileClient({ data }: { data: ProfileData }) {
     const res = await fetch("/api/profile/me", {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ display_name: form.name }),
+      body: JSON.stringify({ display_name: form.name, home_airport: form.homeAirport }),
     });
     if (res.ok) {
       setDirty(false);
@@ -1356,7 +1359,7 @@ function BillBtn({ active, onClick, children }: { active: boolean; onClick: () =
 }
 
 // ── SETTINGS ─────────────────────────────────────────────
-type FormState = { name: string; email: string };
+type FormState = { name: string; email: string; homeAirport: string };
 type NotifState = ProfileData["notifPrefs"];
 
 function SettingsTab({ form, setForm, dirty, saveProfile, notif, savePrefs, showToast, memberSince }: {
@@ -1378,6 +1381,13 @@ function SettingsTab({ form, setForm, dirty, saveProfile, notif, savePrefs, show
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14 }}>
               <Field label="Display name" value={form.name} onChange={(v) => setForm({ ...form, name: v })} />
               <Field label="Email address" value={form.email} type="email" disabled />
+            </div>
+            <div style={{ marginTop: 14 }}>
+              <AirportSelect
+                label="Home airport"
+                value={form.homeAirport}
+                onChange={(v) => setForm({ ...form, homeAirport: v })}
+              />
             </div>
             <div style={{ marginTop: 18 }}>
               <button onClick={saveProfile} disabled={!dirty} style={{ fontFamily: fd, fontWeight: 900, fontSize: 15, padding: "13px 28px", borderRadius: 999, background: lime, color: ink, border: `4px solid ${ink}`, boxShadow: brut, cursor: dirty ? "pointer" : "default", opacity: dirty ? 1 : 0.35, pointerEvents: dirty ? "auto" : "none" }}>
@@ -1428,6 +1438,19 @@ function Field({ label, value, onChange, type = "text", disabled }: { label: str
     <div>
       <div style={{ fontFamily: fm, fontSize: 10, fontWeight: 700, letterSpacing: ".14em", textTransform: "uppercase", color: g600, marginBottom: 7 }}>{label}</div>
       <input type={type} value={value} disabled={disabled} onChange={onChange ? (e) => onChange(e.target.value) : undefined} style={{ width: "100%", fontSize: 14, padding: "12px 16px", border: `3px solid ${ink}`, borderRadius: 12, background: disabled ? g100 : paper, outline: "none", boxShadow: brutSm, opacity: disabled ? 0.6 : 1 }} />
+    </div>
+  );
+}
+
+function AirportSelect({ label, value, onChange }: { label: string; value: string; onChange: (v: string) => void }) {
+  return (
+    <div>
+      <div style={{ fontFamily: fm, fontSize: 10, fontWeight: 700, letterSpacing: ".14em", textTransform: "uppercase", color: g600, marginBottom: 7 }}>{label}</div>
+      <select value={value} onChange={(e) => onChange(e.target.value)} style={{ width: "100%", fontSize: 14, padding: "12px 16px", border: `3px solid ${ink}`, borderRadius: 12, background: paper, outline: "none", boxShadow: brutSm, cursor: "pointer" }}>
+        {DOMESTIC_AIRPORTS.map((a) => (
+          <option key={a.code} value={a.code}>{a.code} — {a.city} ({a.name})</option>
+        ))}
+      </select>
     </div>
   );
 }

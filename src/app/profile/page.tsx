@@ -18,6 +18,7 @@ type ProfileRow = {
   referral_code: string | null;
   referred_by: string | null;
   plan_tier: string;
+  home_airport: string | null;
   created_at: string;
 };
 
@@ -224,6 +225,7 @@ export default async function ProfilePage() {
       monthsInFlock: monthsDiff,
       planTier: (profile?.plan_tier as "free" | "pro") ?? "free",
       referralCode: profile?.referral_code ?? "",
+      homeAirport: profile?.home_airport ?? "IDR",
     },
     stats: {
       totalSavings,

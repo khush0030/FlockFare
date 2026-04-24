@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
 import { auth } from "@/lib/auth";
+import { isValidIATA } from "@/lib/airports";
 
 const db = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -18,6 +19,14 @@ export async function PATCH(request: NextRequest) {
 
   if (typeof body.display_name === "string" && body.display_name.trim()) {
     updates.display_name = body.display_name.trim().slice(0, 100);
+  }
+
+  if (typeof body.home_airport === "string") {
+    const code = body.home_airport.toUpperCase();
+    if (!isValidIATA(code)) {
+      return NextResponse.json({ error: "Invalid home_airport" }, { status: 400 });
+    }
+    updates.home_airport = code;
   }
 
   if (Object.keys(updates).length === 0) {
