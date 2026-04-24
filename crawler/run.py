@@ -26,6 +26,7 @@ if "NEXT_PUBLIC_SUPABASE_URL" in os.environ and "SUPABASE_URL" not in os.environ
 
 from db import expire_stale_deals
 from multi_city import fetch_active_trips, crawl_trip, expire_stale_mc_deals
+from baseline_routes import crawl_baselines
 
 logging.basicConfig(
     level=logging.INFO,
@@ -62,6 +63,14 @@ def main():
                 logger.error(f"  Trip failed: {e}")
     except Exception as e:
         logger.error(f"Could not load multi-city trips: {e}")
+        errors += 1
+
+    try:
+        logger.info("--- Baseline route snapshots ---")
+        written = crawl_baselines(dry_run=args.dry_run)
+        logger.info(f"Baseline snapshots written: {written}")
+    except Exception as e:
+        logger.error(f"Baseline collection failed: {e}")
         errors += 1
 
     if not args.dry_run:

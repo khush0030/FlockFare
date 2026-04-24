@@ -2,9 +2,10 @@ name: FlockFare Fare Crawler
 
 on:
   schedule:
-    # Daily at 06:00 UTC (~11:30 AM IST). 1 run/day × 8 SerpApi calls/trip = 240/mo
-    # for the seeded Phuket+Bangkok trip — fits the free 250-call quota with margin
-    # for user-added trips. Increase to twice daily only if quota allows.
+    # Daily at 06:00 UTC (~11:30 AM IST).
+    # Quota: 8 calls/day multi-city + 16 calls/day baseline routes (4 origins ×
+    # 4 destinations) = 24/day ≈ 720/month. Free tier is 250/mo — paid plan
+    # required. Trim baseline_routes.ORIGINS/DESTINATIONS to stay under quota.
     - cron: '0 6 * * *'
   workflow_dispatch:
     inputs:
